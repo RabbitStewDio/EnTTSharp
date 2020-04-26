@@ -1,0 +1,49 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <BaseOutputPath>$(MSBuildThisFileDirectory)/output/$(MSBuildProjectName)/bin</BaseOutputPath>
+    <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)/output/$(MSBuildProjectName)/obj</BaseIntermediateOutputPath>
+  </PropertyGroup>
+	
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <NoWarn>1701;1702;1591</NoWarn>
+    <DefineConstants>$(DefineConstants);JETBRAINS_ANNOTATIONS</DefineConstants>
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <Description>A entity based turn based role-playing game framework</Description>
+    <Authors>Thomas Morgner</Authors>
+    <Copyright>Copyright $([System.DateTime]::Now.Year) Maintainers of RogueEntity</Copyright>
+    <PackageTags>game rogue</PackageTags>
+    <PackageProjectUrl>https://www.rabbit-stew-dio.com/projects/rogue-entity/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/rabbitstewdio/RogueEntity</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+<!--    <PackageIconUrl>https://raw.githubusercontent.com/github.com/rabbitstewdio/RogueEntity/icon.png</PackageIconUrl> -->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)/LICENSE.txt" Pack="true" PackagePath=""/>
+  </ItemGroup>
+  
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('netstandard')) OR $(TargetFramework.StartsWith('netcoreapp'))">
+    <DefineConstants>$(DefineConstants);NETCORE</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(IsPackable)' == 'True'">
+    <DocumentationFile>$(BaseOutputPath)\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <DefineConstants>$(DefineConstants);DEBUG</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <DefineConstants>$(DefineConstants);RELEASE</DefineConstants>
+    <Optimize>True</Optimize>
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+  </PropertyGroup>
+  
+</Project>

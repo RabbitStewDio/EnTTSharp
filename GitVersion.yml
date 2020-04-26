@@ -1,0 +1,70 @@
+next-version: 1.0.0
+assembly-versioning-scheme: Major
+mode: ContinuousDelivery
+branches:
+  master:
+    mode: ContinuousDelivery
+    tag: ''
+    increment: Patch
+    prevent-increment-of-merged-branch-version: true
+    track-merge-target: false
+#    tracks-release-branches: false
+#    is-release-branch: false
+  releases?[/-]:
+    mode: ContinuousDelivery
+    tag: beta
+    increment: Patch
+    prevent-increment-of-merged-branch-version: true
+    track-merge-target: false
+#    tracks-release-branches: false
+#    is-release-branch: true
+  features?[/-]:
+    mode: ContinuousDelivery
+    tag: useBranchName
+    increment: Inherit
+    prevent-increment-of-merged-branch-version: false
+    track-merge-target: false
+#    tracks-release-branches: false
+#    is-release-branch: false
+  (pull|pull\-requests|pr)[/-]:
+    mode: ContinuousDelivery
+    tag: PullRequest
+    increment: Inherit
+    prevent-increment-of-merged-branch-version: false
+    tag-number-pattern: '[/-](?<number>\d+)[-/]'
+    track-merge-target: false
+#    tracks-release-branches: false
+#    is-release-branch: false
+  hotfix(es)?[/-]:
+    mode: ContinuousDelivery
+    tag: beta
+    increment: Patch
+    prevent-increment-of-merged-branch-version: false
+    track-merge-target: false
+#    tracks-release-branches: false
+#    is-release-branch: false
+  support[/-]:
+    mode: ContinuousDelivery
+    tag: ''
+    increment: Patch
+    prevent-increment-of-merged-branch-version: true
+    track-merge-target: false
+#    tracks-release-branches: false
+#    is-release-branch: false
+  dev(elop)?(ment)?$:
+    mode: ContinuousDeployment
+    tag: unstable
+    increment: Minor
+    prevent-increment-of-merged-branch-version: false
+    track-merge-target: true
+#    tracks-release-branches: true
+#    is-release-branch: false
+  support-dev(elop)?(ment)?[/-]:
+    mode: ContinuousDeployment
+    tag: unstable
+    increment: Minor
+    prevent-increment-of-merged-branch-version: false
+    track-merge-target: true
+#    tracks-release-branches: true
+#    is-release-branch: false
+    
