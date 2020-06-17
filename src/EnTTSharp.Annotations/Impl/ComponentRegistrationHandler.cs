@@ -16,6 +16,11 @@ namespace EnTTSharp.Annotations.Impl
                 Logger.Debug("Type {ComponentType} has default constructor.", typeof(TComponent));
                 r.WithConstructor(Activator.CreateInstance<TComponent>);
             }
+            else
+            {
+                r.WithoutConstruction();
+            }
+            
             var handlerMethods = typeof(TComponent).GetMethods(BindingFlags.Static | BindingFlags.Public);
             foreach (var m in handlerMethods)
             {

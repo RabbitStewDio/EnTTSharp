@@ -2,6 +2,12 @@
 {
     public partial class EntityRegistry
     {
+        public void DiscardView<TView>() where TView : IEntityView
+        {
+            views.Remove(typeof(TView));
+        }
+        
+/*        
         public IEntityView<T1> View<T1>()
         {
             return new AdhocView<T1>(this);
@@ -37,11 +43,6 @@
             return new AdhocView<T1, T2, T3, T4, T5, T6, T7>(this);
         }
 
-        public void DiscardView<TView>() where TView : IEntityView
-        {
-            views.Remove(typeof(TView));
-        }
-
         public IPersistentEntityView<T1> PersistentView<T1>()
         {
             var type = typeof(PersistentView<T1>);
@@ -60,7 +61,7 @@
             var type = typeof(PersistentView<T1, T2>);
             if (views.TryGetValue(type, out var view))
             {
-                return (IPersistentEntityView<T1, T2>) view;
+                return (IPersistentEntityView<T1, T2>)view;
             }
 
             var v = new PersistentView<T1, T2>(this);
@@ -73,7 +74,7 @@
             var type = typeof(PersistentView<T1, T2, T3>);
             if (views.TryGetValue(type, out var view))
             {
-                return (IPersistentEntityView<T1, T2, T3>) view;
+                return (IPersistentEntityView<T1, T2, T3>)view;
             }
 
             var v = new PersistentView<T1, T2, T3>(this);
@@ -86,7 +87,7 @@
             var type = typeof(PersistentView<T1, T2, T3, T4>);
             if (views.TryGetValue(type, out var view))
             {
-                return (IPersistentEntityView<T1, T2, T3, T4>) view;
+                return (IPersistentEntityView<T1, T2, T3, T4>)view;
             }
 
             var v = new PersistentView<T1, T2, T3, T4>(this);
@@ -99,7 +100,7 @@
             var type = typeof(PersistentView<T1, T2, T3, T4, T5>);
             if (views.TryGetValue(type, out var view))
             {
-                return (IPersistentEntityView<T1, T2, T3, T4, T5>) view;
+                return (IPersistentEntityView<T1, T2, T3, T4, T5>)view;
             }
 
             var v = new PersistentView<T1, T2, T3, T4, T5>(this);
@@ -112,7 +113,7 @@
             var type = typeof(PersistentView<T1, T2, T3, T4, T5, T6>);
             if (views.TryGetValue(type, out var view))
             {
-                return (IPersistentEntityView<T1, T2, T3, T4, T5, T6>) view;
+                return (IPersistentEntityView<T1, T2, T3, T4, T5, T6>)view;
             }
 
             var v = new PersistentView<T1, T2, T3, T4, T5, T6>(this);
@@ -125,12 +126,13 @@
             var type = typeof(PersistentView<T1, T2, T3, T4, T5, T6, T7>);
             if (views.TryGetValue(type, out var view))
             {
-                return (IPersistentEntityView<T1, T2, T3, T4, T5, T6, T7>) view;
+                return (IPersistentEntityView<T1, T2, T3, T4, T5, T6, T7>)view;
             }
 
             var v = new PersistentView<T1, T2, T3, T4, T5, T6, T7>(this);
             views[type] = v;
             return v;
         }
+*/        
     }
 }

@@ -80,7 +80,7 @@ namespace EnTTSharp.Annotations
                 h.Process(result);
             }
 
-            return true;
+            return !result.IsEmpty;
         }
     }
 }

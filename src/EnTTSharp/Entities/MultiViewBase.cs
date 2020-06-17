@@ -10,9 +10,11 @@ namespace EnttSharp.Entities
         readonly EventHandler<EntityKey> onCreated;
         readonly EventHandler<EntityKey> onDestroyed;
         protected readonly List<ISparsePool> Sets;
+
         /// <summary>
-        ///   Use this as a general fallback during the construction of subclasses, where it may not yet
-        ///   be safe to use the overloaded 'Contains' method.
+        ///   Use this as a general fallback during the construction of
+        ///   subclasses, where it may not yet be safe to use the overloaded
+        ///   'Contains' method.
         /// </summary>
         protected readonly Func<EntityKey, bool> IsMemberPredicate;
 
@@ -113,7 +115,7 @@ namespace EnttSharp.Entities
         public abstract TEnumerator GetEnumerator();
 
         protected abstract int EstimatedSize { get; }
-        
+
         protected bool IsMember(EntityKey e)
         {
             foreach (var set in Sets)
@@ -172,7 +174,6 @@ namespace EnttSharp.Entities
             {
                 EntityKeyListPool.Release(p);
             }
-
         }
 
         public bool GetComponent<TComponent>(EntityKey entity, out TComponent data)

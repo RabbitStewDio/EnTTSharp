@@ -6,9 +6,10 @@ namespace EnTTSharp.Annotations.Impl
 {
     public abstract class EntityActivatorBase : IEntityRegistrationActivator
     {
-        public void Activate(EntityComponentRegistration reg, EntityRegistry registry)
+        static readonly MethodInfo ProcessMethodInfo;
+
+        static EntityActivatorBase()
         {
-            var typeInfo = reg.TypeInfo;
             var method = typeof(EntityActivatorBase).GetMethod(nameof(ProcessTypedInternal),
                                                                BindingFlags.NonPublic | BindingFlags.Instance,
                                                                null,
@@ -16,10 +17,16 @@ namespace EnTTSharp.Annotations.Impl
                                                                null);
             if (method == null)
             {
-                throw new InvalidOperationException("XUnable to find private generic method. That really should not happen.");
+                throw new InvalidOperationException("Unable to find private generic method. That really should not happen.");
             }
 
-            var genericMethod = method.MakeGenericMethod(typeInfo);
+            ProcessMethodInfo = method;
+        }
+
+        public void Activate(EntityComponentRegistration reg, EntityRegistry registry)
+        {
+            var typeInfo = reg.TypeInfo;
+            var genericMethod = ProcessMethodInfo.MakeGenericMethod(typeInfo);
             genericMethod.Invoke(this, new object[] { reg, registry });
         }
 

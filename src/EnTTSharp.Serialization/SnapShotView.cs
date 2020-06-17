@@ -4,12 +4,12 @@ using EnttSharp.Entities;
 
 namespace EnTTSharp.Serialization
 {
-    public class SnapShotView : ISnapShotView
+    public class SnapshotView 
     {
         readonly EntityRegistry registry;
         readonly List<EntityKey> destroyedEntities;
 
-        public SnapShotView(EntityRegistry registry)
+        public SnapshotView(EntityRegistry registry)
         {
             this.registry = registry ?? throw new ArgumentNullException(nameof(registry));
             this.destroyedEntities = new List<EntityKey>();
@@ -17,7 +17,7 @@ namespace EnTTSharp.Serialization
             this.registry.BeforeEntityDestroyed += OnEntityDestroyed;
         }
 
-        ~SnapShotView()
+        ~SnapshotView()
         {
             Dispose(false);
         }
@@ -41,30 +41,46 @@ namespace EnTTSharp.Serialization
             GC.SuppressFinalize(this);
         }
 
-        public ISnapShotView WriteDestroyed(IEntityArchiveWriter writer)
+        public SnapshotView WriteEndOfFrame(IEntityArchiveWriter writer, bool forceFlush)
         {
+            writer.WriteEndOfFrame();
+            if (forceFlush)
+            {
+                writer.FlushFrame();
+            }
+
+            return this;
+        }
+
+        public SnapshotView WriteDestroyed(IEntityArchiveWriter writer)
+        {
+            writer.WriteStartDestroyed(destroyedEntities.Count);
             foreach (var d in destroyedEntities)
             {
                 writer.WriteDestroyed(d);
             }
+            writer.WriteEndDestroyed();
 
             destroyedEntities.Clear();
             return this;
         }
 
-        public ISnapShotView WriteEntites(IEntityArchiveWriter writer)
+        public SnapshotView WriteEntites(IEntityArchiveWriter writer)
         {
+            writer.WriteStartEntity(registry.Count);
             foreach (var d in registry)
             {
                 writer.WriteEntity(d);
             }
+            writer.WriteEndEntity();
 
             return this;
         }
 
-        public ISnapShotView WriteComponent<TComponent>(IEntityArchiveWriter writer)
+        public SnapshotView WriteComponent<TComponent>(IEntityArchiveWriter writer)
         {
             var pool = registry.GetPool<TComponent>();
+            writer.WriteStartComponent<TComponent>(pool.Count);
             foreach (var entity in pool)
             {
                 if (pool.TryGet(entity, out var c))
@@ -72,26 +88,23 @@ namespace EnTTSharp.Serialization
                     writer.WriteComponent(entity, c);
                 }
             }
+            writer.WriteEndComponent<TComponent>();
 
             return this;
         }
 
-        public ISnapShotView WriteTag<TComponent>(IEntityArchiveWriter writer)
+        public SnapshotView WriteTag<TComponent>(IEntityArchiveWriter writer)
         {
             if (registry.TryGetTag(out var entity, out TComponent tag))
             {
                 writer.WriteTag(entity, tag);
             }
+            else
+            {
+                writer.WriteMissingTag<TComponent>();
+            }
 
             return this;
-        }
-    }
-
-    public static class SnapShotExtensions
-    {
-        public static ISnapShotView CreateSnapshot(this EntityRegistry r)
-        {
-            return new SnapShotView(r);
         }
     }
 }

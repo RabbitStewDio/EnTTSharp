@@ -2,11 +2,11 @@
 
 namespace EnTTSharp.Serialization
 {
-    public interface ISnapShotView : IDisposable
+    public interface ISnapshotView : IDisposable
     {
-        ISnapShotView WriteDestroyed(IEntityArchiveWriter writer);
-        ISnapShotView WriteEntites(IEntityArchiveWriter writer);
-        ISnapShotView WriteComponent<TComponent>(IEntityArchiveWriter writer);
-        ISnapShotView WriteTag<TComponent>(IEntityArchiveWriter writer);
+        ISnapshotView WriteDestroyed(IEntityArchiveWriter writer);
+        ISnapshotView WriteEntites(IEntityArchiveWriter writer);
+        ISnapshotView WriteComponent<TComponent>(IEntityArchiveWriter writer);
+        ISnapshotView WriteTag<TComponent>(IEntityArchiveWriter writer);
     }
 }

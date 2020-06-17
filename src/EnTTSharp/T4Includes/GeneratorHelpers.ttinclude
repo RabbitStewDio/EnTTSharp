@@ -1,0 +1,39 @@
+<#@ template language="C#" #>
+<#@ import namespace="System.Text" #>
+<#+
+    public const int MaxParameterCount = 7;
+
+    public static string BuildLightTemplate(int paramCount)
+    {
+        var templateParams = new StringBuilder();
+        for (int x = 0; x < paramCount; x += 1)
+        {
+            if (x > 0)
+            {
+                templateParams.Append(", ");
+            }
+            templateParams.Append("T");
+            templateParams.Append(x + 1);
+        }
+        return templateParams.ToString();
+    }
+    
+    public static string BuildTemplate(int paramCount)
+    {
+        return "<" + BuildLightTemplate(paramCount) + ">"; 
+    }
+    
+    public static string JoinGenericParams(int count, string template, string separator)
+    {
+        var sb = new StringBuilder();
+        for (int x = 0; x < count; x += 1)
+        {
+            if (x > 0)
+            {
+                sb.Append(separator);
+            }
+            sb.Append(string.Format(template, x + 1));
+        }
+        return sb.ToString();
+    }
+#>

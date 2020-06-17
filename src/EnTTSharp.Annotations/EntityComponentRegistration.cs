@@ -14,6 +14,7 @@ namespace EnTTSharp.Annotations
             this.data = new Dictionary<Type, object>();
         }
 
+        public bool IsEmpty => data.Count == 0;
         public TypeInfo TypeInfo { get; }
 
         public void Store<TData>(TData value)
@@ -32,6 +33,11 @@ namespace EnTTSharp.Annotations
 
             result = default;
             return false;
+        }
+
+        public override string ToString()
+        {
+            return $"EntityComponentRegistration({nameof(TypeInfo)}: {TypeInfo}, {nameof(IsEmpty)}: {IsEmpty})";
         }
     }
 }

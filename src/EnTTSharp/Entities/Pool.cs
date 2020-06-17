@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using EnttSharp.Entities.Helpers;
 
 namespace EnttSharp.Entities
 {
@@ -64,14 +65,14 @@ namespace EnttSharp.Entities
                     base.RemoveAll();
                     return;
                 }
-                
+
                 while (Count > 0)
                 {
                     var k = Last;
                     Remove(k);
                 }
             }
-            
+
             public override bool WriteBack(EntityKey entity, in TComponent component)
             {
                 if (Updated == null)

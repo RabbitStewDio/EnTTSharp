@@ -6,6 +6,8 @@ namespace EnTTSharp.Annotations.Impl
 {
     public static class ComponentRegistrationExtensions
     {
+        class NonConstructibleMarker{}
+
         public static EntityComponentRegistration WithConstructor<TComponent>(this EntityComponentRegistration reg, Func<TComponent> constructorFn)
         {
             reg.Store(new ConstructorRegistration<TComponent>(constructorFn));
@@ -16,6 +18,12 @@ namespace EnTTSharp.Annotations.Impl
                                                                              Action<EntityKey, EntityRegistry, TComponent> destructorFn)
         {
             reg.Store(new DestructorRegistration<TComponent>(destructorFn));
+            return reg;
+        }
+
+        public static EntityComponentRegistration WithoutConstruction(this EntityComponentRegistration reg)
+        {
+            reg.Store(new NonConstructibleMarker());
             return reg;
         }
 

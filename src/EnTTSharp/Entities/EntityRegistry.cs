@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using EnttSharp.Entities.Helpers;
 
 namespace EnttSharp.Entities
 {
@@ -11,7 +12,7 @@ namespace EnttSharp.Entities
         readonly List<SparseSet> pools;
         readonly Dictionary<Type, IComponentRegistration> componentIndex;
         readonly Dictionary<Type, int> tagIndex;
-        readonly List<Attaching> tags;
+        readonly List<Attachment> tags;
         readonly Dictionary<Type, IEntityView> views;
 
         int next;
@@ -23,7 +24,7 @@ namespace EnttSharp.Entities
             entities = new List<EntityKey>();
             pools = new List<SparseSet>();
             tagIndex = new Dictionary<Type, int>();
-            tags = new List<Attaching>();
+            tags = new List<Attachment>();
             views = new Dictionary<Type, IEntityView>();
         }
 
@@ -66,7 +67,7 @@ namespace EnttSharp.Entities
         {
             if (componentIndex.TryGetValue(typeof(TComponent), out var reg))
             {
-                return (IComponentRegistration<TComponent>) reg;
+                return (IComponentRegistration<TComponent>)reg;
             }
 
             throw new ArgumentException($"Unknown registration for type {typeof(TComponent)}");
@@ -81,7 +82,7 @@ namespace EnttSharp.Entities
         public Pools.Pool<TComponent> GetPool<TComponent>()
         {
             var idx = ManagedIndex<TComponent>();
-            return (Pools.Pool<TComponent>) pools[idx];
+            return (Pools.Pool<TComponent>)pools[idx];
         }
 
         public Pools.Pool<TComponent> Register<TComponent>() where TComponent : new()
@@ -220,11 +221,11 @@ namespace EnttSharp.Entities
             {
                 idx = tagIndex.Count;
                 tagIndex[typeof(TTag)] = idx;
-                tags.Add(new Attaching(entity, tag));
+                tags.Add(new Attachment(entity, tag));
             }
             else
             {
-                tags[idx] = new Attaching(entity, tag);
+                tags[idx] = new Attachment(entity, tag);
             }
         }
 
@@ -237,8 +238,9 @@ namespace EnttSharp.Entities
         }
 
         /// <summary>
-        ///  Synchronizes the state of the registry with data received from the snapshot loader.
-        ///  This will insert keys by using internal knowledge of the data structured used.
+        ///  Synchronizes the state of the registry with data received from the
+        ///  snapshot loader. This will insert keys by using internal knowledge
+        ///  of the data structured used.
         /// </summary>
         /// <param name="entity"></param>
         /// <param name="destroyed"></param>
@@ -265,10 +267,10 @@ namespace EnttSharp.Entities
                 var e = tags[idx];
                 if (e.Tag != null)
                 {
-                    GetRegistration<TTag>().Destruct(e.Entity, (TTag) e.Tag);
+                    GetRegistration<TTag>().Destruct(e.Entity, (TTag)e.Tag);
                 }
 
-                tags[idx] = default(Attaching);
+                tags[idx] = default(Attachment);
             }
         }
 
@@ -283,7 +285,7 @@ namespace EnttSharp.Entities
                     throw new ArgumentException();
                 }
 
-                return (TTag) tagRaw;
+                return (TTag)tagRaw;
             }
 
             throw new ArgumentException();
@@ -295,7 +297,7 @@ namespace EnttSharp.Entities
             {
                 var att = tags[idx];
                 entity = att.Entity;
-                tag = (TTag) att.Tag;
+                tag = (TTag)att.Tag;
                 return true;
             }
 
@@ -437,6 +439,7 @@ namespace EnttSharp.Entities
                     Destroy(last);
                 }
             }
+
             EntityKeyListPool.Release(l);
 
             if (!IsEmpty)
@@ -448,6 +451,7 @@ namespace EnttSharp.Entities
                 {
                     pool.RemoveAll();
                 }
+
                 entities.Clear();
                 available = 0;
                 next = default;
@@ -498,12 +502,12 @@ namespace EnttSharp.Entities
             return value;
         }
 
-        struct Attaching
+        struct Attachment
         {
             public readonly EntityKey Entity;
             public readonly object Tag;
 
-            public Attaching(EntityKey entity, object tag)
+            public Attachment(EntityKey entity, object tag)
             {
                 Entity = entity;
                 Tag = tag ?? throw new ArgumentNullException(nameof(tag));

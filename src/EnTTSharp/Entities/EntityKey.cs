@@ -2,13 +2,19 @@
 
 namespace EnttSharp.Entities
 {
+    public interface IEntityKey: IEquatable<IEntityKey>
+    {
+        byte Age { get; }
+        int Key { get; }
+    }
+    
     [Serializable]
     public readonly struct EntityKey : IEquatable<EntityKey>
     {
         readonly uint keyData;
         readonly uint extraData;
 
-        public int Key => (int) keyData;
+        public int Key => (int)keyData;
         public uint Extra => extraData & 0xFF_FFFF;
         public byte Age => (byte)((extraData >> 24) & 0xFF);
 
@@ -18,7 +24,7 @@ namespace EnttSharp.Entities
 
             extraData = (uint)(age << 24);
             extraData |= extra & 0xFF_FFFF;
-            keyData = (uint) key;
+            keyData = (uint)key;
         }
 
         public bool Equals(EntityKey other)
@@ -35,7 +41,7 @@ namespace EnttSharp.Entities
         {
             unchecked
             {
-                return ((int) keyData * 397) ^ (int) extraData;
+                return ((int)keyData * 397) ^ (int)extraData;
             }
         }
 

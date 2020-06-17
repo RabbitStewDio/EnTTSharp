@@ -1,5 +1,5 @@
 ﻿using System;
-using EnttSharp.Entities.Data;
+using EnttSharp.Entities.Helpers;
 
 namespace EnttSharp.Entities
 {
@@ -29,11 +29,12 @@ namespace EnttSharp.Entities
             {
                 view.Add(e);
             }
+
             base.OnCreated(sender, e);
         }
 
         public int Count => EstimatedSize;
-        
+
         public override bool Contains(EntityKey e)
         {
             return view.Contains(e);

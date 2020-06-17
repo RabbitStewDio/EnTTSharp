@@ -1,59 +1,59 @@
 ﻿using System;
-using EnttSharp.Entities.Data;
+using EnttSharp.Entities.Helpers;
 
 namespace EnttSharp.Entities
 {
-  /// <summary>
-  ///  Specialisation to avoid boxing when requesting an enumerator.
-  /// </summary>
-  public abstract class AdhocMultiViewBase : MultiViewBase<PredicateEnumerator<EntityKey>>
-  {
-    protected AdhocMultiViewBase(EntityRegistry registry,
-                                 params ISparsePool[] entries): base(registry, entries)
+    /// <summary>
+    ///  Specialisation to avoid boxing when requesting an enumerator.
+    /// </summary>
+    public abstract class AdhocMultiViewBase : MultiViewBase<PredicateEnumerator<EntityKey>>
     {
-    }
-
-    protected override int EstimatedSize
-    {
-        get
+        protected AdhocMultiViewBase(EntityRegistry registry,
+                                     params ISparsePool[] entries) : base(registry, entries)
         {
-            if (Sets.Count == 0)
+        }
+
+        protected override int EstimatedSize
+        {
+            get
             {
-                return 0;
+                if (Sets.Count == 0)
+                {
+                    return 0;
+                }
+
+                var count = int.MaxValue;
+                foreach (var set in Sets)
+                {
+                    if (set.Count < count)
+                    {
+                        count = set.Count;
+                    }
+                }
+
+                return count;
             }
-            
+        }
+
+        public override PredicateEnumerator<EntityKey> GetEnumerator()
+        {
+            ISparsePool s = null;
             var count = int.MaxValue;
             foreach (var set in Sets)
             {
                 if (set.Count < count)
                 {
-                    count = set.Count;
+                    s = set;
+                    count = s.Count;
                 }
             }
 
-            return count;
+            if (s == null)
+            {
+                throw new ArgumentException();
+            }
+
+            return new PredicateEnumerator<EntityKey>(s, IsMemberPredicate);
         }
     }
-
-    public override PredicateEnumerator<EntityKey> GetEnumerator()
-    {
-      ISparsePool s = null;
-      var count = int.MaxValue;
-      foreach (var set in Sets)
-      {
-        if (set.Count < count)
-        {
-          s = set;
-          count = s.Count;
-        }
-      }
-
-      if (s == null)
-      {
-        throw new ArgumentException();
-      }
-
-      return new PredicateEnumerator<EntityKey>(s, IsMemberPredicate);
-    }
-  }
 }

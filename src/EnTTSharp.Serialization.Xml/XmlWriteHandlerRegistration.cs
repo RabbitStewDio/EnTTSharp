@@ -1,0 +1,50 @@
+﻿using System;
+using System.Xml;
+using EnttSharp.Entities;
+
+namespace EnTTSharp.Serialization.Xml
+{
+    public delegate void WriteHandlerDelegate<TComponent>(XmlWriter writer, EntityKey k, TComponent component);
+
+    public readonly struct XmlWriteHandlerRegistration
+    {
+        readonly object handler;
+
+        XmlWriteHandlerRegistration(Type targetType, string typeId, object handler, bool tag)
+        {
+            this.TargetType = targetType;
+            this.TypeId = typeId;
+            this.handler = handler;
+            this.Tag = tag;
+        }
+
+        public Type TargetType { get; }
+        public string TypeId { get; }
+        public bool Tag { get; }
+
+        public WriteHandlerDelegate<TData> GetHandler<TData>()
+        {
+            return (WriteHandlerDelegate<TData>)handler;
+        }
+
+        public static XmlWriteHandlerRegistration Create<TData>(WriteHandlerDelegate<TData> handler, bool tag)
+        {
+            if (handler == null)
+            {
+                throw new ArgumentNullException(nameof(handler));
+            }
+
+            return new XmlWriteHandlerRegistration(typeof(TData), typeof(TData).FullName, handler, tag);
+        }
+
+        public static XmlWriteHandlerRegistration Create<TData>(string typeId, WriteHandlerDelegate<TData> handler, bool tag)
+        {
+            if (handler == null)
+            {
+                throw new ArgumentNullException(nameof(handler));
+            }
+
+            return new XmlWriteHandlerRegistration(typeof(TData), typeId ?? typeof(TData).FullName, handler, tag);
+        }
+    }
+}

@@ -378,3 +378,5 @@ build-artefacts/
 /NuGet/
 
 bin/
+obj/
+

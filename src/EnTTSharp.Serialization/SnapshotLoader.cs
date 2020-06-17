@@ -32,6 +32,11 @@ namespace EnTTSharp.Serialization
             this.Registry.AttachTag(entity, c);
         }
 
+        public void OnTagRemoved<TComponent>()
+        {
+            this.Registry.RemoveTag<TComponent>();
+        }
+
         public virtual EntityKey Map(EntityKey input)
         {
             return input;
