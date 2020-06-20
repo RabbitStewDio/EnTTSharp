@@ -5,15 +5,15 @@ using EnttSharp.Entities;
 
 namespace EnTTSharp.Serialization
 {
-    public class AsyncSnapshotView 
+    public class AsyncSnapshotView<TEntityKey> where TEntityKey : IEntityKey
     {
-        readonly EntityRegistry registry;
-        readonly List<EntityKey> destroyedEntities;
+        readonly IEntityPoolAccess<TEntityKey> registry;
+        readonly List<TEntityKey> destroyedEntities;
 
-        public AsyncSnapshotView(EntityRegistry registry)
+        public AsyncSnapshotView(IEntityPoolAccess<TEntityKey> registry)
         {
             this.registry = registry ?? throw new ArgumentNullException(nameof(registry));
-            this.destroyedEntities = new List<EntityKey>();
+            this.destroyedEntities = new List<TEntityKey>();
 
             this.registry.BeforeEntityDestroyed += OnEntityDestroyed;
         }
@@ -31,7 +31,7 @@ namespace EnTTSharp.Serialization
             }
         }
 
-        void OnEntityDestroyed(object sender, EntityKey e)
+        void OnEntityDestroyed(object sender, TEntityKey e)
         {
             destroyedEntities.Add(e);
         }
@@ -42,7 +42,7 @@ namespace EnTTSharp.Serialization
             GC.SuppressFinalize(this);
         }
 
-        public async Task<AsyncSnapshotView> WriteDestroyed(IAsyncEntityArchiveWriter writer)
+        public async Task<AsyncSnapshotView<TEntityKey>> WriteDestroyed(IAsyncEntityArchiveWriter<TEntityKey> writer)
         {
             await writer.WriteStartDestroyedAsync(destroyedEntities.Count);
             foreach (var d in destroyedEntities)
@@ -55,7 +55,7 @@ namespace EnTTSharp.Serialization
             return this;
         }
 
-        public async Task<AsyncSnapshotView> WriteEntites(IAsyncEntityArchiveWriter writer)
+        public async Task<AsyncSnapshotView<TEntityKey>> WriteEntites(IAsyncEntityArchiveWriter<TEntityKey> writer)
         {
             await writer.WriteStartEntityAsync(destroyedEntities.Count);
             foreach (var d in registry)
@@ -67,7 +67,7 @@ namespace EnTTSharp.Serialization
             return this;
         }
 
-        public async Task<AsyncSnapshotView> WriteComponent<TComponent>(IAsyncEntityArchiveWriter writer)
+        public async Task<AsyncSnapshotView<TEntityKey>> WriteComponent<TComponent>(IAsyncEntityArchiveWriter<TEntityKey> writer)
         {
             var pool = registry.GetPool<TComponent>();
             await writer.WriteStartComponentAsync<TComponent>(pool.Count);
@@ -83,7 +83,7 @@ namespace EnTTSharp.Serialization
             return this;
         }
 
-        public async Task<AsyncSnapshotView> WriteTag<TComponent>(IAsyncEntityArchiveWriter writer)
+        public async Task<AsyncSnapshotView<TEntityKey>> WriteTag<TComponent>(IAsyncEntityArchiveWriter<TEntityKey> writer)
         {
             if (registry.TryGetTag(out var entity, out TComponent tag))
             {

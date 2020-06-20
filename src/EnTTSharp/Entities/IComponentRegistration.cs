@@ -5,10 +5,11 @@
         int Index { get; }
     }
 
-    public interface IComponentRegistration<T> : IComponentRegistration
+    public interface IComponentRegistration<in TEntityKey, T> : IComponentRegistration
+        where TEntityKey: IEntityKey
     {
         T Create();
-        void Destruct(EntityKey k, T o);
+        void Destruct(TEntityKey k, T o);
         bool HasDestructor();
     }
 }

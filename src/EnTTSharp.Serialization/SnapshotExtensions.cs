@@ -4,24 +4,22 @@ namespace EnTTSharp.Serialization
 {
     public static class SnapshotExtensions
     {
-        public static SnapshotView CreateSnapshot(this EntityRegistry r)
+        public static SnapshotView<TEntityKey> CreateSnapshot<TEntityKey>(this EntityRegistry<TEntityKey> r) 
+            where TEntityKey : IEntityKey
         {
-            return new SnapshotView(r);
+            return new SnapshotView<TEntityKey>(r);
         }
 
-        public static AsyncSnapshotView CreateAsyncSnapshot(this EntityRegistry r)
+        public static AsyncSnapshotView<TEntityKey> CreateAsyncSnapshot<TEntityKey>(this IEntityPoolAccess<TEntityKey> r)
+            where TEntityKey : IEntityKey
         {
-            return new AsyncSnapshotView(r);
+            return new AsyncSnapshotView<TEntityKey>(r);
         }
 
-        public static SnapshotLoader CreateLoader(this EntityRegistry reg)
+        public static SnapshotLoader<TEntityKey> CreateLoader<TEntityKey>(this EntityRegistry<TEntityKey> reg)
+            where TEntityKey : IEntityKey
         {
-            return new SnapshotLoader(reg);
-        }
-
-        public static SnapshotLoader CreateContinuousLoader(this EntityRegistry reg)
-        {
-            return new ContinuousSnapshotLoader(reg);
+            return new SnapshotLoader<TEntityKey>(reg);
         }
     }
 }

@@ -3,13 +3,13 @@ using EnttSharp.Entities;
 
 namespace EnTTSharp.Annotations.Impl
 {
-    class DestructorRegistration<TComponent>
+    class DestructorRegistration<TEntityKey, TComponent> where TEntityKey : IEntityKey
     {
-        public readonly Action<EntityKey, EntityRegistry, TComponent> DestructorFn;
+        public readonly Action<TEntityKey, IEntityViewControl<TEntityKey>, TComponent> DestructorFn;
 
-        public DestructorRegistration(Action<EntityKey, EntityRegistry, TComponent> constructorFn)
+        public DestructorRegistration(Action<TEntityKey, IEntityViewControl<TEntityKey>, TComponent> destructorFn)
         {
-            this.DestructorFn = constructorFn;
+            this.DestructorFn = destructorFn;
         }
     }
 }

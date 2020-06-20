@@ -15,7 +15,7 @@ using System;
  
 namespace EnttSharp.Entities.Systems
 {
-    public readonly partial struct EntitySystemBuilder<TContext>
+    public readonly partial struct EntitySystemBuilder<TEntityKey, TContext>
     {
 <#
     for (var p = 1; p <= MaxParameterCount; p += 1)
@@ -24,7 +24,7 @@ namespace EnttSharp.Entities.Systems
         var templateParams = BuildTemplate(p);
 #>
 
-        public Action<TContext> CreateSystem<<#= templateParamsLight #>>(ViewDelegates.ApplyWithContext<TContext, <#= templateParamsLight #>> action)
+        public Action<TContext> CreateSystem<<#= templateParamsLight #>>(ViewDelegates.ApplyWithContext<TEntityKey, TContext, <#= templateParamsLight #>> action)
         {
             var view = reg.PersistentView<<#= templateParamsLight #>>();
             view.AllowParallelExecution = allowParallel;

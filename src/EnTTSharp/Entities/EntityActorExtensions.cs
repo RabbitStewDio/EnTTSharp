@@ -2,14 +2,16 @@
 {
     public static class EntityActorExtensions
     {
-        public static EntityActor CreateAsActor(this EntityRegistry reg)
+        public static EntityActor<TEntityKey> CreateAsActor<TEntityKey>(this EntityRegistry<TEntityKey> reg) 
+            where TEntityKey : IEntityKey
         {
-            return new EntityActor(reg);
+            return EntityActor.Create(reg);
         }
 
-        public static EntityActor AsActor(this EntityRegistry reg, EntityKey k)
+        public static EntityActor<TEntityKey> AsActor<TEntityKey>(this EntityRegistry<TEntityKey> reg, TEntityKey k) 
+            where TEntityKey : IEntityKey
         {
-            return new EntityActor(reg, k);
+            return new EntityActor<TEntityKey>(reg, k);
         }
     }
 }

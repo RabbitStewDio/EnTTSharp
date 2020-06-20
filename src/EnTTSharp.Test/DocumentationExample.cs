@@ -29,7 +29,7 @@ namespace EnTTSharp.Test
             }
         }
 
-        public static void UpdatePosition(EntityRegistry registry, TimeSpan deltaTime)
+        public static void UpdatePosition(EntityRegistry<EntityKey> registry, TimeSpan deltaTime)
         {
             // view contains all the entities that have both a position and a velocty component ...
             var view = registry.View<Velocity, Position>();
@@ -45,7 +45,7 @@ namespace EnTTSharp.Test
             }
         }
 
-        public static void ClearVelocity(EntityRegistry registry)
+        public static void ClearVelocity(EntityRegistry<EntityKey> registry)
         {
             var view = registry.View<Velocity>();
             foreach (var entity in view)
@@ -57,7 +57,7 @@ namespace EnTTSharp.Test
         public static void DummyMain(string [] args)
         {
             var random = new Random();
-            var registry = new EntityRegistry();
+            var registry = new EntityRegistry<EntityKey>((age, id) => new EntityKey(age, id));
             registry.Register<Velocity>();
             registry.Register<Position>();
 

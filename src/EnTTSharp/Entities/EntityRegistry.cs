@@ -6,27 +6,35 @@ using EnttSharp.Entities.Helpers;
 
 namespace EnttSharp.Entities
 {
-    public partial class EntityRegistry : IEnumerable<EntityKey>, IEntityViewFactory
+    public partial class EntityRegistry<TEntityKey> : IEntityViewFactory<TEntityKey>,
+                                                      IEntityPoolAccess<TEntityKey>,
+                                                      IEntityComponentRegistry<TEntityKey>
+        where TEntityKey : IEntityKey
     {
-        readonly List<EntityKey> entities;
-        readonly List<SparseSet> pools;
+        readonly EqualityComparer<TEntityKey> equalityComparer;
+        readonly List<TEntityKey> entities;
+        readonly List<SparseSet<TEntityKey>> pools;
         readonly Dictionary<Type, IComponentRegistration> componentIndex;
         readonly Dictionary<Type, int> tagIndex;
         readonly List<Attachment> tags;
-        readonly Dictionary<Type, IEntityView> views;
-
+        readonly Dictionary<Type, IEntityView<TEntityKey>> views;
+        readonly Func<byte, int, TEntityKey> entityKeyFactory;
         int next;
         int available;
 
-        public EntityRegistry()
+        public EntityRegistry(Func<byte, int, TEntityKey> entityKeyFactory)
         {
+            this.entityKeyFactory = entityKeyFactory ?? throw new ArgumentNullException(nameof(entityKeyFactory));
+            equalityComparer = EqualityComparer<TEntityKey>.Default;
             componentIndex = new Dictionary<Type, IComponentRegistration>();
-            entities = new List<EntityKey>();
-            pools = new List<SparseSet>();
+            entities = new List<TEntityKey>();
+            pools = new List<SparseSet<TEntityKey>>();
             tagIndex = new Dictionary<Type, int>();
             tags = new List<Attachment>();
-            views = new Dictionary<Type, IEntityView>();
+            views = new Dictionary<Type, IEntityView<TEntityKey>>();
         }
+
+        public event EventHandler<TEntityKey> BeforeEntityDestroyed;
 
         public int Count
         {
@@ -43,7 +51,7 @@ namespace EnttSharp.Entities
             return GetEnumerator();
         }
 
-        IEnumerator<EntityKey> IEnumerable<EntityKey>.GetEnumerator()
+        IEnumerator<TEntityKey> IEnumerable<TEntityKey>.GetEnumerator()
         {
             return GetEnumerator();
         }
@@ -63,11 +71,11 @@ namespace EnttSharp.Entities
             throw new ArgumentException($"Unknown registration for type {typeof(TComponent)}");
         }
 
-        IComponentRegistration<TComponent> GetRegistration<TComponent>()
+        IComponentRegistration<TEntityKey, TComponent> GetRegistration<TComponent>()
         {
             if (componentIndex.TryGetValue(typeof(TComponent), out var reg))
             {
-                return (IComponentRegistration<TComponent>)reg;
+                return (IComponentRegistration<TEntityKey, TComponent>)reg;
             }
 
             throw new ArgumentException($"Unknown registration for type {typeof(TComponent)}");
@@ -79,13 +87,13 @@ namespace EnttSharp.Entities
             return pools[idx].Count;
         }
 
-        public Pools.Pool<TComponent> GetPool<TComponent>()
+        public Pools.Pool<TEntityKey, TComponent> GetPool<TComponent>()
         {
             var idx = ManagedIndex<TComponent>();
-            return (Pools.Pool<TComponent>)pools[idx];
+            return (Pools.Pool<TEntityKey, TComponent>)pools[idx];
         }
 
-        public Pools.Pool<TComponent> Register<TComponent>() where TComponent : new()
+        public Pools.Pool<TEntityKey, TComponent> Register<TComponent>() where TComponent : new()
         {
             if (IsManaged<TComponent>())
             {
@@ -99,8 +107,15 @@ namespace EnttSharp.Entities
             return pool;
         }
 
-        public Pools.Pool<TComponent> Register<TComponent>(Func<TComponent> con,
-                                                           Action<EntityKey, EntityRegistry, TComponent> destructor = null)
+        void IEntityComponentRegistry<TEntityKey>.Register<TComponent>(Func<TComponent> constructorFn,
+                                                                       Action<TEntityKey, IEntityViewControl<TEntityKey>, TComponent> destructorFn)
+        {
+            Register(constructorFn, destructorFn);
+        }
+
+        public Pools.Pool<TEntityKey, TComponent>
+            Register<TComponent>(Func<TComponent> con,
+                                 Action<TEntityKey, EntityRegistry<TEntityKey>, TComponent> destructor = null)
         {
             if (IsManaged<TComponent>())
             {
@@ -114,8 +129,14 @@ namespace EnttSharp.Entities
             return pool;
         }
 
-        public Pools.Pool<TComponent> RegisterNonConstructable<TComponent>(
-            Action<EntityKey, EntityRegistry, TComponent> destructor = null)
+        void IEntityComponentRegistry<TEntityKey>.RegisterNonConstructable<TComponent>
+            (Action<TEntityKey, IEntityViewControl<TEntityKey>, TComponent> destructorFn)
+        {
+            RegisterNonConstructable(destructorFn);
+        }
+
+        public Pools.Pool<TEntityKey, TComponent> RegisterNonConstructable<TComponent>(
+            Action<TEntityKey, EntityRegistry<TEntityKey>, TComponent> destructor = null)
         {
             if (IsManaged<TComponent>())
             {
@@ -139,9 +160,9 @@ namespace EnttSharp.Entities
             return GetPool<TComponent>().Count == 0;
         }
 
-        public bool IsValid(EntityKey key)
+        public bool IsValid(TEntityKey key)
         {
-            return entities[key.Key] == key;
+            return equalityComparer.Equals(entities[key.Key], key);
         }
 
         public int StoredVersion(EntityKey key)
@@ -149,7 +170,7 @@ namespace EnttSharp.Entities
             return entities[key.Key].Age;
         }
 
-        public EntityKey Create(uint data = 0)
+        public TEntityKey Create()
         {
             if (available > 0)
             {
@@ -157,7 +178,7 @@ namespace EnttSharp.Entities
                 // this is filled in during destroy ...
                 var entityKey = next;
                 var nextEmpty = entities[next];
-                var entity = new EntityKey(nextEmpty.Age, entityKey, data);
+                var entity = entityKeyFactory(nextEmpty.Age, entityKey);
                 entities[next] = entity;
                 next = nextEmpty.Key;
                 available -= 1;
@@ -165,20 +186,20 @@ namespace EnttSharp.Entities
             }
             else
             {
-                var entity = new EntityKey(1, entities.Count, data);
+                var entity = entityKeyFactory(1, entities.Count);
                 entities.Add(entity);
                 return entity;
             }
         }
 
-        public void Destroy(EntityKey entity)
+        public void Destroy(TEntityKey entity)
         {
             AssertValid(entity);
 
             BeforeEntityDestroyed?.Invoke(this, entity);
 
             var entt = entity.Key;
-            var node = new EntityKey(RollingAgeIncrement(entity.Age), available > 0 ? next : entt + 1);
+            var node = entityKeyFactory(RollingAgeIncrement(entity.Age), available > 0 ? next : entt + 1);
 
             entities[entt] = node;
             next = entt;
@@ -190,8 +211,6 @@ namespace EnttSharp.Entities
             }
         }
 
-        public event EventHandler<EntityKey> BeforeEntityDestroyed;
-
         public bool HasTag<TTag>()
         {
             if (!tagIndex.TryGetValue(typeof(TTag), out var idx))
@@ -202,13 +221,13 @@ namespace EnttSharp.Entities
             return tags[idx].Tag != null;
         }
 
-        public void AttachTag<TTag>(EntityKey entity)
+        public void AttachTag<TTag>(TEntityKey entity)
         {
             var tag = GetRegistration<TTag>().Create();
             AttachTag(entity, tag);
         }
 
-        public void AttachTag<TTag>(EntityKey entity, in TTag tag)
+        public void AttachTag<TTag>(TEntityKey entity, in TTag tag)
         {
             AssertValid(entity);
 
@@ -229,7 +248,7 @@ namespace EnttSharp.Entities
             }
         }
 
-        void AssertValid(EntityKey entity)
+        void AssertValid(TEntityKey entity)
         {
             if (!IsValid(entity))
             {
@@ -244,19 +263,19 @@ namespace EnttSharp.Entities
         /// </summary>
         /// <param name="entity"></param>
         /// <param name="destroyed"></param>
-        public void AssureEntityState(EntityKey entity, bool destroyed)
+        public void AssureEntityState(TEntityKey entity, bool destroyed)
         {
             var entt = entity.Key;
             while (entities.Count <= entt)
             {
-                entities.Add(new EntityKey(0, entities.Count));
+                entities.Add(entityKeyFactory(0, entities.Count));
             }
 
             entities[entt] = entity;
             if (destroyed)
             {
                 Destroy(entity);
-                entities[entt] = new EntityKey(entity.Age, entities[entt].Key);
+                entities[entt] = entityKeyFactory(entity.Age, entities[entt].Key);
             }
         }
 
@@ -291,7 +310,7 @@ namespace EnttSharp.Entities
             throw new ArgumentException();
         }
 
-        public bool TryGetTag<TTag>(out EntityKey entity, out TTag tag)
+        public bool TryGetTag<TTag>(out TEntityKey entity, out TTag tag)
         {
             if (tagIndex.TryGetValue(typeof(TTag), out var idx))
             {
@@ -301,12 +320,12 @@ namespace EnttSharp.Entities
                 return true;
             }
 
-            entity = default(EntityKey);
-            tag = default(TTag);
+            entity = default;
+            tag = default;
             return false;
         }
 
-        public EntityKey GetTaggedEntity<TTag>()
+        public TEntityKey GetTaggedEntity<TTag>()
         {
             if (tagIndex.TryGetValue(typeof(TTag), out var idx))
             {
@@ -331,7 +350,7 @@ namespace EnttSharp.Entities
             }
         }
 
-        public TComponent AssignComponent<TComponent>(EntityKey entity)
+        public TComponent AssignComponent<TComponent>(TEntityKey entity)
         {
             AssertManaged<TComponent>();
 
@@ -340,42 +359,42 @@ namespace EnttSharp.Entities
             return component;
         }
 
-        public void AssignComponent<TComponent>(EntityKey entity, in TComponent c)
+        public void AssignComponent<TComponent>(TEntityKey entity, in TComponent c)
         {
             AssertManaged<TComponent>();
             AssertValid(entity);
             GetPool<TComponent>().Add(entity, in c);
         }
 
-        public void RemoveComponent<TComponent>(EntityKey entity)
+        public void RemoveComponent<TComponent>(TEntityKey entity)
         {
             AssertManaged<TComponent>();
             AssertValid(entity);
             GetPool<TComponent>().Remove(entity);
         }
 
-        public bool HasComponent<TComponent>(EntityKey entity)
+        public bool HasComponent<TComponent>(TEntityKey entity)
         {
             AssertManaged<TComponent>();
             AssertValid(entity);
             return GetPool<TComponent>().Contains(entity);
         }
 
-        public bool GetComponent<TComponent>(EntityKey entity, out TComponent c)
+        public bool GetComponent<TComponent>(TEntityKey entity, out TComponent c)
         {
             AssertManaged<TComponent>();
             AssertValid(entity);
             return GetPool<TComponent>().TryGet(entity, out c);
         }
 
-        public TComponent AssignOrReplace<TComponent>(EntityKey entity)
+        public TComponent AssignOrReplace<TComponent>(TEntityKey entity)
         {
             var component = GetRegistration<TComponent>().Create();
             AssignOrReplace(entity, in component);
             return component;
         }
 
-        public void AssignOrReplace<TComponent>(EntityKey entity, in TComponent c)
+        public void AssignOrReplace<TComponent>(TEntityKey entity, in TComponent c)
         {
             AssertValid(entity);
 
@@ -390,24 +409,24 @@ namespace EnttSharp.Entities
             }
         }
 
-        public bool Contains(EntityKey e)
+        public bool Contains(TEntityKey e)
         {
             return IsValid(e);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void WriteBack<TComponent>(EntityKey entity, in TComponent data)
+        public void WriteBack<TComponent>(TEntityKey entity, in TComponent data)
         {
             AssertValid(entity);
             GetPool<TComponent>().WriteBack(entity, in data);
         }
 
-        public bool ReplaceComponent<TComponent>(EntityKey entity)
+        public bool ReplaceComponent<TComponent>(TEntityKey entity)
         {
             return ReplaceComponent(entity, GetRegistration<TComponent>().Create());
         }
 
-        public bool ReplaceComponent<TComponent>(EntityKey entity, in TComponent c)
+        public bool ReplaceComponent<TComponent>(TEntityKey entity, in TComponent c)
         {
             AssertValid(entity);
             return GetPool<TComponent>().Replace(entity, in c);
@@ -431,7 +450,7 @@ namespace EnttSharp.Entities
 
         public void Reset()
         {
-            var l = EntityKeyListPool.Reserve(GetEnumerator(), Count);
+            var l = EntityKeyListPool<TEntityKey>.Reserve(GetEnumerator(), Count);
             foreach (var last in l)
             {
                 if (IsValid(last))
@@ -440,7 +459,7 @@ namespace EnttSharp.Entities
                 }
             }
 
-            EntityKeyListPool.Release(l);
+            EntityKeyListPool<TEntityKey>.Release(l);
 
             if (!IsEmpty)
             {
@@ -458,7 +477,7 @@ namespace EnttSharp.Entities
             }
         }
 
-        public void Reset(EntityKey entity)
+        public void Reset(TEntityKey entity)
         {
             foreach (var pool in pools)
             {
@@ -469,7 +488,7 @@ namespace EnttSharp.Entities
             }
         }
 
-        public bool IsOrphan(EntityKey e)
+        public bool IsOrphan(TEntityKey e)
         {
             AssertValid(e);
             var orphan = true;
@@ -480,7 +499,7 @@ namespace EnttSharp.Entities
 
             foreach (var tag in tags)
             {
-                orphan &= tag.Entity != e;
+                orphan &= !equalityComparer.Equals(tag.Entity, e);
             }
 
             return orphan;
@@ -504,28 +523,28 @@ namespace EnttSharp.Entities
 
         struct Attachment
         {
-            public readonly EntityKey Entity;
+            public readonly TEntityKey Entity;
             public readonly object Tag;
 
-            public Attachment(EntityKey entity, object tag)
+            public Attachment(TEntityKey entity, object tag)
             {
                 Entity = entity;
                 Tag = tag ?? throw new ArgumentNullException(nameof(tag));
             }
         }
 
-        public struct EntityKeyEnumerator : IEnumerator<EntityKey>
+        public struct EntityKeyEnumerator : IEnumerator<TEntityKey>
         {
-            readonly List<EntityKey> contents;
+            readonly List<TEntityKey> contents;
 
             int index;
-            EntityKey current;
+            TEntityKey current;
 
-            internal EntityKeyEnumerator(List<EntityKey> widget) : this()
+            internal EntityKeyEnumerator(List<TEntityKey> widget) : this()
             {
                 contents = widget;
                 index = -1;
-                current = default(EntityKey);
+                current = default;
             }
 
             public void Dispose()
@@ -545,14 +564,14 @@ namespace EnttSharp.Entities
                     }
                 }
 
-                current = default(EntityKey);
+                current = default;
                 return false;
             }
 
             public void Reset()
             {
                 index = -1;
-                current = default(EntityKey);
+                current = default;
             }
 
             object IEnumerator.Current
@@ -560,7 +579,7 @@ namespace EnttSharp.Entities
                 get { return Current; }
             }
 
-            public EntityKey Current
+            public TEntityKey Current
             {
                 get
                 {

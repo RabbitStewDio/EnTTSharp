@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Runtime.Serialization;
 using System.Xml;
-using EnttSharp.Entities;
 
 namespace EnTTSharp.Serialization.Xml
 {
@@ -18,7 +17,7 @@ namespace EnTTSharp.Serialization.Xml
             this.serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
         }
 
-        public void Write(XmlWriter writer, EntityKey entity, T component)
+        public void Write(XmlWriter writer, T component)
         {
             serializer.WriteObject(writer, component);
         }

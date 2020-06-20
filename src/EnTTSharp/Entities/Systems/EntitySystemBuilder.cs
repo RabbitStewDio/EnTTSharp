@@ -2,12 +2,12 @@
 
 namespace EnttSharp.Entities.Systems
 {
-    public readonly partial struct EntitySystemBuilder<TContext>
+    public readonly partial struct EntitySystemBuilder<TEntityKey, TContext> where TEntityKey : IEntityKey
     {
-        readonly EntityRegistry reg;
+        readonly IEntityViewFactory<TEntityKey> reg;
         readonly bool allowParallel;
 
-        public EntitySystemBuilder(EntityRegistry registry, bool allowParallelExecution)
+        public EntitySystemBuilder(IEntityViewFactory<TEntityKey> registry, bool allowParallelExecution)
         {
             this.allowParallel = allowParallelExecution;
             this.reg = registry;

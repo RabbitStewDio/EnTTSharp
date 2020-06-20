@@ -5,18 +5,18 @@ using MessagePack;
 
 namespace EnTTSharp.Serialization.BinaryPack
 {
-    public class BinaryBulkArchiveReader
+    public class BinaryBulkArchiveReader<TEntityKey> where TEntityKey : IEntityKey
     {
         readonly MessagePackSerializerOptions options;
-        readonly BinaryReaderBackend registry;
+        readonly BinaryReaderBackend<TEntityKey> registry;
 
-        public BinaryBulkArchiveReader(BinaryReaderBackend registry, MessagePackSerializerOptions optionsRaw = null)
+        public BinaryBulkArchiveReader(BinaryReaderBackend<TEntityKey> registry, MessagePackSerializerOptions optionsRaw = null)
         {
             this.registry = registry;
             this.options = BinaryControlObjects.CreateOptions(optionsRaw);
         }
 
-        public void ReadAll(Stream reader, ISnapshotLoader loader)
+        public void ReadAll(Stream reader, ISnapshotLoader<TEntityKey> loader)
         {
             for (;;)
             {
@@ -43,12 +43,12 @@ namespace EnTTSharp.Serialization.BinaryPack
             }
         }
 
-        void ReadTag(Stream reader, ISnapshotLoader loader)
+        void ReadTag(Stream reader, ISnapshotLoader<TEntityKey> loader)
         {
             registry.ReadTag(reader, loader, options);
         }
 
-        void ReadComponents(Stream reader, ISnapshotLoader loader)
+        void ReadComponents(Stream reader, ISnapshotLoader<TEntityKey> loader)
         {
             var startRecord = MessagePackSerializer.Deserialize<BinaryControlObjects.StartComponentRecord>(reader, options);
             if (!registry.Registry.TryGetValue(startRecord.ComponentId, out var handler))
@@ -62,22 +62,22 @@ namespace EnTTSharp.Serialization.BinaryPack
             }
         }
 
-        void ReadDestroyedEntities(Stream reader, ISnapshotLoader loader)
+        void ReadDestroyedEntities(Stream reader, ISnapshotLoader<TEntityKey> loader)
         {
             var entityCount = MessagePackSerializer.Deserialize<int>(reader, options);
             for (int e = 0; e < entityCount; e += 1)
             {
-                var key = MessagePackSerializer.Deserialize<EntityKey>(reader, options);
+                var key = MessagePackSerializer.Deserialize<EntityKeyData>(reader, options);
                 loader.OnDestroyedEntity(loader.Map(key));
             }
         }
 
-        void ReadEntities(Stream reader, ISnapshotLoader loader)
+        void ReadEntities(Stream reader, ISnapshotLoader<TEntityKey> loader)
         {
             var entityCount = MessagePackSerializer.Deserialize<int>(reader, options);
             for (int e = 0; e < entityCount; e += 1)
             {
-                var key = MessagePackSerializer.Deserialize<EntityKey>(reader, options);
+                var key = MessagePackSerializer.Deserialize<EntityKeyData>(reader, options);
                 loader.OnEntity(loader.Map(key));
             }
         }

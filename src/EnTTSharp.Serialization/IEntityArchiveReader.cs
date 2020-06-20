@@ -3,19 +3,20 @@ using EnttSharp.Entities;
 
 namespace EnTTSharp.Serialization
 {
-    public interface IEntityArchiveReader
+    public interface IEntityArchiveReader<TEntityKey> 
+        where TEntityKey: IEntityKey
     {
         int ReadEntityCount();
-        EntityKey ReadEntity(Func<EntityKey, EntityKey> entityMapper);
+        TEntityKey ReadEntity(Func<EntityKeyData, TEntityKey> entityMapper);
 
         int ReadComponentCount<TComponent>();
-        bool TryReadComponent<TComponent>(Func<EntityKey, EntityKey> entityMapper, out EntityKey key, out TComponent component);
+        bool TryReadComponent<TComponent>(Func<EntityKeyData, TEntityKey> entityMapper, out TEntityKey key, out TComponent component);
 
         bool ReadTagFlag<TComponent>();
-        bool TryReadTag<TComponent>(Func<EntityKey, EntityKey> entityMapper, out EntityKey entityKey, out TComponent component);
+        bool TryReadTag<TComponent>(Func<EntityKeyData, TEntityKey> entityMapper, out TEntityKey entityKey, out TComponent component);
 
         int ReadDestroyedCount();
-        EntityKey ReadDestroyed(Func<EntityKey, EntityKey> entityMapper);
+        TEntityKey ReadDestroyed(Func<EntityKeyData, TEntityKey> entityMapper);
 
     }
 }

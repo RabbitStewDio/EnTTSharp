@@ -1,48 +1,49 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using EnttSharp.Entities;
 
 namespace EnTTSharp.Serialization.Xml
 {
     public static class XmlArchiveWriterExtensions
     {
-        static readonly MethodInfo WriteComponentMethod;
-        static readonly MethodInfo WriteTagMethod;
-
-        static XmlArchiveWriterExtensions()
+        static (MethodInfo, MethodInfo) ReflectXmlArchiveWriterExtensions<TEntityKey>() where TEntityKey : IEntityKey
         {
-            WriteComponentMethod = typeof(SnapshotView).GetMethod(nameof(SnapshotView.WriteComponent),
-                                                                  BindingFlags.Instance | BindingFlags.Public,
-                                                                  null,
-                                                                  new[] {typeof(IEntityArchiveWriter)},
-                                                                  null) ??
-                throw new InvalidOperationException($"Unable to find required public method {nameof(SnapshotView.WriteComponent)}");
+            var writeComponentMethod = typeof(SnapshotView<TEntityKey>).GetMethod(nameof(SnapshotView<TEntityKey>.WriteComponent),
+                                                                              BindingFlags.Instance | BindingFlags.Public,
+                                                                              null,
+                                                                              new[] {typeof(IEntityArchiveWriter<TEntityKey>)},
+                                                                              null) ??
+                throw new InvalidOperationException($"Unable to find required public method {nameof(SnapshotView<TEntityKey>.WriteComponent)}");
 
-            WriteTagMethod = typeof(SnapshotView).GetMethod(nameof(SnapshotView.WriteTag),
-                                                                  BindingFlags.Instance | BindingFlags.Public,
-                                                                  null,
-                                                                  new[] {typeof(IEntityArchiveWriter)},
-                                                                  null) ??
-                throw new InvalidOperationException($"Unable to find required public method {nameof(SnapshotView.WriteTag)}");
+            var writeTagMethod = typeof(SnapshotView<TEntityKey>).GetMethod(nameof(SnapshotView<TEntityKey>.WriteTag),
+                                                                        BindingFlags.Instance | BindingFlags.Public,
+                                                                        null,
+                                                                        new[] {typeof(IEntityArchiveWriter<TEntityKey>)},
+                                                                        null) ??
+                throw new InvalidOperationException($"Unable to find required public method {nameof(SnapshotView<TEntityKey>.WriteTag)}");
 
+            return (writeComponentMethod, writeTagMethod);
         }
 
-        public static SnapshotView WriteAll(this SnapshotView v, XmlArchiveWriter output)
+        public static SnapshotView<TEntityKey> WriteAll<TEntityKey>(this SnapshotView<TEntityKey> v, XmlArchiveWriter<TEntityKey> output) 
+            where TEntityKey : IEntityKey
         {
             v.WriteDestroyed(output);
             v.WriteEntites(output);
 
+            var (writeComponent, writeTag) = ReflectXmlArchiveWriterExtensions<TEntityKey>();
             var parameters = new object[] { output };
             var handlerRegistrations = output.Registry.Handlers.Where(e => !e.Tag).OrderBy(e => e.TypeId);
             foreach (var r in handlerRegistrations)
             {
-                WriteComponentMethod.MakeGenericMethod(r.TargetType).Invoke(v, parameters);
+                writeComponent.MakeGenericMethod(r.TargetType).Invoke(v, parameters);
             }
 
             var tagRegistrations = output.Registry.Handlers.Where(e => e.Tag).OrderBy(e => e.TypeId);
             foreach (var r in tagRegistrations)
             {
-                WriteTagMethod.MakeGenericMethod(r.TargetType).Invoke(v, parameters);
+                writeTag.MakeGenericMethod(r.TargetType).Invoke(v, parameters);
             }
             return v;
         }

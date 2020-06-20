@@ -1,19 +1,25 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace EnttSharp.Entities
 {
-    public readonly struct EntityActor
+    public static class EntityActor
     {
-        readonly EntityKey entity;
-        readonly IEntityViewControl registry;
-
-        public EntityActor(EntityRegistry registry)
+        public static EntityActor<TEntityKey> Create<TEntityKey>
+            (EntityRegistry<TEntityKey> registry) where TEntityKey : IEntityKey
         {
-            this.registry = registry ?? throw new ArgumentNullException(nameof(registry));
-            this.entity = registry.Create();
+            var entity = registry.Create();
+            return new EntityActor<TEntityKey>(registry, entity);
         }
+    }
 
-        public EntityActor(IEntityViewControl registry, EntityKey entity)
+    public readonly struct EntityActor<TEntityKey> where TEntityKey : IEntityKey
+    {
+        static readonly EqualityComparer<TEntityKey> EqualityHandler = EqualityComparer<TEntityKey>.Default;
+        readonly TEntityKey entity;
+        readonly IEntityViewControl<TEntityKey> registry;
+
+        internal EntityActor(IEntityViewControl<TEntityKey> registry, TEntityKey entity)
         {
             this.entity = entity;
             this.registry = registry ?? throw new ArgumentNullException(nameof(registry));
@@ -26,27 +32,27 @@ namespace EnttSharp.Entities
 
         public bool HasTag<TTag>()
         {
-            if (registry.TryGetTag(out EntityKey k, out TTag _))
+            if (registry.TryGetTag(out TEntityKey k, out TTag _))
             {
-                return k == entity;
+                return EqualityHandler.Equals(k, entity);
             }
 
             return false;
         }
 
-        public EntityActor AttachTag<TTag>()
+        public EntityActor<TEntityKey> AttachTag<TTag>()
         {
             registry.AttachTag<TTag>(entity);
             return this;
         }
 
-        public EntityActor AttachTag<TTag>(TTag tag)
+        public EntityActor<TEntityKey> AttachTag<TTag>(TTag tag)
         {
             registry.AttachTag(entity, tag);
             return this;
         }
 
-        public EntityActor RemoveTag<TTag>()
+        public EntityActor<TEntityKey> RemoveTag<TTag>()
         {
             registry.RemoveTag<TTag>();
             return this;
@@ -54,42 +60,42 @@ namespace EnttSharp.Entities
 
         public bool TryGetTag<TTag>(out TTag tag)
         {
-            if (registry.TryGetTag(out EntityKey other, out tag))
+            if (registry.TryGetTag(out TEntityKey other, out tag))
             {
-                if (other == entity)
+                if (EqualityHandler.Equals(other, entity))
                 {
                     return true;
                 }
             }
 
-            tag = default(TTag);
+            tag = default;
             return false;
         }
 
-        public EntityKey Entity
+        public TEntityKey Entity
         {
             get { return entity; }
         }
 
-        public EntityActor AssignComponent<TComponent>()
+        public EntityActor<TEntityKey> AssignComponent<TComponent>()
         {
             registry.AssignComponent<TComponent>(entity);
             return this;
         }
 
-        public EntityActor AssignComponent<TComponent>(TComponent c)
+        public EntityActor<TEntityKey> AssignComponent<TComponent>(TComponent c)
         {
             registry.AssignComponent(entity, c);
             return this;
         }
 
-        public EntityActor AssignComponent<TComponent>(in TComponent c)
+        public EntityActor<TEntityKey> AssignComponent<TComponent>(in TComponent c)
         {
             registry.AssignComponent(entity, in c);
             return this;
         }
 
-        public EntityActor RemoveComponent<TComponent>()
+        public EntityActor<TEntityKey> RemoveComponent<TComponent>()
         {
             registry.RemoveComponent<TComponent>(entity);
             return this;
@@ -105,7 +111,7 @@ namespace EnttSharp.Entities
             return registry.GetComponent(entity, out c);
         }
 
-        public EntityActor AssignOrReplace<TComponent>(in TComponent c)
+        public EntityActor<TEntityKey> AssignOrReplace<TComponent>(in TComponent c)
         {
             registry.AssignOrReplace(entity, in c);
             return this;

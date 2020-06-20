@@ -1,33 +1,41 @@
 ﻿using System;
+using System.Collections.Generic;
 using EnttSharp.Entities;
 
 namespace EnTTSharp.Serialization
 {
-    public class SnapshotLoader : ISnapshotLoader
+    public class SnapshotLoader<TEntityKey> : ISnapshotLoader<TEntityKey> 
+        where TEntityKey : IEntityKey
     {
-        public SnapshotLoader(EntityRegistry registry)
+        readonly Dictionary<EntityKeyData, TEntityKey> remoteMapping;
+        readonly Dictionary<TEntityKey, EntityKeyData> localMapping;
+
+        public SnapshotLoader(IEntityPoolAccess<TEntityKey> registry)
         {
             this.Registry = registry ?? throw new ArgumentNullException(nameof(registry));
+            registry.BeforeEntityDestroyed += OnLocalEntityDestroyed;
+            remoteMapping = new Dictionary<EntityKeyData, TEntityKey>();
+            localMapping = new Dictionary<TEntityKey, EntityKeyData>();
         }
 
-        protected EntityRegistry Registry { get; }
+        protected IEntityPoolAccess<TEntityKey> Registry { get; }
 
-        public void OnEntity(EntityKey entity)
+        public void OnEntity(TEntityKey entity)
         {
             this.Registry.AssureEntityState(entity, false);
         }
 
-        public void OnDestroyedEntity(EntityKey entity)
+        public void OnDestroyedEntity(TEntityKey entity)
         {
             this.Registry.AssureEntityState(entity, true);
         }
 
-        public void OnComponent<TComponent>(EntityKey entity, in TComponent c)
+        public void OnComponent<TComponent>(TEntityKey entity, in TComponent c)
         {
             this.Registry.AssignComponent(entity, c);
         }
 
-        public void OnTag<TComponent>(EntityKey entity, in TComponent c)
+        public void OnTag<TComponent>(TEntityKey entity, in TComponent c)
         {
             this.Registry.AttachTag(entity, c);
         }
@@ -37,14 +45,14 @@ namespace EnTTSharp.Serialization
             this.Registry.RemoveTag<TComponent>();
         }
 
-        public virtual EntityKey Map(EntityKey input)
+        public virtual TEntityKey Map(EntityKey input)
         {
-            return input;
+            return Registry.Create();
         }
 
         public void CleanOrphans()
         {
-            var p = EntityKeyListPool.Reserve(Registry.GetEnumerator(), Registry.Count);
+            var p = EntityKeyListPool<TEntityKey>.Reserve(Registry.GetEnumerator(), Registry.Count);
             try
             {
                 foreach (var ek in p)
@@ -57,8 +65,41 @@ namespace EnTTSharp.Serialization
             }
             finally
             {
-                EntityKeyListPool.Release(p);
+                EntityKeyListPool<TEntityKey>.Release(p);
             }
+        }
+
+        ~SnapshotLoader()
+        {
+            Registry.BeforeEntityDestroyed -= OnLocalEntityDestroyed;
+        }
+
+        void OnLocalEntityDestroyed(object sender, TEntityKey e)
+        {
+            if (localMapping.TryGetValue(e, out var remoteKey))
+            {
+                remoteMapping.Remove(remoteKey);
+                localMapping.Remove(e);
+            }
+        }
+
+        public virtual TEntityKey Map(EntityKeyData input)
+        {
+            if (remoteMapping.TryGetValue(input, out var mapped))
+            {
+                return mapped;
+            }
+
+            var local = Registry.Create();
+            remoteMapping[input] = local;
+            localMapping[local] = input;
+            return local;
+        }
+
+        public void Dispose()
+        {
+            Registry.BeforeEntityDestroyed -= OnLocalEntityDestroyed;
+            GC.SuppressFinalize(this);
         }
     }
 }

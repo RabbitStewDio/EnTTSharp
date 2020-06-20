@@ -4,31 +4,32 @@
     ///   A controller interface that allows actions to query and update
     ///   components.
     /// </summary>
-    public interface IEntityViewControl
+    public interface IEntityViewControl<TEntityKey>
+        where TEntityKey: IEntityKey
     {
         bool HasTag<TTag>();
-        bool TryGetTag<TTag>(out EntityKey k, out TTag tag);
+        bool TryGetTag<TTag>(out TEntityKey k, out TTag tag);
         void RemoveTag<TTag>();
-        void AttachTag<TTag>(EntityKey entity);
-        void AttachTag<TTag>(EntityKey entity, in TTag tag);
+        void AttachTag<TTag>(TEntityKey entity);
+        void AttachTag<TTag>(TEntityKey entity, in TTag tag);
 
-        bool Contains(EntityKey e);
-        bool GetComponent<TComponent>(EntityKey entity, out TComponent data);
-        bool HasComponent<TComponent>(EntityKey entity);
+        bool Contains(TEntityKey e);
+        bool GetComponent<TComponent>(TEntityKey entity, out TComponent data);
+        bool HasComponent<TComponent>(TEntityKey entity);
 
         // Writeback is only necessary for structs. Classes are by-ref and all references point to the
         // same instance anyway.
-        void WriteBack<TComponent>(EntityKey entity, in TComponent data);
-        void RemoveComponent<TComponent>(EntityKey entity);
+        void WriteBack<TComponent>(TEntityKey entity, in TComponent data);
+        void RemoveComponent<TComponent>(TEntityKey entity);
 
-        TComponent AssignComponent<TComponent>(EntityKey entity);
-        void AssignComponent<TComponent>(EntityKey entity, in TComponent c);
+        TComponent AssignComponent<TComponent>(TEntityKey entity);
+        void AssignComponent<TComponent>(TEntityKey entity, in TComponent c);
 
-        TComponent AssignOrReplace<TComponent>(EntityKey entity);
-        void AssignOrReplace<TComponent>(EntityKey entity, in TComponent c);
-        bool ReplaceComponent<TComponent>(EntityKey entity, in TComponent c);
+        TComponent AssignOrReplace<TComponent>(TEntityKey entity);
+        void AssignOrReplace<TComponent>(TEntityKey entity, in TComponent c);
+        bool ReplaceComponent<TComponent>(TEntityKey entity, in TComponent c);
 
-        void Reset(EntityKey entity);
-        bool IsOrphan(EntityKey entity);
+        void Reset(TEntityKey entity);
+        bool IsOrphan(TEntityKey entity);
     }
 }

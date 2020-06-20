@@ -3,27 +3,28 @@ using EnttSharp.Entities.Helpers;
 
 namespace EnttSharp.Entities
 {
-    public abstract class PersistentMultiViewBase : MultiViewBase<PredicateEnumerator<EntityKey>>
+    public abstract class PersistentMultiViewBase<TEntityKey> : MultiViewBase<TEntityKey, PredicateEnumerator<TEntityKey>> 
+        where TEntityKey : IEntityKey
     {
-        readonly SparseSet view;
-        protected readonly Func<EntityKey, bool> FastIsMemberPredicate;
+        readonly SparseSet<TEntityKey> view;
+        protected readonly Func<TEntityKey, bool> FastIsMemberPredicate;
 
-        protected PersistentMultiViewBase(EntityRegistry registry,
-                                          params ISparsePool[] entries) : base(registry, entries)
+        protected PersistentMultiViewBase(IEntityPoolAccess<TEntityKey> registry,
+                                          params ISparsePool<TEntityKey>[] entries) : base(registry, entries)
         {
-            view = SparseSet.CreateFrom(CreateInitialEnumerator(entries));
+            view = SparseSet<TEntityKey>.CreateFrom(CreateInitialEnumerator(entries));
             FastIsMemberPredicate = view.Contains;
         }
 
         protected override int EstimatedSize => view.Count;
 
-        protected override void OnDestroyed(object sender, EntityKey e)
+        protected override void OnDestroyed(object sender, TEntityKey e)
         {
             base.OnDestroyed(sender, e);
             view.Remove(e);
         }
 
-        protected override void OnCreated(object sender, EntityKey e)
+        protected override void OnCreated(object sender, TEntityKey e)
         {
             if (IsMember(e) && !view.Contains(e))
             {
@@ -35,14 +36,14 @@ namespace EnttSharp.Entities
 
         public int Count => EstimatedSize;
 
-        public override bool Contains(EntityKey e)
+        public override bool Contains(TEntityKey e)
         {
             return view.Contains(e);
         }
 
-        public override PredicateEnumerator<EntityKey> GetEnumerator()
+        public override PredicateEnumerator<TEntityKey> GetEnumerator()
         {
-            return new PredicateEnumerator<EntityKey>(view, FastIsMemberPredicate);
+            return new PredicateEnumerator<TEntityKey>(view, FastIsMemberPredicate);
         }
 
         public override void Respect<TComponent>()
@@ -50,9 +51,9 @@ namespace EnttSharp.Entities
             view.Respect(Registry.GetPool<TComponent>());
         }
 
-        PredicateEnumerator<EntityKey> CreateInitialEnumerator(ISparsePool[] sets)
+        PredicateEnumerator<TEntityKey> CreateInitialEnumerator(ISparsePool<TEntityKey>[] sets)
         {
-            ISparsePool s = null;
+            ISparsePool<TEntityKey> s = null;
             var count = int.MaxValue;
             foreach (var set in sets)
             {
@@ -68,7 +69,7 @@ namespace EnttSharp.Entities
                 throw new ArgumentException();
             }
 
-            return new PredicateEnumerator<EntityKey>(s, IsMemberPredicate);
+            return new PredicateEnumerator<TEntityKey>(s, IsMemberPredicate);
         }
     }
 }

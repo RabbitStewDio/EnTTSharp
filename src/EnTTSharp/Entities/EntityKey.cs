@@ -2,6 +2,10 @@
 
 namespace EnttSharp.Entities
 {
+    public readonly struct Unit
+    {
+    }
+
     public interface IEntityKey: IEquatable<IEntityKey>
     {
         byte Age { get; }
@@ -9,27 +13,29 @@ namespace EnttSharp.Entities
     }
     
     [Serializable]
-    public readonly struct EntityKey : IEquatable<EntityKey>
+    public readonly struct EntityKey : IEquatable<EntityKey>, IEntityKey
     {
         readonly uint keyData;
-        readonly uint extraData;
 
-        public int Key => (int)keyData;
-        public uint Extra => extraData & 0xFF_FFFF;
-        public byte Age => (byte)((extraData >> 24) & 0xFF);
+        public int Key => (int)keyData & 0xFF_FFFF;
+        public byte Age => (byte)((keyData >> 24) & 0xFF);
 
-        public EntityKey(byte age, int key, uint extra = 0)
+        public EntityKey(byte age, int key)
         {
             if (key < 0) throw new ArgumentException();
 
-            extraData = (uint)(age << 24);
-            extraData |= extra & 0xFF_FFFF;
-            keyData = (uint)key;
+            keyData = (uint)(age << 24);
+            keyData |= (uint)(key & 0xFF_FFFF);
         }
 
         public bool Equals(EntityKey other)
         {
-            return keyData == other.keyData && extraData == other.extraData;
+            return keyData == other.keyData;
+        }
+
+        public bool Equals(IEntityKey obj)
+        {
+            return obj is EntityKey other && Equals(other);
         }
 
         public override bool Equals(object obj)
@@ -41,7 +47,7 @@ namespace EnttSharp.Entities
         {
             unchecked
             {
-                return ((int)keyData * 397) ^ (int)extraData;
+                return (int)keyData;
             }
         }
 
@@ -51,6 +57,68 @@ namespace EnttSharp.Entities
         }
 
         public static bool operator !=(EntityKey left, EntityKey right)
+        {
+            return !left.Equals(right);
+        }
+
+        public override string ToString()
+        {
+            return $"{nameof(Key)}: {Key}, {nameof(Age)}: {Age}";
+        }
+
+        public static EntityKey Create(byte age, int id)
+        {
+            return new EntityKey(age, id);
+        }
+    }
+
+    [Serializable]
+    public readonly struct EntityKey<TPayLoad> : IEquatable<EntityKey<TPayLoad>>, IEntityKey
+    {
+        readonly uint keyData;
+        public readonly TPayLoad PayLoad;
+
+        public int Key => (int)keyData & 0xFF_FFFF;
+        public byte Age => (byte)((keyData >> 24) & 0xFF);
+
+        public EntityKey(byte age, int key, TPayLoad payLoad)
+        {
+            if (key < 0) throw new ArgumentException();
+
+            PayLoad = payLoad;
+            keyData = (uint)(age << 24);
+            keyData |= (uint)(key & 0xFF_FFFF);
+        }
+
+        public bool Equals(EntityKey<TPayLoad> other)
+        {
+            return keyData == other.keyData;
+        }
+
+        public bool Equals(IEntityKey obj)
+        {
+            return obj is EntityKey other && Equals(other);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is EntityKey other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (int)keyData;
+            }
+        }
+
+        public static bool operator ==(EntityKey<TPayLoad> left, EntityKey<TPayLoad> right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(EntityKey<TPayLoad> left, EntityKey<TPayLoad> right)
         {
             return !left.Equals(right);
         }

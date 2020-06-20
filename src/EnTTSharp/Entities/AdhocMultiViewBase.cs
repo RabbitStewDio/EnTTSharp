@@ -6,10 +6,11 @@ namespace EnttSharp.Entities
     /// <summary>
     ///  Specialisation to avoid boxing when requesting an enumerator.
     /// </summary>
-    public abstract class AdhocMultiViewBase : MultiViewBase<PredicateEnumerator<EntityKey>>
+    public abstract class AdhocMultiViewBase<TEntityKey> : MultiViewBase<TEntityKey, PredicateEnumerator<TEntityKey>> 
+        where TEntityKey : IEntityKey
     {
-        protected AdhocMultiViewBase(EntityRegistry registry,
-                                     params ISparsePool[] entries) : base(registry, entries)
+        protected AdhocMultiViewBase(IEntityPoolAccess<TEntityKey> registry,
+                                     params ISparsePool<TEntityKey>[] entries) : base(registry, entries)
         {
         }
 
@@ -35,9 +36,9 @@ namespace EnttSharp.Entities
             }
         }
 
-        public override PredicateEnumerator<EntityKey> GetEnumerator()
+        public override PredicateEnumerator<TEntityKey> GetEnumerator()
         {
-            ISparsePool s = null;
+            ISparsePool<TEntityKey> s = null;
             var count = int.MaxValue;
             foreach (var set in Sets)
             {
@@ -53,7 +54,7 @@ namespace EnttSharp.Entities
                 throw new ArgumentException();
             }
 
-            return new PredicateEnumerator<EntityKey>(s, IsMemberPredicate);
+            return new PredicateEnumerator<TEntityKey>(s, IsMemberPredicate);
         }
     }
 }

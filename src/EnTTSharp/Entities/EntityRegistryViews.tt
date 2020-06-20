@@ -14,27 +14,28 @@
 
 namespace EnttSharp.Entities
 {
-    public partial class EntityRegistry
+    public partial class EntityRegistry<TEntityKey>
     {
 <#
     for (var p = 1; p <= MaxParameterCount; p += 1)
     {
+        var templateParamsLight = BuildLightTemplate(p);
         var templateParams = BuildTemplate(p);
 #>
-        public IEntityView<#= templateParams #> View<#= templateParams #>()
+        public IEntityView<TEntityKey, <#= templateParamsLight #>> View<#= templateParams #>()
         {
-            return new AdhocView<#= templateParams #>(this);
+            return new AdhocView<TEntityKey, <#= templateParamsLight #>>(this);
         }
 
-        public IPersistentEntityView<#= templateParams #> PersistentView<#= templateParams #>()
+        public IPersistentEntityView<TEntityKey, <#= templateParamsLight #>> PersistentView<#= templateParams #>()
         {
-            var type = typeof(PersistentView<#= templateParams #>);
+            var type = typeof(PersistentView<TEntityKey, <#= templateParamsLight #>>);
             if (views.TryGetValue(type, out var view))
             {
-                return (IPersistentEntityView<#= templateParams #>)view;
+                return (IPersistentEntityView<TEntityKey, <#= templateParamsLight #>>)view;
             }
 
-            var v = new PersistentView<#= templateParams #>(this);
+            var v = new PersistentView<TEntityKey, <#= templateParamsLight #>>(this);
             views[type] = v;
             return v;
         }

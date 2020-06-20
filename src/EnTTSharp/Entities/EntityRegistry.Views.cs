@@ -1,8 +1,8 @@
 ﻿namespace EnttSharp.Entities
 {
-    public partial class EntityRegistry
+    public partial class EntityRegistry<TEntityKey>
     {
-        public void DiscardView<TView>() where TView : IEntityView
+        public void DiscardView<TView>() where TView : IEntityView<TEntityKey>
         {
             views.Remove(typeof(TView));
         }

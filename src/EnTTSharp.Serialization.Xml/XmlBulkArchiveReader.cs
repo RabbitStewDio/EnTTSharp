@@ -1,21 +1,22 @@
 ﻿using System.Xml;
+using EnttSharp.Entities;
 
 namespace EnTTSharp.Serialization.Xml
 {
-    public class XmlBulkArchiveReader
+    public class XmlBulkArchiveReader<TEntityKey> where TEntityKey : IEntityKey
     {
-        readonly XmlArchiveReaderBackend readerConfiguration;
+        readonly XmlArchiveReaderBackend<TEntityKey> readerConfiguration;
 
-        public XmlBulkArchiveReader(XmlReadHandlerRegistry registry): this(new XmlArchiveReaderBackend(registry))
+        public XmlBulkArchiveReader(XmlReadHandlerRegistry registry): this(new XmlArchiveReaderBackend<TEntityKey>(registry))
         {
         }
 
-        public XmlBulkArchiveReader(XmlArchiveReaderBackend readerConfiguration)
+        public XmlBulkArchiveReader(XmlArchiveReaderBackend<TEntityKey> readerConfiguration)
         {
             this.readerConfiguration = readerConfiguration;
         }
 
-        public void ReadAll(XmlReader reader, ISnapshotLoader loader)
+        public void ReadAll(XmlReader reader, ISnapshotLoader<TEntityKey> loader)
         {
             if (reader.IsEmptyElement)
             {
@@ -38,7 +39,7 @@ namespace EnTTSharp.Serialization.Xml
             }
         }
 
-        bool HandleRootElement(XmlReader reader, ISnapshotLoader loader)
+        bool HandleRootElement(XmlReader reader, ISnapshotLoader<TEntityKey> loader)
         {
             switch (reader.Name)
             {
@@ -67,7 +68,7 @@ namespace EnTTSharp.Serialization.Xml
         }
 
 
-        void ReadEntities(XmlReader reader, ISnapshotLoader loader)
+        void ReadEntities(XmlReader reader, ISnapshotLoader<TEntityKey> loader)
         {
             if (reader.IsEmptyElement)
             {
@@ -80,7 +81,7 @@ namespace EnTTSharp.Serialization.Xml
                 {
                     if (reader.Name == XmlTagNames.Entity)
                     {
-                        var entity = readerConfiguration.ReadEntity(reader);
+                        var entity = readerConfiguration.ReadEntity(reader, loader.Map);
                         loader.OnEntity(entity);
                     }
                     else
@@ -95,7 +96,7 @@ namespace EnTTSharp.Serialization.Xml
             }
         }
 
-        void ReadDestroyed(XmlReader reader, ISnapshotLoader loader)
+        void ReadDestroyed(XmlReader reader, ISnapshotLoader<TEntityKey> loader)
         {
             if (reader.IsEmptyElement)
             {
@@ -108,7 +109,7 @@ namespace EnTTSharp.Serialization.Xml
                 {
                     if (reader.Name == XmlTagNames.DestroyedEntity)
                     {
-                        var entity = readerConfiguration.ReadDestroyedEntity(reader);
+                        var entity = readerConfiguration.ReadDestroyedEntity(reader, loader.Map);
                         loader.OnDestroyedEntity(entity);
                     }
                     else
@@ -123,7 +124,7 @@ namespace EnTTSharp.Serialization.Xml
             }
         }
 
-        void ReadComponent(XmlReader reader, ISnapshotLoader loader)
+        void ReadComponent(XmlReader reader, ISnapshotLoader<TEntityKey> loader)
         {
             if (reader.IsEmptyElement)
             {

@@ -10,7 +10,7 @@ namespace EnTTSharp.Test.Helpers
     [Test]
     public void Adding()
     {
-      var s = new SparseSet();
+      var s = new SparseSet<EntityKey>();
       var key1 = new EntityKey(1, 100);
       var key2 = new EntityKey(1, 105);
       var key3 = new EntityKey(1, 0);

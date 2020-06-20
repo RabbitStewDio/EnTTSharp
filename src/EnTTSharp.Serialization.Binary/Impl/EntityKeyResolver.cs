@@ -24,15 +24,13 @@ namespace EnTTSharp.Serialization.BinaryPack
             {
                 writer.Write(value.Age);
                 writer.Write(value.Key);
-                writer.Write(value.Extra);
             }
 
             public EntityKey Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
             {
                 var age = reader.ReadByte();
                 var key = reader.ReadInt32();
-                var extra = reader.ReadUInt32();
-                return new EntityKey(age, key, extra);
+                return new EntityKey(age, key);
             }
         }
     }

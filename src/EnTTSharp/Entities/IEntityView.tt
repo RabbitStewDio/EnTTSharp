@@ -20,14 +20,16 @@ namespace EnttSharp.Entities
         var templateParamsLight = BuildLightTemplate(p);
         var templateParams = BuildTemplate(p);
 #>
-    public interface IEntityView<#= templateParams #>  : IEntityView
+    public interface IEntityView<TEntityKey, <#= templateParamsLight #>>  : IEntityView<TEntityKey>
+        where TEntityKey: IEntityKey
     {
-        void Apply(ViewDelegates.Apply<#= templateParams #> bulk);
-        void ApplyWithContext<TContext>(TContext t, ViewDelegates.ApplyWithContext<TContext, <#= templateParamsLight #>> bulk);
+        void Apply(ViewDelegates.Apply<TEntityKey, <#= templateParamsLight #>> bulk);
+        void ApplyWithContext<TContext>(TContext t, ViewDelegates.ApplyWithContext<TEntityKey, TContext, <#= templateParamsLight #>> bulk);
 
     }
 
-    public interface IPersistentEntityView<#= templateParams #>  : IEntityView<#= templateParams #>
+    public interface IPersistentEntityView<TEntityKey, <#= templateParamsLight #>>  : IEntityView<TEntityKey, <#= templateParamsLight #>>
+        where TEntityKey: IEntityKey
     {
         int Count { get; }
     }

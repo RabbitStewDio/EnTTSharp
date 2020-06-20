@@ -1,4 +1,5 @@
 ﻿using EnTTSharp.Annotations;
+using EnttSharp.Entities;
 using EnTTSharp.Serialization.Xml;
 using FluentAssertions;
 using NUnit.Framework;
@@ -12,7 +13,7 @@ namespace EnTTSharp.Test.Serialisation
         {
             var components = new EntityRegistrationScanner()
                              .With(new XmlEntityRegistrationHandler())
-                             .With(new XmlDataContractRegistrationHandler())
+                             .With(new XmlDataContractRegistrationHandler<EntityKey>())
                              .RegisterEntitiesFromAllAssemblies();
             components.Count.Should().Be(1);
 

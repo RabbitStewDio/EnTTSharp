@@ -6,7 +6,9 @@ namespace EnTTSharp.Annotations.Impl
 {
     public static class ComponentRegistrationExtensions
     {
-        class NonConstructibleMarker{}
+        class NonConstructibleMarker
+        {
+        }
 
         public static EntityComponentRegistration WithConstructor<TComponent>(this EntityComponentRegistration reg, Func<TComponent> constructorFn)
         {
@@ -14,10 +16,11 @@ namespace EnTTSharp.Annotations.Impl
             return reg;
         }
 
-        public static EntityComponentRegistration WithDestructor<TComponent>(this EntityComponentRegistration reg,
-                                                                             Action<EntityKey, EntityRegistry, TComponent> destructorFn)
+        public static EntityComponentRegistration WithDestructor<TEntityKey, TComponent>(this EntityComponentRegistration reg,
+                                                                                         Action<TEntityKey, IEntityViewControl<TEntityKey>, TComponent> destructorFn) 
+            where TEntityKey : IEntityKey
         {
-            reg.Store(new DestructorRegistration<TComponent>(destructorFn));
+            reg.Store(new DestructorRegistration<TEntityKey, TComponent>(destructorFn));
             return reg;
         }
 
@@ -56,6 +59,5 @@ namespace EnTTSharp.Annotations.Impl
         {
             return IsSameFunction(m, typeof(void), parameter);
         }
-
     }
 }

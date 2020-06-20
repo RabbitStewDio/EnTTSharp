@@ -34,7 +34,7 @@ namespace EnTTSharp.Test
         [Test]
         public void TestPerformance()
         {
-            var r = new EntityRegistry();
+            var r = new EntityRegistry<EntityKey>(EntityKey.Create);
             r.Register<PerformanceTraitPos>();
             r.Register<PerformanceTraitVelocity>();
             var view = r.PersistentView<PerformanceTraitPos, PerformanceTraitVelocity>();
@@ -60,7 +60,7 @@ namespace EnTTSharp.Test
             Console.WriteLine(time);
         }
 
-        void Run(IEntityViewControl v, EntityKey k, in PerformanceTraitPos c1, in PerformanceTraitVelocity c2)
+        void Run(IEntityViewControl<EntityKey> v, EntityKey k, in PerformanceTraitPos c1, in PerformanceTraitVelocity c2)
         {
             var c = c1;
             c.X += c2.X;

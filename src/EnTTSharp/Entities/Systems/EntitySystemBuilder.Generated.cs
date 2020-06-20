@@ -11,10 +11,10 @@ using System;
  
 namespace EnttSharp.Entities.Systems
 {
-    public readonly partial struct EntitySystemBuilder<TContext>
+    public readonly partial struct EntitySystemBuilder<TEntityKey, TContext>
     {
 
-        public Action<TContext> CreateSystem<T1>(ViewDelegates.ApplyWithContext<TContext, T1> action)
+        public Action<TContext> CreateSystem<T1>(ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1> action)
         {
             var view = reg.PersistentView<T1>();
             view.AllowParallelExecution = allowParallel;
@@ -27,7 +27,7 @@ namespace EnttSharp.Entities.Systems
             return Act;
         }
 
-        public Action<TContext> CreateSystem<T1, T2>(ViewDelegates.ApplyWithContext<TContext, T1, T2> action)
+        public Action<TContext> CreateSystem<T1, T2>(ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1, T2> action)
         {
             var view = reg.PersistentView<T1, T2>();
             view.AllowParallelExecution = allowParallel;
@@ -40,7 +40,7 @@ namespace EnttSharp.Entities.Systems
             return Act;
         }
 
-        public Action<TContext> CreateSystem<T1, T2, T3>(ViewDelegates.ApplyWithContext<TContext, T1, T2, T3> action)
+        public Action<TContext> CreateSystem<T1, T2, T3>(ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1, T2, T3> action)
         {
             var view = reg.PersistentView<T1, T2, T3>();
             view.AllowParallelExecution = allowParallel;
@@ -53,7 +53,7 @@ namespace EnttSharp.Entities.Systems
             return Act;
         }
 
-        public Action<TContext> CreateSystem<T1, T2, T3, T4>(ViewDelegates.ApplyWithContext<TContext, T1, T2, T3, T4> action)
+        public Action<TContext> CreateSystem<T1, T2, T3, T4>(ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1, T2, T3, T4> action)
         {
             var view = reg.PersistentView<T1, T2, T3, T4>();
             view.AllowParallelExecution = allowParallel;
@@ -66,7 +66,7 @@ namespace EnttSharp.Entities.Systems
             return Act;
         }
 
-        public Action<TContext> CreateSystem<T1, T2, T3, T4, T5>(ViewDelegates.ApplyWithContext<TContext, T1, T2, T3, T4, T5> action)
+        public Action<TContext> CreateSystem<T1, T2, T3, T4, T5>(ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1, T2, T3, T4, T5> action)
         {
             var view = reg.PersistentView<T1, T2, T3, T4, T5>();
             view.AllowParallelExecution = allowParallel;
@@ -79,7 +79,7 @@ namespace EnttSharp.Entities.Systems
             return Act;
         }
 
-        public Action<TContext> CreateSystem<T1, T2, T3, T4, T5, T6>(ViewDelegates.ApplyWithContext<TContext, T1, T2, T3, T4, T5, T6> action)
+        public Action<TContext> CreateSystem<T1, T2, T3, T4, T5, T6>(ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1, T2, T3, T4, T5, T6> action)
         {
             var view = reg.PersistentView<T1, T2, T3, T4, T5, T6>();
             view.AllowParallelExecution = allowParallel;
@@ -92,7 +92,7 @@ namespace EnttSharp.Entities.Systems
             return Act;
         }
 
-        public Action<TContext> CreateSystem<T1, T2, T3, T4, T5, T6, T7>(ViewDelegates.ApplyWithContext<TContext, T1, T2, T3, T4, T5, T6, T7> action)
+        public Action<TContext> CreateSystem<T1, T2, T3, T4, T5, T6, T7>(ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1, T2, T3, T4, T5, T6, T7> action)
         {
             var view = reg.PersistentView<T1, T2, T3, T4, T5, T6, T7>();
             view.AllowParallelExecution = allowParallel;

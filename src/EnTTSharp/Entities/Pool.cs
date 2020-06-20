@@ -4,36 +4,38 @@ using EnttSharp.Entities.Helpers;
 
 namespace EnttSharp.Entities
 {
-    public interface ISparsePool : IEnumerable<EntityKey>
+    public interface ISparsePool<TEntityKey> : IEnumerable<TEntityKey>
+        where TEntityKey: IEntityKey
     {
-        event EventHandler<EntityKey> Destroyed;
-        event EventHandler<EntityKey> Created;
-        bool Contains(EntityKey k);
+        event EventHandler<TEntityKey> Destroyed;
+        event EventHandler<TEntityKey> Created;
+        bool Contains(TEntityKey k);
         int Count { get; }
         void Reserve(int capacity);
-        new RawList<EntityKey>.Enumerator GetEnumerator();
+        new RawList<TEntityKey>.Enumerator GetEnumerator();
     }
 
     public static class Pools
     {
-        public class Pool<TComponent> : SparseDictionary<TComponent>, ISparsePool
+        public class Pool<TEntityKey, TComponent> : SparseDictionary<TEntityKey, TComponent>, ISparsePool<TEntityKey>
+            where TEntityKey : IEntityKey
         {
-            public event EventHandler<(EntityKey key, TComponent old)> DestroyedNotify;
-            public event EventHandler<EntityKey> Destroyed;
-            public event EventHandler<EntityKey> Created;
-            public event EventHandler<(EntityKey key, TComponent old)> Updated;
+            public event EventHandler<(TEntityKey key, TComponent old)> DestroyedNotify;
+            public event EventHandler<TEntityKey> Destroyed;
+            public event EventHandler<TEntityKey> Created;
+            public event EventHandler<(TEntityKey key, TComponent old)> Updated;
 
             internal Pool()
             {
             }
 
-            public override void Add(EntityKey e, in TComponent component)
+            public override void Add(TEntityKey e, in TComponent component)
             {
                 base.Add(e, in component);
                 Created?.Invoke(this, e);
             }
 
-            public override bool Remove(EntityKey e)
+            public override bool Remove(TEntityKey e)
             {
                 if (Destroyed == null && DestroyedNotify == null)
                 {
@@ -73,7 +75,7 @@ namespace EnttSharp.Entities
                 }
             }
 
-            public override bool WriteBack(EntityKey entity, in TComponent component)
+            public override bool WriteBack(TEntityKey entity, in TComponent component)
             {
                 if (Updated == null)
                 {
@@ -93,17 +95,18 @@ namespace EnttSharp.Entities
             }
         }
 
-        public class DestructorPool<TComponent> : Pool<TComponent>
+        public class DestructorPool<TEntityKey, TComponent> : Pool<TEntityKey, TComponent>
+            where TEntityKey : IEntityKey
         {
-            readonly IComponentRegistration<TComponent> componentRegistration;
+            readonly IComponentRegistration<TEntityKey, TComponent> componentRegistration;
 
-            internal DestructorPool(IComponentRegistration<TComponent> componentRegistration)
+            internal DestructorPool(IComponentRegistration<TEntityKey, TComponent> componentRegistration)
             {
                 this.componentRegistration = componentRegistration ??
                                              throw new ArgumentNullException(nameof(componentRegistration));
             }
 
-            public override bool Remove(EntityKey e)
+            public override bool Remove(TEntityKey e)
             {
                 if (TryGet(e, out var com))
                 {
@@ -117,7 +120,7 @@ namespace EnttSharp.Entities
                 return false;
             }
 
-            public override bool Replace(EntityKey entity, in TComponent component)
+            public override bool Replace(TEntityKey entity, in TComponent component)
             {
                 if (TryGet(entity, out var c))
                 {
@@ -134,14 +137,15 @@ namespace EnttSharp.Entities
             }
         }
 
-        public static Pool<T> Create<T>(IComponentRegistration<T> reg)
+        public static Pool<TEntityKey, T> Create<TEntityKey, T>(IComponentRegistration<TEntityKey, T> reg)
+            where TEntityKey : IEntityKey
         {
             if (reg.HasDestructor())
             {
-                return new DestructorPool<T>(reg);
+                return new DestructorPool<TEntityKey, T>(reg);
             }
 
-            return new Pool<T>();
+            return new Pool<TEntityKey, T>();
         }
     }
 }

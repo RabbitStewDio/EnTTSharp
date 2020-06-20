@@ -21,11 +21,13 @@ namespace EnttSharp.Entities
         var templateParamsLight = BuildLightTemplate(p);
         var templateParams = BuildTemplate(p);
 #>
-        public delegate void Apply<#= templateParams #>(IEntityViewControl v, EntityKey k,
-                        <#= JoinGenericParams(p, "in T{0} c{0}", ", ") #> );
+        public delegate void Apply<TEntityKey, <#= templateParamsLight #>>(IEntityViewControl<TEntityKey> v, TEntityKey k,
+                        <#= JoinGenericParams(p, "in T{0} c{0}", ", ") #> )
+            where TEntityKey: IEntityKey;
 
-        public delegate void ApplyWithContext<in TContext, <#= templateParamsLight #>>(IEntityViewControl v, TContext context, EntityKey k, 
-                        <#= JoinGenericParams(p, "in T{0} c{0}", ", ") #> );
+        public delegate void ApplyWithContext<TEntityKey, in TContext, <#= templateParamsLight #>>(IEntityViewControl<TEntityKey> v, TContext context, TEntityKey k, 
+                        <#= JoinGenericParams(p, "in T{0} c{0}", ", ") #> )
+            where TEntityKey: IEntityKey;
 <#
     }
 #>

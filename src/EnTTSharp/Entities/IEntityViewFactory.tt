@@ -13,17 +13,18 @@
 
 namespace EnttSharp.Entities
 {
-    public interface IEntityViewFactory : IEntityViewControl
+    public interface IEntityViewFactory<TEntityKey> : IEntityViewControl<TEntityKey>
+        where TEntityKey: IEntityKey
     {
-        void DiscardView<TView>() where TView : IEntityView;
+        void DiscardView<TView>() where TView : IEntityView<TEntityKey>;
 
 <#
     for (var p = 1; p <= MaxParameterCount; p += 1)
     {
-        var templateParams = BuildTemplate(p);
+        var templateParamsLight = BuildLightTemplate(p);
 #>
-        IEntityView<#= templateParams #> View<#= templateParams #>();
-        IPersistentEntityView<#= templateParams #> PersistentView<#= templateParams #>();
+        IEntityView<TEntityKey, <#= templateParamsLight #>> View<<#= templateParamsLight #>>();
+        IPersistentEntityView<TEntityKey, <#= templateParamsLight #>> PersistentView<<#= templateParamsLight #>>();
 
 <#
     }

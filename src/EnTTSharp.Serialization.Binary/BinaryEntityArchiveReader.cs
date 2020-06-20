@@ -5,14 +5,14 @@ using MessagePack;
 
 namespace EnTTSharp.Serialization.BinaryPack
 {
-    public class BinaryEntityArchiveReader: IEntityArchiveReader
+    public class BinaryEntityArchiveReader<TEntityKey>: IEntityArchiveReader<TEntityKey> where TEntityKey : IEntityKey
     {
         readonly MessagePackSerializerOptions options;
-        readonly BinaryReaderBackend registry;
+        readonly BinaryReaderBackend<TEntityKey> registry;
         readonly Stream reader;
         BinaryReadHandlerRegistration readHandlerRegistration;
 
-        public BinaryEntityArchiveReader(BinaryReaderBackend registry, 
+        public BinaryEntityArchiveReader(BinaryReaderBackend<TEntityKey> registry, 
                                          Stream reader,
                                          MessagePackSerializerOptions optionsRaw = null)
         {
@@ -32,9 +32,9 @@ namespace EnTTSharp.Serialization.BinaryPack
             return MessagePackSerializer.Deserialize<int>(reader, options);
         }
 
-        public EntityKey ReadEntity(Func<EntityKey, EntityKey> entityMapper)
+        public TEntityKey ReadEntity(Func<EntityKeyData, TEntityKey> entityMapper)
         {
-            var key = MessagePackSerializer.Deserialize<EntityKey>(reader, options);
+            var key = MessagePackSerializer.Deserialize<EntityKeyData>(reader, options);
             return entityMapper(key);
         }
 
@@ -55,10 +55,10 @@ namespace EnTTSharp.Serialization.BinaryPack
             return c.ComponentCount;
         }
 
-        public bool TryReadComponent<TComponent>(Func<EntityKey, EntityKey> entityMapper, 
-                                                 out EntityKey key, out TComponent component)
+        public bool TryReadComponent<TComponent>(Func<EntityKeyData, TEntityKey> entityMapper, 
+                                                 out TEntityKey key, out TComponent component)
         {
-            var entityKey = MessagePackSerializer.Deserialize<EntityKey>(reader, options);
+            var entityKey = MessagePackSerializer.Deserialize<EntityKeyData>(reader, options);
             component = MessagePackSerializer.Deserialize<TComponent>(reader, options);
             if (readHandlerRegistration.TryGetPostProcessor<TComponent>(out var pp))
             {
@@ -86,9 +86,9 @@ namespace EnTTSharp.Serialization.BinaryPack
             return c.ComponentExists;
         }
 
-        public bool TryReadTag<TComponent>(Func<EntityKey, EntityKey> entityMapper, out EntityKey key, out TComponent component)
+        public bool TryReadTag<TComponent>(Func<EntityKeyData, TEntityKey> entityMapper, out TEntityKey key, out TComponent component)
         {
-            var entityKey = MessagePackSerializer.Deserialize<EntityKey>(reader, options);
+            var entityKey = MessagePackSerializer.Deserialize<EntityKeyData>(reader, options);
             component = MessagePackSerializer.Deserialize<TComponent>(reader, options);
             if (readHandlerRegistration.TryGetPostProcessor<TComponent>(out var pp))
             {
@@ -110,9 +110,9 @@ namespace EnTTSharp.Serialization.BinaryPack
             return MessagePackSerializer.Deserialize<int>(reader, options);
         }
 
-        public EntityKey ReadDestroyed(Func<EntityKey, EntityKey> entityMapper)
+        public TEntityKey ReadDestroyed(Func<EntityKeyData, TEntityKey> entityMapper)
         {
-            var key = MessagePackSerializer.Deserialize<EntityKey>(reader, options);
+            var key = MessagePackSerializer.Deserialize<EntityKeyData>(reader, options);
             return entityMapper(key);
         }
     }

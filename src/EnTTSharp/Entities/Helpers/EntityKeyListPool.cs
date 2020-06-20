@@ -4,20 +4,22 @@ using System.Collections.Generic;
 
 namespace EnttSharp.Entities
 {
-    public static class EntityKeyListPool
+    public static class EntityKeyListPool<TEntityKey>
     {
-        static readonly ConcurrentQueue<List<EntityKey>> pools;
+        static readonly ConcurrentQueue<List<TEntityKey>> pools;
 
         static EntityKeyListPool()
         {
-            pools = new ConcurrentQueue<List<EntityKey>>();
+            pools = new ConcurrentQueue<List<TEntityKey>>();
         }
 
-        public static List<EntityKey> Reserve<TEnumerator>(TEnumerator src, int estimatedSize) where TEnumerator : IEnumerator<EntityKey>
+        public static List<TEntityKey> Reserve<TEnumerator>(TEnumerator src, 
+                                                           int estimatedSize) 
+            where TEnumerator : IEnumerator<TEntityKey>
         {
             if (!pools.TryDequeue(out var result))
             {
-                result = new List<EntityKey>(estimatedSize);
+                result = new List<TEntityKey>(estimatedSize);
             }
             else
             {
@@ -33,7 +35,7 @@ namespace EnttSharp.Entities
             return result;
         }
 
-        public static void Release(List<EntityKey> l)
+        public static void Release(List<TEntityKey> l)
         {
             if (l == null) throw new ArgumentNullException(nameof(l));
 

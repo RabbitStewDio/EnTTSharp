@@ -5,7 +5,7 @@ using MessagePack;
 
 namespace EnTTSharp.Serialization.BinaryPack
 {
-    public class BinaryArchiveWriter: IEntityArchiveWriter
+    public class BinaryArchiveWriter<TEntityKey>: IEntityArchiveWriter<TEntityKey> where TEntityKey : IEntityKey
     {
         readonly BinaryWriteHandlerRegistry registry;
         readonly Stream writer;
@@ -35,9 +35,10 @@ namespace EnTTSharp.Serialization.BinaryPack
             MessagePackSerializer.Serialize(writer, entityCount, options);
         }
 
-        public void WriteEntity(in EntityKey entityKey)
+        public void WriteEntity(in TEntityKey entityKey)
         {
-            MessagePackSerializer.Serialize(writer, entityKey, options);
+            var entityData = new EntityKeyData(entityKey.Age, entityKey.Key);
+            MessagePackSerializer.Serialize(writer, entityData, options);
         }
 
         public void WriteEndEntity()
@@ -51,10 +52,11 @@ namespace EnTTSharp.Serialization.BinaryPack
             MessagePackSerializer.Serialize(writer, new BinaryControlObjects.StartComponentRecord(entityCount, handler.TypeId));
         }
 
-        public void WriteComponent<TComponent>(in EntityKey entityKey, in TComponent c)
+        public void WriteComponent<TComponent>(in TEntityKey entityKey, in TComponent c)
         {
             var handler = registry.QueryHandler<TComponent>();
-            MessagePackSerializer.Serialize(writer, entityKey, options);
+            var entityData = new EntityKeyData(entityKey.Age, entityKey.Key);
+            MessagePackSerializer.Serialize(writer, entityData, options);
             if (handler.TryGetPreProcessor<TComponent>(out var processor))
             {
                 MessagePackSerializer.Serialize(writer, processor(c), options);
@@ -69,12 +71,13 @@ namespace EnTTSharp.Serialization.BinaryPack
         {
         }
 
-        public void WriteTag<TComponent>(in EntityKey entityKey, in TComponent c)
+        public void WriteTag<TComponent>(in TEntityKey entityKey, in TComponent c)
         {
             var handler = registry.QueryHandler<TComponent>();
             MessagePackSerializer.Serialize(writer, BinaryControlObjects.BinaryStreamState.Tag, options);
             MessagePackSerializer.Serialize(new BinaryControlObjects.StartTagRecord(true, handler.TypeId), options);
-            MessagePackSerializer.Serialize(writer, entityKey, options);
+            var entityData = new EntityKeyData(entityKey.Age, entityKey.Key);
+            MessagePackSerializer.Serialize(writer, entityData, options);
             if (handler.TryGetPreProcessor<TComponent>(out var processor))
             {
                 MessagePackSerializer.Serialize(writer, processor(c), options);
@@ -98,9 +101,10 @@ namespace EnTTSharp.Serialization.BinaryPack
             MessagePackSerializer.Serialize(writer, entityCount, options);
         }
 
-        public void WriteDestroyed(in EntityKey entityKey)
+        public void WriteDestroyed(in TEntityKey entityKey)
         {
-            MessagePackSerializer.Serialize(writer, entityKey, options);
+            var entityData = new EntityKeyData(entityKey.Age, entityKey.Key);
+            MessagePackSerializer.Serialize(writer, entityData, options);
         }
 
         public void WriteEndDestroyed()

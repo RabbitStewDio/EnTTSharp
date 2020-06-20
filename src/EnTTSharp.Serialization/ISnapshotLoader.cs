@@ -5,13 +5,14 @@ namespace EnTTSharp.Serialization
     /// <summary>
     ///   A callback interface that notifies the EntityRegistry of incoming changes.
     /// </summary>
-    public interface ISnapshotLoader
+    public interface ISnapshotLoader<TEntityKey>
+        where TEntityKey : IEntityKey
     {
-        void OnEntity(EntityKey entity);
-        void OnDestroyedEntity(EntityKey entity);
-        void OnComponent<TComponent>(EntityKey entity, in TComponent c);
-        void OnTag<TComponent>(EntityKey entity, in TComponent c);
-        EntityKey Map(EntityKey input);
+        void OnEntity(TEntityKey entity);
+        void OnDestroyedEntity(TEntityKey entity);
+        void OnComponent<TComponent>(TEntityKey entity, in TComponent c);
+        void OnTag<TComponent>(TEntityKey entity, in TComponent c);
+        TEntityKey Map(EntityKeyData input);
         void CleanOrphans();
         void OnTagRemoved<TComponent>();
     }

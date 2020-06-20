@@ -7,7 +7,7 @@ namespace EnTTSharp.Test.Helpers
 {
     public class SparseDictTest
     {
-        void Change(IEntityViewControl view, EntityKey e, in TestStructFixture t)
+        void Change(IEntityViewControl<EntityKey> view, EntityKey e, in TestStructFixture t)
         {
             view.WriteBack(e, new TestStructFixture(10, t.y));
         }
@@ -15,7 +15,7 @@ namespace EnTTSharp.Test.Helpers
         [Test]
         public void TestViewProcessing()
         {
-            EntityRegistry reg = new EntityRegistry();
+            var reg = new EntityRegistry<EntityKey>(EntityKey.Create);
             reg.Register<TestStructFixture>();
 
             var entity = reg.Create();

@@ -5,9 +5,9 @@ using Serilog;
 
 namespace EnTTSharp.Annotations.Impl
 {
-    public class ComponentRegistrationHandler : EntityRegistrationHandlerBase
+    public class ComponentRegistrationHandler<TEntityKey> : EntityRegistrationHandlerBase where TEntityKey : IEntityKey
     {
-        static readonly ILogger Logger = Log.ForContext<ComponentRegistrationHandler>();
+        static readonly ILogger Logger = Log.ForContext<ComponentRegistrationHandler<TEntityKey>>();
 
         protected override void ProcessTyped<TComponent>(EntityComponentRegistration r)
         {
@@ -26,8 +26,8 @@ namespace EnTTSharp.Annotations.Impl
             {
                 if (IsDestructor<TComponent>(m))
                 {
-                    var d = (Action<EntityKey, EntityRegistry, TComponent>)
-                        Delegate.CreateDelegate(typeof(Action<EntityKey, EntityRegistry, TComponent>), m);
+                    var d = (Action<TEntityKey, IEntityViewControl<TEntityKey>, TComponent>)
+                        Delegate.CreateDelegate(typeof(Action<TEntityKey, IEntityViewControl<TEntityKey>, TComponent>), m);
                     r.WithDestructor(d);
                 }
             }
@@ -68,7 +68,9 @@ namespace EnTTSharp.Annotations.Impl
         {
             return methodInfo.GetCustomAttribute<EntityDestructorAttribute>() != null 
                    && methodInfo.IsStatic
-                   && methodInfo.IsSameAction(typeof(EntityKey), typeof(TComponentType));
+                   && methodInfo.IsSameAction(typeof(TEntityKey), 
+                                              typeof(IEntityViewControl<TEntityKey>), 
+                                              typeof(TComponentType));
         }
 
     }

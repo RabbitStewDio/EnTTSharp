@@ -9,7 +9,8 @@ namespace EnttSharp.Entities.Helpers
     ///  https://www.geeksforgeeks.org/sparse-set/ )
     /// 
     /// </summary>
-    public class SparseSet : IEnumerable<EntityKey>
+    public class SparseSet<TEntityKey> : IEnumerable<TEntityKey>
+        where TEntityKey: IEntityKey
     {
         readonly struct ReverseEntry
         {
@@ -35,10 +36,12 @@ namespace EnttSharp.Entities.Helpers
             }
         }
 
+        static readonly EqualityComparer<TEntityKey> EqualityHandler = EqualityComparer<TEntityKey>.Default; 
+
         /// <summary>
         ///  Contains the entites in the set in insertion order.
         /// </summary>
-        readonly RawList<EntityKey> direct;
+        readonly RawList<TEntityKey> direct;
 
         /// <summary>
         ///  stores an pointer into the direct list.
@@ -47,13 +50,13 @@ namespace EnttSharp.Entities.Helpers
 
         public SparseSet()
         {
-            direct = new RawList<EntityKey>();
+            direct = new RawList<TEntityKey>();
             reverse = new RawList<ReverseEntry>();
         }
 
         public int Count => direct.Count;
 
-        public void Add(EntityKey e)
+        public void Add(TEntityKey e)
         {
             if (Contains(e))
             {
@@ -65,7 +68,7 @@ namespace EnttSharp.Entities.Helpers
             direct.Add(e);
         }
 
-        public virtual bool Remove(EntityKey e)
+        public virtual bool Remove(TEntityKey e)
         {
             if (!Contains(e))
             {
@@ -89,7 +92,7 @@ namespace EnttSharp.Entities.Helpers
             return true;
         }
 
-        protected EntityKey Last => direct[direct.Count - 1];
+        protected TEntityKey Last => direct[direct.Count - 1];
 
         /// <summary>
         ///  Increases the capacity of the sparse set. This never reduces the capacity.
@@ -111,25 +114,25 @@ namespace EnttSharp.Entities.Helpers
             get { return reverse.Count; }
         }
 
-        public bool Contains(EntityKey entity)
+        public bool Contains(TEntityKey entity)
         {
             var pos = entity.Key;
             if (pos < reverse.Count)
             {
                 var rk = reverse[pos];
-                return rk.InUse && direct[rk.Key] == entity;
+                return rk.InUse && EqualityHandler.Equals(direct[rk.Key], entity);
             }
 
             return false;
         }
 
-        public int IndexOf(EntityKey entity)
+        public int IndexOf(TEntityKey entity)
         {
             var pos = entity.Key;
             if (pos < reverse.Count)
             {
                 var entityKey = reverse[pos];
-                if (entityKey.InUse && direct[entityKey.Key] == entity)
+                if (entityKey.InUse && EqualityHandler.Equals(direct[entityKey.Key], entity))
                 {
                     return entityKey.Key;
                 }
@@ -138,7 +141,7 @@ namespace EnttSharp.Entities.Helpers
             return -1;
         }
 
-        public void Reset(EntityKey entity)
+        public void Reset(TEntityKey entity)
         {
             // same as remove, but do not fail if not there
             if (Contains(entity))
@@ -147,7 +150,7 @@ namespace EnttSharp.Entities.Helpers
             }
         }
 
-        IEnumerator<EntityKey> IEnumerable<EntityKey>.GetEnumerator()
+        IEnumerator<TEntityKey> IEnumerable<TEntityKey>.GetEnumerator()
         {
             return GetEnumerator();
         }
@@ -157,7 +160,7 @@ namespace EnttSharp.Entities.Helpers
             return GetEnumerator();
         }
 
-        public RawList<EntityKey>.Enumerator GetEnumerator()
+        public RawList<TEntityKey>.Enumerator GetEnumerator()
         {
             return direct.GetEnumerator();
         }
@@ -170,7 +173,7 @@ namespace EnttSharp.Entities.Helpers
             reverse.Swap(reverseSrc, reverseTgt);
         }
 
-        public void Respect(IEnumerable<EntityKey> other)
+        public void Respect(IEnumerable<TEntityKey> other)
         {
             // where do we drop items that have been moved out of the way ..
             var targetPosition = direct.Count - 1;
@@ -179,7 +182,7 @@ namespace EnttSharp.Entities.Helpers
                 var posLocal = IndexOf(otherEntity);
                 if (posLocal != -1)
                 {
-                    if (otherEntity != direct[targetPosition])
+                    if (EqualityHandler.Equals(otherEntity, direct[targetPosition]))
                     {
                         Swap(targetPosition, posLocal);
                     }
@@ -195,10 +198,10 @@ namespace EnttSharp.Entities.Helpers
             direct.Clear();
         }
 
-        public static SparseSet CreateFrom<TEnumerator>(TEnumerator members)
-            where TEnumerator : IEnumerator<EntityKey>
+        public static SparseSet<TEntityKey> CreateFrom<TEnumerator>(TEnumerator members)
+            where TEnumerator : IEnumerator<TEntityKey>
         {
-            var set = new SparseSet();
+            var set = new SparseSet<TEntityKey>();
             while (members.MoveNext())
             {
                 set.Add(members.Current);

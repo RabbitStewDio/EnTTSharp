@@ -2,7 +2,8 @@
 
 namespace EnttSharp.Entities.Helpers
 {
-    public class SparseDictionary<TComponent> : SparseSet, ISortableCollection<TComponent>
+    public class SparseDictionary<TEntityKey, TComponent> : SparseSet<TEntityKey>, ISortableCollection<TComponent>
+        where TEntityKey: IEntityKey
     {
         readonly RawList<TComponent> instances;
 
@@ -23,13 +24,13 @@ namespace EnttSharp.Entities.Helpers
 
         public IEnumerable<TComponent> Instances => instances;
 
-        public virtual void Add(EntityKey e, in TComponent component)
+        public virtual void Add(TEntityKey e, in TComponent component)
         {
             base.Add(e);
             instances.Add(component);
         }
 
-        public override bool Remove(EntityKey e)
+        public override bool Remove(TEntityKey e)
         {
             var idx = IndexOf(e);
             if (idx == -1)
@@ -65,7 +66,7 @@ namespace EnttSharp.Entities.Helpers
             instances.Clear();
         }
 
-        public bool TryGet(EntityKey entity, out TComponent component)
+        public bool TryGet(TEntityKey entity, out TComponent component)
         {
             var idx = IndexOf(entity);
             if (idx >= 0)
@@ -78,12 +79,12 @@ namespace EnttSharp.Entities.Helpers
             return false;
         }
 
-        public virtual bool Replace(EntityKey entity, in TComponent component)
+        public virtual bool Replace(TEntityKey entity, in TComponent component)
         {
             return WriteBack(entity, in component);
         }
 
-        public virtual bool WriteBack(EntityKey entity, in TComponent component)
+        public virtual bool WriteBack(TEntityKey entity, in TComponent component)
         {
             var idx = IndexOf(entity);
             if (idx == -1)

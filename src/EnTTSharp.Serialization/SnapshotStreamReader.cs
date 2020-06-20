@@ -6,18 +6,18 @@ namespace EnTTSharp.Serialization
     /// <summary>
     ///   An ordered stream loader.
     /// </summary>
-    public class SnapshotStreamReader
+    public class SnapshotStreamReader<TEntityKey> where TEntityKey : IEntityKey
     {
-        readonly ISnapshotLoader loader;
-        readonly Func<EntityKey, EntityKey> entityMapper;
+        readonly ISnapshotLoader<TEntityKey> loader;
+        readonly Func<EntityKeyData, TEntityKey> entityMapper;
 
-        public SnapshotStreamReader(ISnapshotLoader loader)
+        public SnapshotStreamReader(ISnapshotLoader<TEntityKey> loader)
         {
             this.loader = loader;
             this.entityMapper = loader.Map;
         }
 
-        public SnapshotStreamReader ReadEntities(IEntityArchiveReader reader)
+        public SnapshotStreamReader<TEntityKey> ReadEntities(IEntityArchiveReader<TEntityKey> reader)
         {
             var count = reader.ReadEntityCount();
             for (int c = 0; c < count; c += 1)
@@ -29,12 +29,12 @@ namespace EnTTSharp.Serialization
             return this;
         }
 
-        public SnapshotStreamReader ReadComponent<TComponent>(IEntityArchiveReader reader)
+        public SnapshotStreamReader<TEntityKey> ReadComponent<TComponent>(IEntityArchiveReader<TEntityKey> reader)
         {
             var count = reader.ReadComponentCount<TComponent>();
             for (int c = 0; c < count; c += 1)
             {
-                if (reader.TryReadComponent(entityMapper, out EntityKey entity, out TComponent component))
+                if (reader.TryReadComponent(entityMapper, out TEntityKey entity, out TComponent component))
                 {
                     loader.OnComponent(entity, component);
                 }
@@ -43,11 +43,11 @@ namespace EnTTSharp.Serialization
             return this;
         }
 
-        public SnapshotStreamReader ReadTag<TComponent>(IEntityArchiveReader reader)
+        public SnapshotStreamReader<TEntityKey> ReadTag<TComponent>(IEntityArchiveReader<TEntityKey> reader)
         {
             if (reader.ReadTagFlag<TComponent>())
             {
-                if (reader.TryReadTag(entityMapper, out EntityKey entity, out TComponent component))
+                if (reader.TryReadTag(entityMapper, out TEntityKey entity, out TComponent component))
                 {
                     loader.OnTag(entity, component);
                 }
@@ -60,7 +60,7 @@ namespace EnTTSharp.Serialization
             return this;
         }
 
-        public SnapshotStreamReader ReadDestroyed(IEntityArchiveReader reader)
+        public SnapshotStreamReader<TEntityKey> ReadDestroyed(IEntityArchiveReader<TEntityKey> reader)
         {
             var count = reader.ReadDestroyedCount();
             for (int c = 0; c < count; c += 1)

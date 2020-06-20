@@ -13,7 +13,7 @@ namespace EnTTSharp.Test.Serialisation
 {
     public class RegistrySerialisationTest
     {
-        EntityRegistry ereg;
+        EntityRegistry<EntityKey> ereg;
         XmlWriteHandlerRegistry wreg;
         XmlReadHandlerRegistry rreg;
 
@@ -32,7 +32,7 @@ namespace EnTTSharp.Test.Serialisation
             rreg.Register(XmlReadHandlerRegistration.Create(new DefaultReadHandler<int>().Read, true));
             rreg.Register(XmlReadHandlerRegistration.Create(new DefaultReadHandler<float>().Read, true));
 
-            ereg = new EntityRegistry();
+            ereg = new EntityRegistry<EntityKey>(EntityKey.Create);
             ereg.Register<TestStructFixture>();
             ereg.Register<StringBuilder>();
             ereg.Register<int>();
@@ -48,14 +48,14 @@ namespace EnTTSharp.Test.Serialisation
 
             Console.WriteLine(sb);
 
-            var nreg = new EntityRegistry();
+            var nreg = new EntityRegistry<EntityKey>(EntityKey.Create);
             nreg.Register<TestStructFixture>();
             nreg.Register<StringBuilder>();
 
             var xmlReader = XmlReader.Create(new StringReader(sb));
             xmlReader.AdvanceToElement("snapshot");
 
-            var readerConfig = new XmlBulkArchiveReader(rreg);
+            var readerConfig = new XmlBulkArchiveReader<EntityKey>(rreg);
             readerConfig.ReadAll(xmlReader, nreg.CreateLoader());
 
             var result = WriteRegistry(nreg, wreg, true);
@@ -70,15 +70,15 @@ namespace EnTTSharp.Test.Serialisation
 
             Console.WriteLine(sb);
 
-            var nreg = new EntityRegistry();
+            var nreg = new EntityRegistry<EntityKey>(EntityKey.Create);
             nreg.Register<TestStructFixture>();
             nreg.Register<StringBuilder>();
 
             var xmlReader = XmlReader.Create(new StringReader(sb));
             xmlReader.AdvanceToElement("snapshot");
 
-            var streamReader = new SnapshotStreamReader(nreg.CreateLoader());
-            var archiveReader = new XmlEntityArchiveReader(rreg, xmlReader);
+            var streamReader = new SnapshotStreamReader<EntityKey>(nreg.CreateLoader());
+            var archiveReader = new XmlEntityArchiveReader<EntityKey>(rreg, xmlReader);
             streamReader.ReadDestroyed(archiveReader)
                         .ReadEntities(archiveReader)
                         .ReadComponent<TestStructFixture>(archiveReader)
@@ -97,15 +97,15 @@ namespace EnTTSharp.Test.Serialisation
 
             Console.WriteLine(sb);
 
-            var nreg = new EntityRegistry();
+            var nreg = new EntityRegistry<EntityKey>(EntityKey.Create);
             nreg.Register<TestStructFixture>();
             nreg.Register<StringBuilder>();
 
             var xmlReader = XmlReader.Create(new StringReader(sb));
             xmlReader.AdvanceToElement("snapshot");
 
-            var streamReader = new SnapshotStreamReader(nreg.CreateLoader());
-            var archiveReader = new XmlEntityArchiveReader(rreg, xmlReader);
+            var streamReader = new SnapshotStreamReader<EntityKey>(nreg.CreateLoader());
+            var archiveReader = new XmlEntityArchiveReader<EntityKey>(rreg, xmlReader);
             streamReader.ReadAll(archiveReader);
 
             var result = WriteRegistry(nreg, wreg, true);
@@ -113,7 +113,7 @@ namespace EnTTSharp.Test.Serialisation
             result.Should().Be(sb);
         }
 
-        static string WriteRegistry(EntityRegistry ereg,
+        static string WriteRegistry(EntityRegistry<EntityKey> ereg,
                                     XmlWriteHandlerRegistry writerRegistry,
                                     bool automaticHandlers)
         {
@@ -124,7 +124,7 @@ namespace EnTTSharp.Test.Serialisation
                                                  Indent = true,
                                                  IndentChars = "  "
                                              });
-            var output = new XmlArchiveWriter(writerRegistry, xmlWriter);
+            var output = new XmlArchiveWriter<EntityKey>(writerRegistry, xmlWriter);
             output.WriteDefaultSnapshotDocumentHeader();
             var snapshotView = ereg.CreateSnapshot();
             if (automaticHandlers)

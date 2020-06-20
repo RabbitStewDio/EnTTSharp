@@ -4,16 +4,16 @@ using EnttSharp.Entities;
 
 namespace EnTTSharp.Serialization.Xml
 {
-    public class XmlEntityArchiveReader : IEntityArchiveReader
+    public class XmlEntityArchiveReader<TEntityKey> : IEntityArchiveReader<TEntityKey> where TEntityKey : IEntityKey
     {
-        readonly XmlArchiveReaderBackend readerConfiguration;
+        readonly XmlArchiveReaderBackend<TEntityKey> readerConfiguration;
         readonly XmlReader reader;
 
         public XmlEntityArchiveReader(XmlReadHandlerRegistry readerConfiguration, XmlReader reader): 
-            this(new XmlArchiveReaderBackend(readerConfiguration), reader)
+            this(new XmlArchiveReaderBackend<TEntityKey>(readerConfiguration), reader)
         {}
 
-        public XmlEntityArchiveReader(XmlArchiveReaderBackend readerConfiguration, XmlReader reader)
+        public XmlEntityArchiveReader(XmlArchiveReaderBackend<TEntityKey> readerConfiguration, XmlReader reader)
         {
             this.readerConfiguration = readerConfiguration ?? throw new ArgumentNullException(nameof(readerConfiguration));
             this.reader = reader;
@@ -34,10 +34,10 @@ namespace EnTTSharp.Serialization.Xml
             throw new SnapshotIOException("Unable to parse 'count' attribute on element 'Entities'");
         }
 
-        public EntityKey ReadEntity(Func<EntityKey, EntityKey> entityMapper)
+        public TEntityKey ReadEntity(Func<EntityKeyData, TEntityKey> entityMapper)
         {
             reader.AdvanceToElement(XmlTagNames.Entity);
-            return entityMapper(readerConfiguration.ReadEntity(reader));
+            return readerConfiguration.ReadEntity(reader, entityMapper);
         }
 
         public int ReadComponentCount<TComponent>()
@@ -50,8 +50,8 @@ namespace EnTTSharp.Serialization.Xml
             throw new SnapshotIOException("Unable to parse 'count' attribute on element 'Components'");
         }
 
-        public bool TryReadComponent<TComponent>(Func<EntityKey, EntityKey> entityMapper, 
-                                                 out EntityKey key, out TComponent component)
+        public bool TryReadComponent<TComponent>(Func<EntityKeyData, TEntityKey> entityMapper, 
+                                                 out TEntityKey key, out TComponent component)
         {
             reader.AdvanceToElement(XmlTagNames.Component);
             readerConfiguration.ReadComponentTyped(reader, entityMapper, out key, out component);
@@ -70,8 +70,8 @@ namespace EnTTSharp.Serialization.Xml
             return false;
         }
 
-        public bool TryReadTag<TComponent>(Func<EntityKey, EntityKey> entityMapper,
-                                           out EntityKey entityKey, out TComponent component)
+        public bool TryReadTag<TComponent>(Func<EntityKeyData, TEntityKey> entityMapper,
+                                           out TEntityKey entityKey, out TComponent component)
         {
             readerConfiguration.ReadTagTyped(reader, entityMapper, out entityKey, out component);
             return true;
@@ -87,9 +87,9 @@ namespace EnTTSharp.Serialization.Xml
             throw new SnapshotIOException("Unable to parse 'count' attribute on element 'DestroyedEntities'");
         }
 
-        public EntityKey ReadDestroyed(Func<EntityKey, EntityKey> entityMapper)
+        public TEntityKey ReadDestroyed(Func<EntityKeyData, TEntityKey> entityMapper)
         {
-            return entityMapper(readerConfiguration.ReadDestroyedEntity(reader));
+            return readerConfiguration.ReadDestroyedEntity(reader, entityMapper);
         }
     }
 }

@@ -2,12 +2,12 @@
 
 namespace EnTTSharp.Annotations.Impl
 {
-    public class ComponentRegistrationActivator : EntityActivatorBase
+    public class ComponentRegistrationActivator<TEntityKey> : EntityActivatorBase<TEntityKey> where TEntityKey : IEntityKey
     {
-        protected override void ProcessTyped<TComponent>(EntityComponentRegistration r, EntityRegistry reg)
+        protected override void ProcessTyped<TComponent>(EntityComponentRegistration r, IEntityComponentRegistry<TEntityKey> reg)
         {
             bool hasConstructor = r.TryGet(out ConstructorRegistration<TComponent> constructor);
-            bool hasDestructor = r.TryGet(out DestructorRegistration<TComponent> destructor);
+            bool hasDestructor = r.TryGet(out DestructorRegistration<TEntityKey, TComponent> destructor);
 
             if (hasConstructor && hasDestructor)
             {

@@ -4,9 +4,11 @@
     {
         public static bool GlobalAllowParallel = true;
 
-        public static EntitySystemBuilder<TContext> BuildSystem<TContext>(this EntityRegistry registry, bool allowParallel = true)
+        public static EntitySystemBuilder<TEntityKey, TContext> BuildSystem<TEntityKey, TContext>(this IEntityViewFactory<TEntityKey> registry, 
+                                                                                                bool allowParallel = true) 
+            where TEntityKey : IEntityKey
         {
-            return new EntitySystemBuilder<TContext>(registry, GlobalAllowParallel && allowParallel);
+            return new EntitySystemBuilder<TEntityKey, TContext>(registry, GlobalAllowParallel && allowParallel);
         }
 /*
         [Obsolete]

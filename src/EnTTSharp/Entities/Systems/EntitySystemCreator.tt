@@ -26,10 +26,11 @@ namespace EnttSharp.Entities.Systems
 
         [Obsolete]
         public static Action<TContext>
-            CreateSystem<TContext, <#= templateParamsLight #> >(EntityRegistry reg,
-                                           ViewDelegates.ApplyWithContext<TContext, <#= templateParamsLight #>> action, bool allowParallel = false)
+            CreateSystem<TEntityKey, TContext, <#= templateParamsLight #> >(IEntityViewFactory<TEntityKey> reg,
+                                           ViewDelegates.ApplyWithContext<TEntityKey, TContext, <#= templateParamsLight #>> action, bool allowParallel = false)
+            where TEntityKey: IEntityKey
         {
-            return reg.BuildSystem<TContext>(allowParallel).CreateSystem(action);
+            return reg.BuildSystem<TEntityKey, TContext>(allowParallel).CreateSystem(action);
         }
 <#
     }

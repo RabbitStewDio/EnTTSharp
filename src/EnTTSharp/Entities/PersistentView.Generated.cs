@@ -11,11 +11,12 @@
 namespace EnttSharp.Entities
 {
 
-    public sealed class PersistentView<T1> : PersistentMultiViewBase, IPersistentEntityView<T1>
+    public sealed class PersistentView<TEntityKey, T1> : PersistentMultiViewBase<TEntityKey>, IPersistentEntityView<TEntityKey, T1>
+        where TEntityKey: IEntityKey
     {
-        readonly Pools.Pool<T1> pool1;
+        readonly Pools.Pool<TEntityKey, T1> pool1;
 
-        public PersistentView(EntityRegistry registry) :
+        public PersistentView(IEntityPoolAccess<TEntityKey> registry) :
             base(registry, 
                  registry.GetPool<T1>()
             )
@@ -23,9 +24,9 @@ namespace EnttSharp.Entities
             pool1 = registry.GetPool<T1>();
         }
 
-        public void Apply(ViewDelegates.Apply<T1> bulk)
+        public void Apply(ViewDelegates.Apply<TEntityKey, T1> bulk)
         {
-            var p = EntityKeyListPool.Reserve(this.GetEnumerator(), EstimatedSize);
+            var p = EntityKeyListPool<TEntityKey>.Reserve(this.GetEnumerator(), EstimatedSize);
             try
             {
                 if (AllowParallelExecution)
@@ -42,11 +43,11 @@ namespace EnttSharp.Entities
             }
             finally
             {
-                EntityKeyListPool.Release(p);
+                EntityKeyListPool<TEntityKey>.Release(p);
             }
         }
 
-        void ApplyOne(ViewDelegates.Apply<T1> bulk, EntityKey ek)
+        void ApplyOne(ViewDelegates.Apply<TEntityKey, T1> bulk, TEntityKey ek)
         {
             if (pool1.TryGet(ek, out var c1))
             {
@@ -54,9 +55,9 @@ namespace EnttSharp.Entities
             }
         }
 
-        public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TContext, T1> bulk)
+        public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1> bulk)
         {
-            var p = EntityKeyListPool.Reserve(this.GetEnumerator(), EstimatedSize);
+            var p = EntityKeyListPool<TEntityKey>.Reserve(this.GetEnumerator(), EstimatedSize);
             try
             {
                 if (AllowParallelExecution)
@@ -73,11 +74,11 @@ namespace EnttSharp.Entities
             }
             finally
             {
-                EntityKeyListPool.Release(p);
+                EntityKeyListPool<TEntityKey>.Release(p);
             }
         }
 
-        void ApplyOneWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TContext, T1> bulk, EntityKey ek)
+        void ApplyOneWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1> bulk, TEntityKey ek)
         {
             if (pool1.TryGet(ek, out var c1))
             {
@@ -86,12 +87,13 @@ namespace EnttSharp.Entities
         }
     }
 
-    public sealed class PersistentView<T1, T2> : PersistentMultiViewBase, IPersistentEntityView<T1, T2>
+    public sealed class PersistentView<TEntityKey, T1, T2> : PersistentMultiViewBase<TEntityKey>, IPersistentEntityView<TEntityKey, T1, T2>
+        where TEntityKey: IEntityKey
     {
-        readonly Pools.Pool<T1> pool1;
-             readonly Pools.Pool<T2> pool2;
+        readonly Pools.Pool<TEntityKey, T1> pool1;
+             readonly Pools.Pool<TEntityKey, T2> pool2;
 
-        public PersistentView(EntityRegistry registry) :
+        public PersistentView(IEntityPoolAccess<TEntityKey> registry) :
             base(registry, 
                  registry.GetPool<T1>(),
              registry.GetPool<T2>()
@@ -101,9 +103,9 @@ namespace EnttSharp.Entities
              pool2 = registry.GetPool<T2>();
         }
 
-        public void Apply(ViewDelegates.Apply<T1, T2> bulk)
+        public void Apply(ViewDelegates.Apply<TEntityKey, T1, T2> bulk)
         {
-            var p = EntityKeyListPool.Reserve(this.GetEnumerator(), EstimatedSize);
+            var p = EntityKeyListPool<TEntityKey>.Reserve(this.GetEnumerator(), EstimatedSize);
             try
             {
                 if (AllowParallelExecution)
@@ -120,11 +122,11 @@ namespace EnttSharp.Entities
             }
             finally
             {
-                EntityKeyListPool.Release(p);
+                EntityKeyListPool<TEntityKey>.Release(p);
             }
         }
 
-        void ApplyOne(ViewDelegates.Apply<T1, T2> bulk, EntityKey ek)
+        void ApplyOne(ViewDelegates.Apply<TEntityKey, T1, T2> bulk, TEntityKey ek)
         {
             if (pool1.TryGet(ek, out var c1) && 
              pool2.TryGet(ek, out var c2))
@@ -133,9 +135,9 @@ namespace EnttSharp.Entities
             }
         }
 
-        public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TContext, T1, T2> bulk)
+        public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1, T2> bulk)
         {
-            var p = EntityKeyListPool.Reserve(this.GetEnumerator(), EstimatedSize);
+            var p = EntityKeyListPool<TEntityKey>.Reserve(this.GetEnumerator(), EstimatedSize);
             try
             {
                 if (AllowParallelExecution)
@@ -152,11 +154,11 @@ namespace EnttSharp.Entities
             }
             finally
             {
-                EntityKeyListPool.Release(p);
+                EntityKeyListPool<TEntityKey>.Release(p);
             }
         }
 
-        void ApplyOneWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TContext, T1, T2> bulk, EntityKey ek)
+        void ApplyOneWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1, T2> bulk, TEntityKey ek)
         {
             if (pool1.TryGet(ek, out var c1) && 
              pool2.TryGet(ek, out var c2))
@@ -166,13 +168,14 @@ namespace EnttSharp.Entities
         }
     }
 
-    public sealed class PersistentView<T1, T2, T3> : PersistentMultiViewBase, IPersistentEntityView<T1, T2, T3>
+    public sealed class PersistentView<TEntityKey, T1, T2, T3> : PersistentMultiViewBase<TEntityKey>, IPersistentEntityView<TEntityKey, T1, T2, T3>
+        where TEntityKey: IEntityKey
     {
-        readonly Pools.Pool<T1> pool1;
-             readonly Pools.Pool<T2> pool2;
-             readonly Pools.Pool<T3> pool3;
+        readonly Pools.Pool<TEntityKey, T1> pool1;
+             readonly Pools.Pool<TEntityKey, T2> pool2;
+             readonly Pools.Pool<TEntityKey, T3> pool3;
 
-        public PersistentView(EntityRegistry registry) :
+        public PersistentView(IEntityPoolAccess<TEntityKey> registry) :
             base(registry, 
                  registry.GetPool<T1>(),
              registry.GetPool<T2>(),
@@ -184,9 +187,9 @@ namespace EnttSharp.Entities
              pool3 = registry.GetPool<T3>();
         }
 
-        public void Apply(ViewDelegates.Apply<T1, T2, T3> bulk)
+        public void Apply(ViewDelegates.Apply<TEntityKey, T1, T2, T3> bulk)
         {
-            var p = EntityKeyListPool.Reserve(this.GetEnumerator(), EstimatedSize);
+            var p = EntityKeyListPool<TEntityKey>.Reserve(this.GetEnumerator(), EstimatedSize);
             try
             {
                 if (AllowParallelExecution)
@@ -203,11 +206,11 @@ namespace EnttSharp.Entities
             }
             finally
             {
-                EntityKeyListPool.Release(p);
+                EntityKeyListPool<TEntityKey>.Release(p);
             }
         }
 
-        void ApplyOne(ViewDelegates.Apply<T1, T2, T3> bulk, EntityKey ek)
+        void ApplyOne(ViewDelegates.Apply<TEntityKey, T1, T2, T3> bulk, TEntityKey ek)
         {
             if (pool1.TryGet(ek, out var c1) && 
              pool2.TryGet(ek, out var c2) && 
@@ -217,9 +220,9 @@ namespace EnttSharp.Entities
             }
         }
 
-        public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TContext, T1, T2, T3> bulk)
+        public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1, T2, T3> bulk)
         {
-            var p = EntityKeyListPool.Reserve(this.GetEnumerator(), EstimatedSize);
+            var p = EntityKeyListPool<TEntityKey>.Reserve(this.GetEnumerator(), EstimatedSize);
             try
             {
                 if (AllowParallelExecution)
@@ -236,11 +239,11 @@ namespace EnttSharp.Entities
             }
             finally
             {
-                EntityKeyListPool.Release(p);
+                EntityKeyListPool<TEntityKey>.Release(p);
             }
         }
 
-        void ApplyOneWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TContext, T1, T2, T3> bulk, EntityKey ek)
+        void ApplyOneWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1, T2, T3> bulk, TEntityKey ek)
         {
             if (pool1.TryGet(ek, out var c1) && 
              pool2.TryGet(ek, out var c2) && 
@@ -251,14 +254,15 @@ namespace EnttSharp.Entities
         }
     }
 
-    public sealed class PersistentView<T1, T2, T3, T4> : PersistentMultiViewBase, IPersistentEntityView<T1, T2, T3, T4>
+    public sealed class PersistentView<TEntityKey, T1, T2, T3, T4> : PersistentMultiViewBase<TEntityKey>, IPersistentEntityView<TEntityKey, T1, T2, T3, T4>
+        where TEntityKey: IEntityKey
     {
-        readonly Pools.Pool<T1> pool1;
-             readonly Pools.Pool<T2> pool2;
-             readonly Pools.Pool<T3> pool3;
-             readonly Pools.Pool<T4> pool4;
+        readonly Pools.Pool<TEntityKey, T1> pool1;
+             readonly Pools.Pool<TEntityKey, T2> pool2;
+             readonly Pools.Pool<TEntityKey, T3> pool3;
+             readonly Pools.Pool<TEntityKey, T4> pool4;
 
-        public PersistentView(EntityRegistry registry) :
+        public PersistentView(IEntityPoolAccess<TEntityKey> registry) :
             base(registry, 
                  registry.GetPool<T1>(),
              registry.GetPool<T2>(),
@@ -272,9 +276,9 @@ namespace EnttSharp.Entities
              pool4 = registry.GetPool<T4>();
         }
 
-        public void Apply(ViewDelegates.Apply<T1, T2, T3, T4> bulk)
+        public void Apply(ViewDelegates.Apply<TEntityKey, T1, T2, T3, T4> bulk)
         {
-            var p = EntityKeyListPool.Reserve(this.GetEnumerator(), EstimatedSize);
+            var p = EntityKeyListPool<TEntityKey>.Reserve(this.GetEnumerator(), EstimatedSize);
             try
             {
                 if (AllowParallelExecution)
@@ -291,11 +295,11 @@ namespace EnttSharp.Entities
             }
             finally
             {
-                EntityKeyListPool.Release(p);
+                EntityKeyListPool<TEntityKey>.Release(p);
             }
         }
 
-        void ApplyOne(ViewDelegates.Apply<T1, T2, T3, T4> bulk, EntityKey ek)
+        void ApplyOne(ViewDelegates.Apply<TEntityKey, T1, T2, T3, T4> bulk, TEntityKey ek)
         {
             if (pool1.TryGet(ek, out var c1) && 
              pool2.TryGet(ek, out var c2) && 
@@ -306,9 +310,9 @@ namespace EnttSharp.Entities
             }
         }
 
-        public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TContext, T1, T2, T3, T4> bulk)
+        public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1, T2, T3, T4> bulk)
         {
-            var p = EntityKeyListPool.Reserve(this.GetEnumerator(), EstimatedSize);
+            var p = EntityKeyListPool<TEntityKey>.Reserve(this.GetEnumerator(), EstimatedSize);
             try
             {
                 if (AllowParallelExecution)
@@ -325,11 +329,11 @@ namespace EnttSharp.Entities
             }
             finally
             {
-                EntityKeyListPool.Release(p);
+                EntityKeyListPool<TEntityKey>.Release(p);
             }
         }
 
-        void ApplyOneWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TContext, T1, T2, T3, T4> bulk, EntityKey ek)
+        void ApplyOneWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1, T2, T3, T4> bulk, TEntityKey ek)
         {
             if (pool1.TryGet(ek, out var c1) && 
              pool2.TryGet(ek, out var c2) && 
@@ -341,15 +345,16 @@ namespace EnttSharp.Entities
         }
     }
 
-    public sealed class PersistentView<T1, T2, T3, T4, T5> : PersistentMultiViewBase, IPersistentEntityView<T1, T2, T3, T4, T5>
+    public sealed class PersistentView<TEntityKey, T1, T2, T3, T4, T5> : PersistentMultiViewBase<TEntityKey>, IPersistentEntityView<TEntityKey, T1, T2, T3, T4, T5>
+        where TEntityKey: IEntityKey
     {
-        readonly Pools.Pool<T1> pool1;
-             readonly Pools.Pool<T2> pool2;
-             readonly Pools.Pool<T3> pool3;
-             readonly Pools.Pool<T4> pool4;
-             readonly Pools.Pool<T5> pool5;
+        readonly Pools.Pool<TEntityKey, T1> pool1;
+             readonly Pools.Pool<TEntityKey, T2> pool2;
+             readonly Pools.Pool<TEntityKey, T3> pool3;
+             readonly Pools.Pool<TEntityKey, T4> pool4;
+             readonly Pools.Pool<TEntityKey, T5> pool5;
 
-        public PersistentView(EntityRegistry registry) :
+        public PersistentView(IEntityPoolAccess<TEntityKey> registry) :
             base(registry, 
                  registry.GetPool<T1>(),
              registry.GetPool<T2>(),
@@ -365,9 +370,9 @@ namespace EnttSharp.Entities
              pool5 = registry.GetPool<T5>();
         }
 
-        public void Apply(ViewDelegates.Apply<T1, T2, T3, T4, T5> bulk)
+        public void Apply(ViewDelegates.Apply<TEntityKey, T1, T2, T3, T4, T5> bulk)
         {
-            var p = EntityKeyListPool.Reserve(this.GetEnumerator(), EstimatedSize);
+            var p = EntityKeyListPool<TEntityKey>.Reserve(this.GetEnumerator(), EstimatedSize);
             try
             {
                 if (AllowParallelExecution)
@@ -384,11 +389,11 @@ namespace EnttSharp.Entities
             }
             finally
             {
-                EntityKeyListPool.Release(p);
+                EntityKeyListPool<TEntityKey>.Release(p);
             }
         }
 
-        void ApplyOne(ViewDelegates.Apply<T1, T2, T3, T4, T5> bulk, EntityKey ek)
+        void ApplyOne(ViewDelegates.Apply<TEntityKey, T1, T2, T3, T4, T5> bulk, TEntityKey ek)
         {
             if (pool1.TryGet(ek, out var c1) && 
              pool2.TryGet(ek, out var c2) && 
@@ -400,9 +405,9 @@ namespace EnttSharp.Entities
             }
         }
 
-        public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TContext, T1, T2, T3, T4, T5> bulk)
+        public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1, T2, T3, T4, T5> bulk)
         {
-            var p = EntityKeyListPool.Reserve(this.GetEnumerator(), EstimatedSize);
+            var p = EntityKeyListPool<TEntityKey>.Reserve(this.GetEnumerator(), EstimatedSize);
             try
             {
                 if (AllowParallelExecution)
@@ -419,11 +424,11 @@ namespace EnttSharp.Entities
             }
             finally
             {
-                EntityKeyListPool.Release(p);
+                EntityKeyListPool<TEntityKey>.Release(p);
             }
         }
 
-        void ApplyOneWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TContext, T1, T2, T3, T4, T5> bulk, EntityKey ek)
+        void ApplyOneWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1, T2, T3, T4, T5> bulk, TEntityKey ek)
         {
             if (pool1.TryGet(ek, out var c1) && 
              pool2.TryGet(ek, out var c2) && 
@@ -436,16 +441,17 @@ namespace EnttSharp.Entities
         }
     }
 
-    public sealed class PersistentView<T1, T2, T3, T4, T5, T6> : PersistentMultiViewBase, IPersistentEntityView<T1, T2, T3, T4, T5, T6>
+    public sealed class PersistentView<TEntityKey, T1, T2, T3, T4, T5, T6> : PersistentMultiViewBase<TEntityKey>, IPersistentEntityView<TEntityKey, T1, T2, T3, T4, T5, T6>
+        where TEntityKey: IEntityKey
     {
-        readonly Pools.Pool<T1> pool1;
-             readonly Pools.Pool<T2> pool2;
-             readonly Pools.Pool<T3> pool3;
-             readonly Pools.Pool<T4> pool4;
-             readonly Pools.Pool<T5> pool5;
-             readonly Pools.Pool<T6> pool6;
+        readonly Pools.Pool<TEntityKey, T1> pool1;
+             readonly Pools.Pool<TEntityKey, T2> pool2;
+             readonly Pools.Pool<TEntityKey, T3> pool3;
+             readonly Pools.Pool<TEntityKey, T4> pool4;
+             readonly Pools.Pool<TEntityKey, T5> pool5;
+             readonly Pools.Pool<TEntityKey, T6> pool6;
 
-        public PersistentView(EntityRegistry registry) :
+        public PersistentView(IEntityPoolAccess<TEntityKey> registry) :
             base(registry, 
                  registry.GetPool<T1>(),
              registry.GetPool<T2>(),
@@ -463,9 +469,9 @@ namespace EnttSharp.Entities
              pool6 = registry.GetPool<T6>();
         }
 
-        public void Apply(ViewDelegates.Apply<T1, T2, T3, T4, T5, T6> bulk)
+        public void Apply(ViewDelegates.Apply<TEntityKey, T1, T2, T3, T4, T5, T6> bulk)
         {
-            var p = EntityKeyListPool.Reserve(this.GetEnumerator(), EstimatedSize);
+            var p = EntityKeyListPool<TEntityKey>.Reserve(this.GetEnumerator(), EstimatedSize);
             try
             {
                 if (AllowParallelExecution)
@@ -482,11 +488,11 @@ namespace EnttSharp.Entities
             }
             finally
             {
-                EntityKeyListPool.Release(p);
+                EntityKeyListPool<TEntityKey>.Release(p);
             }
         }
 
-        void ApplyOne(ViewDelegates.Apply<T1, T2, T3, T4, T5, T6> bulk, EntityKey ek)
+        void ApplyOne(ViewDelegates.Apply<TEntityKey, T1, T2, T3, T4, T5, T6> bulk, TEntityKey ek)
         {
             if (pool1.TryGet(ek, out var c1) && 
              pool2.TryGet(ek, out var c2) && 
@@ -499,9 +505,9 @@ namespace EnttSharp.Entities
             }
         }
 
-        public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TContext, T1, T2, T3, T4, T5, T6> bulk)
+        public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1, T2, T3, T4, T5, T6> bulk)
         {
-            var p = EntityKeyListPool.Reserve(this.GetEnumerator(), EstimatedSize);
+            var p = EntityKeyListPool<TEntityKey>.Reserve(this.GetEnumerator(), EstimatedSize);
             try
             {
                 if (AllowParallelExecution)
@@ -518,11 +524,11 @@ namespace EnttSharp.Entities
             }
             finally
             {
-                EntityKeyListPool.Release(p);
+                EntityKeyListPool<TEntityKey>.Release(p);
             }
         }
 
-        void ApplyOneWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TContext, T1, T2, T3, T4, T5, T6> bulk, EntityKey ek)
+        void ApplyOneWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1, T2, T3, T4, T5, T6> bulk, TEntityKey ek)
         {
             if (pool1.TryGet(ek, out var c1) && 
              pool2.TryGet(ek, out var c2) && 
@@ -536,17 +542,18 @@ namespace EnttSharp.Entities
         }
     }
 
-    public sealed class PersistentView<T1, T2, T3, T4, T5, T6, T7> : PersistentMultiViewBase, IPersistentEntityView<T1, T2, T3, T4, T5, T6, T7>
+    public sealed class PersistentView<TEntityKey, T1, T2, T3, T4, T5, T6, T7> : PersistentMultiViewBase<TEntityKey>, IPersistentEntityView<TEntityKey, T1, T2, T3, T4, T5, T6, T7>
+        where TEntityKey: IEntityKey
     {
-        readonly Pools.Pool<T1> pool1;
-             readonly Pools.Pool<T2> pool2;
-             readonly Pools.Pool<T3> pool3;
-             readonly Pools.Pool<T4> pool4;
-             readonly Pools.Pool<T5> pool5;
-             readonly Pools.Pool<T6> pool6;
-             readonly Pools.Pool<T7> pool7;
+        readonly Pools.Pool<TEntityKey, T1> pool1;
+             readonly Pools.Pool<TEntityKey, T2> pool2;
+             readonly Pools.Pool<TEntityKey, T3> pool3;
+             readonly Pools.Pool<TEntityKey, T4> pool4;
+             readonly Pools.Pool<TEntityKey, T5> pool5;
+             readonly Pools.Pool<TEntityKey, T6> pool6;
+             readonly Pools.Pool<TEntityKey, T7> pool7;
 
-        public PersistentView(EntityRegistry registry) :
+        public PersistentView(IEntityPoolAccess<TEntityKey> registry) :
             base(registry, 
                  registry.GetPool<T1>(),
              registry.GetPool<T2>(),
@@ -566,9 +573,9 @@ namespace EnttSharp.Entities
              pool7 = registry.GetPool<T7>();
         }
 
-        public void Apply(ViewDelegates.Apply<T1, T2, T3, T4, T5, T6, T7> bulk)
+        public void Apply(ViewDelegates.Apply<TEntityKey, T1, T2, T3, T4, T5, T6, T7> bulk)
         {
-            var p = EntityKeyListPool.Reserve(this.GetEnumerator(), EstimatedSize);
+            var p = EntityKeyListPool<TEntityKey>.Reserve(this.GetEnumerator(), EstimatedSize);
             try
             {
                 if (AllowParallelExecution)
@@ -585,11 +592,11 @@ namespace EnttSharp.Entities
             }
             finally
             {
-                EntityKeyListPool.Release(p);
+                EntityKeyListPool<TEntityKey>.Release(p);
             }
         }
 
-        void ApplyOne(ViewDelegates.Apply<T1, T2, T3, T4, T5, T6, T7> bulk, EntityKey ek)
+        void ApplyOne(ViewDelegates.Apply<TEntityKey, T1, T2, T3, T4, T5, T6, T7> bulk, TEntityKey ek)
         {
             if (pool1.TryGet(ek, out var c1) && 
              pool2.TryGet(ek, out var c2) && 
@@ -603,9 +610,9 @@ namespace EnttSharp.Entities
             }
         }
 
-        public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TContext, T1, T2, T3, T4, T5, T6, T7> bulk)
+        public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1, T2, T3, T4, T5, T6, T7> bulk)
         {
-            var p = EntityKeyListPool.Reserve(this.GetEnumerator(), EstimatedSize);
+            var p = EntityKeyListPool<TEntityKey>.Reserve(this.GetEnumerator(), EstimatedSize);
             try
             {
                 if (AllowParallelExecution)
@@ -622,11 +629,11 @@ namespace EnttSharp.Entities
             }
             finally
             {
-                EntityKeyListPool.Release(p);
+                EntityKeyListPool<TEntityKey>.Release(p);
             }
         }
 
-        void ApplyOneWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TContext, T1, T2, T3, T4, T5, T6, T7> bulk, EntityKey ek)
+        void ApplyOneWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1, T2, T3, T4, T5, T6, T7> bulk, TEntityKey ek)
         {
             if (pool1.TryGet(ek, out var c1) && 
              pool2.TryGet(ek, out var c2) && 

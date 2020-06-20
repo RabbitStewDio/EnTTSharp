@@ -5,7 +5,7 @@ using EnttSharp.Entities;
 
 namespace EnTTSharp.Serialization.Xml
 {
-    public class XmlArchiveWriter : IEntityArchiveWriter
+    public class XmlArchiveWriter<TEntityKey> : IEntityArchiveWriter<TEntityKey> where TEntityKey : IEntityKey
     {
         readonly XmlWriter writer;
 
@@ -37,15 +37,11 @@ namespace EnTTSharp.Serialization.Xml
             writer.WriteAttributeString(XmlTagNames.CountAttribute, entityCount.ToString(CultureInfo.InvariantCulture));
         }
 
-        public void WriteDestroyed(in EntityKey entity)
+        public void WriteDestroyed(in TEntityKey entity)
         {
             writer.WriteStartElement(XmlTagNames.DestroyedEntity);
             writer.WriteAttributeString("entity-key", entity.Key.ToString("X"));
             writer.WriteAttributeString("entity-age", entity.Age.ToString("X"));
-            if (entity.Extra != 0)
-            {
-                writer.WriteAttributeString("entity-extra", entity.Extra.ToString("X"));
-            }
             writer.WriteEndElement();
         }
 
@@ -60,15 +56,11 @@ namespace EnTTSharp.Serialization.Xml
             writer.WriteAttributeString(XmlTagNames.CountAttribute, entityCount.ToString(CultureInfo.InvariantCulture));
         }
 
-        public void WriteEntity(in EntityKey entity)
+        public void WriteEntity(in TEntityKey entity)
         {
             writer.WriteStartElement(XmlTagNames.Entity);
             writer.WriteAttributeString("entity-key", entity.Key.ToString("X"));
             writer.WriteAttributeString("entity-age", entity.Age.ToString("X"));
-            if (entity.Extra != 0)
-            {
-                writer.WriteAttributeString("entity-extra", entity.Extra.ToString("X"));
-            }
             writer.WriteEndElement();
         }
 
@@ -86,18 +78,14 @@ namespace EnTTSharp.Serialization.Xml
             writer.WriteAttributeString("type", handler.TypeId);
         }
 
-        public void WriteComponent<TComponent>(in EntityKey entity, in TComponent c)
+        public void WriteComponent<TComponent>(in TEntityKey entity, in TComponent c)
         {
             var handler = Registry.QueryHandler<TComponent>();
             writer.WriteStartElement(XmlTagNames.Component);
             writer.WriteAttributeString("entity-key", entity.Key.ToString("X"));
             writer.WriteAttributeString("entity-age", entity.Age.ToString("X"));
-            if (entity.Extra != 0)
-            {
-                writer.WriteAttributeString("entity-extra", entity.Extra.ToString("X"));
-            }
             writer.WriteAttributeString("type", handler.TypeId);
-            handler.GetHandler<TComponent>().Invoke(writer, entity, c);
+            handler.GetHandler<TComponent>().Invoke(writer, c);
             writer.WriteEndElement();
         }
 
@@ -115,7 +103,7 @@ namespace EnTTSharp.Serialization.Xml
             writer.WriteEndElement();
         }
 
-        public void WriteTag<TComponent>(in EntityKey entity, in TComponent c)
+        public void WriteTag<TComponent>(in TEntityKey entity, in TComponent c)
         {
             var handler = Registry.QueryHandler<TComponent>();
             writer.WriteStartElement(XmlTagNames.Tag);
@@ -123,11 +111,7 @@ namespace EnTTSharp.Serialization.Xml
             writer.WriteAttributeString("missing", "false");
             writer.WriteAttributeString("entity-key", entity.Key.ToString("X"));
             writer.WriteAttributeString("entity-age", entity.Age.ToString("X"));
-            if (entity.Extra != 0)
-            {
-                writer.WriteAttributeString("entity-extra", entity.Extra.ToString("X"));
-            }
-            handler.GetHandler<TComponent>().Invoke(writer, entity, c);
+            handler.GetHandler<TComponent>().Invoke(writer, c);
             writer.WriteEndElement();
         }
 

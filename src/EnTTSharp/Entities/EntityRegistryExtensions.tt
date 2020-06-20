@@ -21,13 +21,15 @@ namespace EnttSharp.Entities
         var templateParamsLight = BuildLightTemplate(p);
         var templateParams = BuildTemplate(p);
 #>
-        public static bool HasComponent<#= templateParams #>(this IEntityViewControl reg, EntityKey e)
+        public static bool HasComponent<TEntityKey, <#= templateParamsLight #>>(this IEntityViewControl<TEntityKey> reg, TEntityKey e)
+            where TEntityKey : IEntityKey
         {
             return <#= JoinGenericParams(p, "reg.HasComponent<T{0}>(e)", " && ") #>;
         }
 
-        public static bool GetComponent<#= templateParams #>(this IEntityViewControl reg, EntityKey entity, 
+        public static bool GetComponent<TEntityKey, <#= templateParamsLight #>>(this IEntityViewControl<TEntityKey> reg, TEntityKey entity, 
                                                              <#= JoinGenericParams(p, "out T{0} c{0}", ", ") #>)
+            where TEntityKey : IEntityKey
         {
             if (<#= JoinGenericParams(p, "reg.GetComponent(entity, out c{0})", " && ") #>)
             {

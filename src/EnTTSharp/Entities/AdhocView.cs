@@ -5,16 +5,17 @@ using EnttSharp.Entities.Helpers;
 
 namespace EnttSharp.Entities
 {
-    public sealed class AdhocView<TComponent> : IEntityView<TComponent>
+    public sealed class AdhocView<TEntityKey, TComponent> : IEntityView<TEntityKey, TComponent> 
+        where TEntityKey : IEntityKey
     {
-        readonly Pools.Pool<TComponent> viewData;
-        readonly EntityRegistry registry;
-        readonly EventHandler<EntityKey> onCreated;
-        readonly EventHandler<EntityKey> onDestroyed;
+        readonly IEntityPoolAccess<TEntityKey> registry;
+        readonly Pools.Pool<TEntityKey, TComponent> viewData;
+        readonly EventHandler<TEntityKey> onCreated;
+        readonly EventHandler<TEntityKey> onDestroyed;
         bool disposed;
         public bool AllowParallelExecution { get; set; }
 
-        public AdhocView(EntityRegistry registry)
+        public AdhocView(IEntityPoolAccess<TEntityKey> registry)
         {
             this.registry = registry ?? throw new ArgumentNullException(nameof(registry));
             this.viewData = registry.GetPool<TComponent>();
@@ -29,12 +30,12 @@ namespace EnttSharp.Entities
             Dispose(false);
         }
 
-        public bool IsOrphan(EntityKey entity)
+        public bool IsOrphan(TEntityKey entity)
         {
             return registry.IsOrphan(entity);
         }
 
-        public void Reset(EntityKey entity)
+        public void Reset(TEntityKey entity)
         {
             registry.Reset(entity);
         }
@@ -44,17 +45,17 @@ namespace EnttSharp.Entities
             return registry.HasTag<TTag>();
         }
 
-        public bool TryGetTag<TTag>(out EntityKey k, out TTag tag)
+        public bool TryGetTag<TTag>(out TEntityKey k, out TTag tag)
         {
             return registry.TryGetTag(out k, out tag);
         }
 
-        public void AttachTag<TTag>(EntityKey entity)
+        public void AttachTag<TTag>(TEntityKey entity)
         {
             registry.AttachTag<TTag>(entity);
         }
 
-        public void AttachTag<TTag>(EntityKey entity, in TTag tag)
+        public void AttachTag<TTag>(TEntityKey entity, in TTag tag)
         {
             registry.AttachTag(entity, in tag);
         }
@@ -64,77 +65,77 @@ namespace EnttSharp.Entities
             registry.RemoveTag<TTag>();
         }
 
-        public bool HasComponent<TOtherComponent>(EntityKey entity)
+        public bool HasComponent<TOtherComponent>(TEntityKey entity)
         {
             return registry.HasComponent<TOtherComponent>(entity);
         }
 
-        public TOtherComponent AssignComponent<TOtherComponent>(EntityKey entity)
+        public TOtherComponent AssignComponent<TOtherComponent>(TEntityKey entity)
         {
             return registry.AssignComponent<TOtherComponent>(entity);
         }
 
-        public void AssignComponent<TOtherComponent>(EntityKey entity, in TOtherComponent c)
+        public void AssignComponent<TOtherComponent>(TEntityKey entity, in TOtherComponent c)
         {
             registry.AssignComponent(entity, in c);
         }
 
-        public bool ReplaceComponent<TOtherComponent>(EntityKey entity, in TOtherComponent c)
+        public bool ReplaceComponent<TOtherComponent>(TEntityKey entity, in TOtherComponent c)
         {
             return registry.ReplaceComponent(entity, in c);
         }
 
-        TOtherComponent IEntityViewControl.AssignOrReplace<TOtherComponent>(EntityKey entity)
+        TOtherComponent IEntityViewControl<TEntityKey>.AssignOrReplace<TOtherComponent>(TEntityKey entity)
         {
             return registry.AssignOrReplace<TOtherComponent>(entity);
         }
 
-        void OnCreated(object sender, EntityKey e)
+        void OnCreated(object sender, TEntityKey e)
         {
             Created?.Invoke(sender, e);
         }
 
-        void OnDestroyed(object sender, EntityKey e)
+        void OnDestroyed(object sender, TEntityKey e)
         {
             Destroyed?.Invoke(sender, e);
         }
 
-        public bool Contains(EntityKey e)
+        public bool Contains(TEntityKey e)
         {
             return viewData.Contains(e);
         }
 
         public void Reserve(int capacity)
         {
-            registry.Reserve<TComponent>(capacity);
+            registry.GetPool<TComponent>().Reserve(capacity);
         }
 
         public void Respect<TOtherComponent>()
         {
-            viewData.Respect(registry.View<TOtherComponent>());
+            viewData.Respect(registry.GetPool<TOtherComponent>());
         }
 
-        public bool GetComponent<TOtherComponent>(EntityKey entity, out TOtherComponent data)
+        public bool GetComponent<TOtherComponent>(TEntityKey entity, out TOtherComponent data)
         {
             return registry.GetComponent(entity, out data);
         }
 
-        public void WriteBack<TOtherComponent>(EntityKey entity, in TOtherComponent data)
+        public void WriteBack<TOtherComponent>(TEntityKey entity, in TOtherComponent data)
         {
             registry.WriteBack(entity, in data);
         }
 
-        public void RemoveComponent<TOtherComponent>(EntityKey entity)
+        public void RemoveComponent<TOtherComponent>(TEntityKey entity)
         {
             registry.RemoveComponent<TOtherComponent>(entity);
         }
 
-        public event EventHandler<EntityKey> Destroyed;
-        public event EventHandler<EntityKey> Created;
+        public event EventHandler<TEntityKey> Destroyed;
+        public event EventHandler<TEntityKey> Created;
 
-        public void Apply(ViewDelegates.Apply bulk)
+        public void Apply(ViewDelegates.Apply<TEntityKey> bulk)
         {
-            var p = EntityKeyListPool.Reserve(viewData.GetEnumerator(), viewData.Count);
+            var p = EntityKeyListPool<TEntityKey>.Reserve(viewData.GetEnumerator(), viewData.Count);
             try
             {
                 foreach (var ek in p)
@@ -144,13 +145,13 @@ namespace EnttSharp.Entities
             }
             finally
             {
-                EntityKeyListPool.Release(p);
+                EntityKeyListPool<TEntityKey>.Release(p);
             }
         }
 
-        public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TContext> bulk)
+        public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TEntityKey, TContext> bulk)
         {
-            var p = EntityKeyListPool.Reserve(viewData.GetEnumerator(), viewData.Count);
+            var p = EntityKeyListPool<TEntityKey>.Reserve(viewData.GetEnumerator(), viewData.Count);
             try
             {
                 foreach (var ek in p)
@@ -160,13 +161,13 @@ namespace EnttSharp.Entities
             }
             finally
             {
-                EntityKeyListPool.Release(p);
+                EntityKeyListPool<TEntityKey>.Release(p);
             }
         }
 
-        public void Apply(ViewDelegates.Apply<TComponent> bulk)
+        public void Apply(ViewDelegates.Apply<TEntityKey, TComponent> bulk)
         {
-            var p = EntityKeyListPool.Reserve(viewData.GetEnumerator(), viewData.Count);
+            var p = EntityKeyListPool<TEntityKey>.Reserve(viewData.GetEnumerator(), viewData.Count);
             try
             {
                 foreach (var ek in p)
@@ -179,14 +180,14 @@ namespace EnttSharp.Entities
             }
             finally
             {
-                EntityKeyListPool.Release(p);
+                EntityKeyListPool<TEntityKey>.Release(p);
             }
         }
 
         public void ApplyWithContext<TContext>(TContext context,
-                                               ViewDelegates.ApplyWithContext<TContext, TComponent> bulk)
+                                               ViewDelegates.ApplyWithContext<TEntityKey, TContext, TComponent> bulk)
         {
-            var p = EntityKeyListPool.Reserve(viewData.GetEnumerator(), viewData.Count);
+            var p = EntityKeyListPool<TEntityKey>.Reserve(viewData.GetEnumerator(), viewData.Count);
             try
             {
                 foreach (var ek in p)
@@ -199,16 +200,16 @@ namespace EnttSharp.Entities
             }
             finally
             {
-                EntityKeyListPool.Release(p);
+                EntityKeyListPool<TEntityKey>.Release(p);
             }
         }
 
-        public void AssignOrReplace<TOtherComponent>(EntityKey entity)
+        public void AssignOrReplace<TOtherComponent>(TEntityKey entity)
         {
             registry.AssignOrReplace<TOtherComponent>(entity);
         }
 
-        public void AssignOrReplace<TOtherComponent>(EntityKey entity, in TOtherComponent c)
+        public void AssignOrReplace<TOtherComponent>(TEntityKey entity, in TOtherComponent c)
         {
             registry.AssignOrReplace(entity, in c);
         }
@@ -218,12 +219,12 @@ namespace EnttSharp.Entities
             return GetEnumerator();
         }
 
-        IEnumerator<EntityKey> IEnumerable<EntityKey>.GetEnumerator()
+        IEnumerator<TEntityKey> IEnumerable<TEntityKey>.GetEnumerator()
         {
             return GetEnumerator();
         }
 
-        public RawList<EntityKey>.Enumerator GetEnumerator()
+        public RawList<TEntityKey>.Enumerator GetEnumerator()
         {
             return viewData.GetEnumerator();
         }

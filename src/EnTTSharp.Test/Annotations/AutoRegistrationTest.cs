@@ -18,7 +18,7 @@ namespace EnTTSharp.Test.Annotations
         public void Test1()
         {
             var components = new EntityRegistrationScanner()
-                             .With(new ComponentRegistrationHandler())
+                             .With(new ComponentRegistrationHandler<EntityKey>())
                              .RegisterEntitiesFromAllAssemblies();
 
             foreach (var c in components)
@@ -28,9 +28,9 @@ namespace EnTTSharp.Test.Annotations
 
             components.Count.Should().Be(6);
 
-            var registry = new EntityRegistry();
-            new EntityComponentActivator()
-                .With(new ComponentRegistrationActivator())
+            var registry = new EntityRegistry<EntityKey>(EntityKey.Create);
+            new EntityComponentActivator<EntityKey>()
+                .With(new ComponentRegistrationActivator<EntityKey>())
                 .ActivateAll(registry, components);
         }
     }

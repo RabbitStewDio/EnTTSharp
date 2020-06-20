@@ -20,11 +20,12 @@ namespace EnttSharp.Entities
         var templateParamsLight = BuildLightTemplate(p);
 #>
 
-    public sealed class PersistentView<#= templateParams #> : PersistentMultiViewBase, IPersistentEntityView<#= templateParams #>
+    public sealed class PersistentView<TEntityKey, <#= templateParamsLight #>> : PersistentMultiViewBase<TEntityKey>, IPersistentEntityView<TEntityKey, <#= templateParamsLight #>>
+        where TEntityKey: IEntityKey
     {
-        <#= JoinGenericParams(p, "readonly Pools.Pool<T{0}> pool{0};", "\n             ") #>
+        <#= JoinGenericParams(p, "readonly Pools.Pool<TEntityKey, T{0}> pool{0};", "\n             ") #>
 
-        public PersistentView(EntityRegistry registry) :
+        public PersistentView(IEntityPoolAccess<TEntityKey> registry) :
             base(registry, 
                  <#= JoinGenericParams(p, "registry.GetPool<T{0}>()", ",\n             ") #>
             )
@@ -32,9 +33,9 @@ namespace EnttSharp.Entities
             <#= JoinGenericParams(p, "pool{0} = registry.GetPool<T{0}>();", "\n             ") #>
         }
 
-        public void Apply(ViewDelegates.Apply<#= templateParams #> bulk)
+        public void Apply(ViewDelegates.Apply<TEntityKey, <#= templateParamsLight #>> bulk)
         {
-            var p = EntityKeyListPool.Reserve(this.GetEnumerator(), EstimatedSize);
+            var p = EntityKeyListPool<TEntityKey>.Reserve(this.GetEnumerator(), EstimatedSize);
             try
             {
                 if (AllowParallelExecution)
@@ -51,11 +52,11 @@ namespace EnttSharp.Entities
             }
             finally
             {
-                EntityKeyListPool.Release(p);
+                EntityKeyListPool<TEntityKey>.Release(p);
             }
         }
 
-        void ApplyOne(ViewDelegates.Apply<#= templateParams #> bulk, EntityKey ek)
+        void ApplyOne(ViewDelegates.Apply<TEntityKey, <#= templateParamsLight #>> bulk, TEntityKey ek)
         {
             if (<#= JoinGenericParams(p, "pool{0}.TryGet(ek, out var c{0})", " && \n             ") #>)
             {
@@ -63,9 +64,9 @@ namespace EnttSharp.Entities
             }
         }
 
-        public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TContext, <#= templateParamsLight #>> bulk)
+        public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TEntityKey, TContext, <#= templateParamsLight #>> bulk)
         {
-            var p = EntityKeyListPool.Reserve(this.GetEnumerator(), EstimatedSize);
+            var p = EntityKeyListPool<TEntityKey>.Reserve(this.GetEnumerator(), EstimatedSize);
             try
             {
                 if (AllowParallelExecution)
@@ -82,11 +83,11 @@ namespace EnttSharp.Entities
             }
             finally
             {
-                EntityKeyListPool.Release(p);
+                EntityKeyListPool<TEntityKey>.Release(p);
             }
         }
 
-        void ApplyOneWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TContext, <#= templateParamsLight #>> bulk, EntityKey ek)
+        void ApplyOneWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TEntityKey, TContext, <#= templateParamsLight #>> bulk, TEntityKey ek)
         {
             if (<#= JoinGenericParams(p, "pool{0}.TryGet(ek, out var c{0})", " && \n             ") #>)
             {

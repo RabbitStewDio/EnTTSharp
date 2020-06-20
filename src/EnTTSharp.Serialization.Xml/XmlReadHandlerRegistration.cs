@@ -4,7 +4,7 @@ using EnttSharp.Entities;
 
 namespace EnTTSharp.Serialization.Xml
 {
-    public delegate TComponent ReadHandlerDelegate<TComponent>(XmlReader reader, Func<EntityKey,EntityKey> keyMapper);
+    public delegate TComponent ReadHandlerDelegate<TComponent>(XmlReader reader);
 
     public readonly struct XmlReadHandlerRegistration
     {
@@ -32,7 +32,7 @@ namespace EnTTSharp.Serialization.Xml
             fn = default;
             return false;
         }
-        
+
         public static XmlReadHandlerRegistration Create<TComponent>(ReadHandlerDelegate<TComponent> handler, bool tag)
         {
             return new XmlReadHandlerRegistration(typeof(TComponent).FullName, typeof(TComponent), handler, tag);
@@ -44,6 +44,7 @@ namespace EnTTSharp.Serialization.Xml
             {
                 id = typeof(TComponent).FullName;
             }
+
             return new XmlReadHandlerRegistration(id, typeof(TComponent), handler, tag);
         }
     }

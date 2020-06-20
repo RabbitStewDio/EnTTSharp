@@ -10,130 +10,130 @@
 
 namespace EnttSharp.Entities
 {
-    public partial class EntityRegistry
+    public partial class EntityRegistry<TEntityKey>
     {
-        public IEntityView<T1> View<T1>()
+        public IEntityView<TEntityKey, T1> View<T1>()
         {
-            return new AdhocView<T1>(this);
+            return new AdhocView<TEntityKey, T1>(this);
         }
 
-        public IPersistentEntityView<T1> PersistentView<T1>()
+        public IPersistentEntityView<TEntityKey, T1> PersistentView<T1>()
         {
-            var type = typeof(PersistentView<T1>);
+            var type = typeof(PersistentView<TEntityKey, T1>);
             if (views.TryGetValue(type, out var view))
             {
-                return (IPersistentEntityView<T1>)view;
+                return (IPersistentEntityView<TEntityKey, T1>)view;
             }
 
-            var v = new PersistentView<T1>(this);
+            var v = new PersistentView<TEntityKey, T1>(this);
             views[type] = v;
             return v;
         }
 
-        public IEntityView<T1, T2> View<T1, T2>()
+        public IEntityView<TEntityKey, T1, T2> View<T1, T2>()
         {
-            return new AdhocView<T1, T2>(this);
+            return new AdhocView<TEntityKey, T1, T2>(this);
         }
 
-        public IPersistentEntityView<T1, T2> PersistentView<T1, T2>()
+        public IPersistentEntityView<TEntityKey, T1, T2> PersistentView<T1, T2>()
         {
-            var type = typeof(PersistentView<T1, T2>);
+            var type = typeof(PersistentView<TEntityKey, T1, T2>);
             if (views.TryGetValue(type, out var view))
             {
-                return (IPersistentEntityView<T1, T2>)view;
+                return (IPersistentEntityView<TEntityKey, T1, T2>)view;
             }
 
-            var v = new PersistentView<T1, T2>(this);
+            var v = new PersistentView<TEntityKey, T1, T2>(this);
             views[type] = v;
             return v;
         }
 
-        public IEntityView<T1, T2, T3> View<T1, T2, T3>()
+        public IEntityView<TEntityKey, T1, T2, T3> View<T1, T2, T3>()
         {
-            return new AdhocView<T1, T2, T3>(this);
+            return new AdhocView<TEntityKey, T1, T2, T3>(this);
         }
 
-        public IPersistentEntityView<T1, T2, T3> PersistentView<T1, T2, T3>()
+        public IPersistentEntityView<TEntityKey, T1, T2, T3> PersistentView<T1, T2, T3>()
         {
-            var type = typeof(PersistentView<T1, T2, T3>);
+            var type = typeof(PersistentView<TEntityKey, T1, T2, T3>);
             if (views.TryGetValue(type, out var view))
             {
-                return (IPersistentEntityView<T1, T2, T3>)view;
+                return (IPersistentEntityView<TEntityKey, T1, T2, T3>)view;
             }
 
-            var v = new PersistentView<T1, T2, T3>(this);
+            var v = new PersistentView<TEntityKey, T1, T2, T3>(this);
             views[type] = v;
             return v;
         }
 
-        public IEntityView<T1, T2, T3, T4> View<T1, T2, T3, T4>()
+        public IEntityView<TEntityKey, T1, T2, T3, T4> View<T1, T2, T3, T4>()
         {
-            return new AdhocView<T1, T2, T3, T4>(this);
+            return new AdhocView<TEntityKey, T1, T2, T3, T4>(this);
         }
 
-        public IPersistentEntityView<T1, T2, T3, T4> PersistentView<T1, T2, T3, T4>()
+        public IPersistentEntityView<TEntityKey, T1, T2, T3, T4> PersistentView<T1, T2, T3, T4>()
         {
-            var type = typeof(PersistentView<T1, T2, T3, T4>);
+            var type = typeof(PersistentView<TEntityKey, T1, T2, T3, T4>);
             if (views.TryGetValue(type, out var view))
             {
-                return (IPersistentEntityView<T1, T2, T3, T4>)view;
+                return (IPersistentEntityView<TEntityKey, T1, T2, T3, T4>)view;
             }
 
-            var v = new PersistentView<T1, T2, T3, T4>(this);
+            var v = new PersistentView<TEntityKey, T1, T2, T3, T4>(this);
             views[type] = v;
             return v;
         }
 
-        public IEntityView<T1, T2, T3, T4, T5> View<T1, T2, T3, T4, T5>()
+        public IEntityView<TEntityKey, T1, T2, T3, T4, T5> View<T1, T2, T3, T4, T5>()
         {
-            return new AdhocView<T1, T2, T3, T4, T5>(this);
+            return new AdhocView<TEntityKey, T1, T2, T3, T4, T5>(this);
         }
 
-        public IPersistentEntityView<T1, T2, T3, T4, T5> PersistentView<T1, T2, T3, T4, T5>()
+        public IPersistentEntityView<TEntityKey, T1, T2, T3, T4, T5> PersistentView<T1, T2, T3, T4, T5>()
         {
-            var type = typeof(PersistentView<T1, T2, T3, T4, T5>);
+            var type = typeof(PersistentView<TEntityKey, T1, T2, T3, T4, T5>);
             if (views.TryGetValue(type, out var view))
             {
-                return (IPersistentEntityView<T1, T2, T3, T4, T5>)view;
+                return (IPersistentEntityView<TEntityKey, T1, T2, T3, T4, T5>)view;
             }
 
-            var v = new PersistentView<T1, T2, T3, T4, T5>(this);
+            var v = new PersistentView<TEntityKey, T1, T2, T3, T4, T5>(this);
             views[type] = v;
             return v;
         }
 
-        public IEntityView<T1, T2, T3, T4, T5, T6> View<T1, T2, T3, T4, T5, T6>()
+        public IEntityView<TEntityKey, T1, T2, T3, T4, T5, T6> View<T1, T2, T3, T4, T5, T6>()
         {
-            return new AdhocView<T1, T2, T3, T4, T5, T6>(this);
+            return new AdhocView<TEntityKey, T1, T2, T3, T4, T5, T6>(this);
         }
 
-        public IPersistentEntityView<T1, T2, T3, T4, T5, T6> PersistentView<T1, T2, T3, T4, T5, T6>()
+        public IPersistentEntityView<TEntityKey, T1, T2, T3, T4, T5, T6> PersistentView<T1, T2, T3, T4, T5, T6>()
         {
-            var type = typeof(PersistentView<T1, T2, T3, T4, T5, T6>);
+            var type = typeof(PersistentView<TEntityKey, T1, T2, T3, T4, T5, T6>);
             if (views.TryGetValue(type, out var view))
             {
-                return (IPersistentEntityView<T1, T2, T3, T4, T5, T6>)view;
+                return (IPersistentEntityView<TEntityKey, T1, T2, T3, T4, T5, T6>)view;
             }
 
-            var v = new PersistentView<T1, T2, T3, T4, T5, T6>(this);
+            var v = new PersistentView<TEntityKey, T1, T2, T3, T4, T5, T6>(this);
             views[type] = v;
             return v;
         }
 
-        public IEntityView<T1, T2, T3, T4, T5, T6, T7> View<T1, T2, T3, T4, T5, T6, T7>()
+        public IEntityView<TEntityKey, T1, T2, T3, T4, T5, T6, T7> View<T1, T2, T3, T4, T5, T6, T7>()
         {
-            return new AdhocView<T1, T2, T3, T4, T5, T6, T7>(this);
+            return new AdhocView<TEntityKey, T1, T2, T3, T4, T5, T6, T7>(this);
         }
 
-        public IPersistentEntityView<T1, T2, T3, T4, T5, T6, T7> PersistentView<T1, T2, T3, T4, T5, T6, T7>()
+        public IPersistentEntityView<TEntityKey, T1, T2, T3, T4, T5, T6, T7> PersistentView<T1, T2, T3, T4, T5, T6, T7>()
         {
-            var type = typeof(PersistentView<T1, T2, T3, T4, T5, T6, T7>);
+            var type = typeof(PersistentView<TEntityKey, T1, T2, T3, T4, T5, T6, T7>);
             if (views.TryGetValue(type, out var view))
             {
-                return (IPersistentEntityView<T1, T2, T3, T4, T5, T6, T7>)view;
+                return (IPersistentEntityView<TEntityKey, T1, T2, T3, T4, T5, T6, T7>)view;
             }
 
-            var v = new PersistentView<T1, T2, T3, T4, T5, T6, T7>(this);
+            var v = new PersistentView<TEntityKey, T1, T2, T3, T4, T5, T6, T7>(this);
             views[type] = v;
             return v;
         }

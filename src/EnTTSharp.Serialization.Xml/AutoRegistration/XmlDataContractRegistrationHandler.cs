@@ -2,13 +2,14 @@
 using System.Runtime.Serialization;
 using EnTTSharp.Annotations;
 using EnTTSharp.Annotations.Impl;
+using EnttSharp.Entities;
 using Serilog;
 
 namespace EnTTSharp.Serialization.Xml
 {
-    public class XmlDataContractRegistrationHandler : EntityRegistrationHandlerBase
+    public class XmlDataContractRegistrationHandler<TEntityKey> : EntityRegistrationHandlerBase where TEntityKey : IEntityKey
     {
-        static readonly ILogger Logger = Log.ForContext<XmlDataContractRegistrationHandler>();
+        static readonly ILogger Logger = Log.ForContext<XmlDataContractRegistrationHandler<TEntityKey>>();
 
         protected override void ProcessTyped<TComponent>(EntityComponentRegistration r)
         {

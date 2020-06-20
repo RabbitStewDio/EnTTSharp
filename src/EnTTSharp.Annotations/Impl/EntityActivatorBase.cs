@@ -4,16 +4,17 @@ using EnttSharp.Entities;
 
 namespace EnTTSharp.Annotations.Impl
 {
-    public abstract class EntityActivatorBase : IEntityRegistrationActivator
+    public abstract class EntityActivatorBase<TEntityKey> : IEntityRegistrationActivator<TEntityKey> 
+        where TEntityKey : IEntityKey
     {
         static readonly MethodInfo ProcessMethodInfo;
 
         static EntityActivatorBase()
         {
-            var method = typeof(EntityActivatorBase).GetMethod(nameof(ProcessTypedInternal),
+            var method = typeof(EntityActivatorBase<TEntityKey>).GetMethod(nameof(ProcessTypedInternal),
                                                                BindingFlags.NonPublic | BindingFlags.Instance,
                                                                null,
-                                                               new[] { typeof(EntityComponentRegistration), typeof(EntityRegistry) },
+                                                               new[] { typeof(EntityComponentRegistration), typeof(IEntityComponentRegistry<TEntityKey>) },
                                                                null);
             if (method == null)
             {
@@ -23,18 +24,18 @@ namespace EnTTSharp.Annotations.Impl
             ProcessMethodInfo = method;
         }
 
-        public void Activate(EntityComponentRegistration reg, EntityRegistry registry)
+        public void Activate(EntityComponentRegistration reg, IEntityComponentRegistry<TEntityKey> registry)
         {
             var typeInfo = reg.TypeInfo;
             var genericMethod = ProcessMethodInfo.MakeGenericMethod(typeInfo);
             genericMethod.Invoke(this, new object[] { reg, registry });
         }
 
-        void ProcessTypedInternal<TComponent>(EntityComponentRegistration r, EntityRegistry reg)
+        void ProcessTypedInternal<TComponent>(EntityComponentRegistration r, IEntityComponentRegistry<TEntityKey> reg)
         {
             ProcessTyped<TComponent>(r, reg);
         }
 
-        protected abstract void ProcessTyped<TComponent>(EntityComponentRegistration r, EntityRegistry reg);
+        protected abstract void ProcessTyped<TComponent>(EntityComponentRegistration r, IEntityComponentRegistry<TEntityKey> reg);
     }
 }

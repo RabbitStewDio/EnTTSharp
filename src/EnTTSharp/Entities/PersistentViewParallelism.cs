@@ -7,7 +7,7 @@ namespace EnttSharp.Entities
 {
     public static class PersistentViewParallelism
     {
-        public static void PartitionAndRun(List<EntityKey> p, Action<EntityKey> action)
+        public static void PartitionAndRun<TEntityKey>(List<TEntityKey> p, Action<TEntityKey> action)
         {
             if (p.Count == 0)
             {

@@ -6,7 +6,7 @@ using EnttSharp.Entities;
 
 namespace EnTTSharp.Serialization.Xml
 {
-    public class XmlArchiveReaderBackend
+    public class XmlArchiveReaderBackend<TEntityKey> where TEntityKey : IEntityKey
     {
         readonly MethodInfo tagParserMethod;
         readonly MethodInfo missingTagParserMethod;
@@ -24,61 +24,54 @@ namespace EnTTSharp.Serialization.Xml
 
             var paramTypes = new[]
             {
-                typeof(XmlReader), typeof(EntityKey), typeof(ISnapshotLoader), typeof(XmlReadHandlerRegistration)
+                typeof(XmlReader), typeof(TEntityKey), typeof(ISnapshotLoader<TEntityKey>), typeof(XmlReadHandlerRegistration)
             };
 
-            tagParserMethod = typeof(XmlArchiveReaderBackend).GetMethod(nameof(ParseTagInternal),
-                                                                        BindingFlags.Instance | BindingFlags.NonPublic, null, 
-                                                                        paramTypes, null)
+            tagParserMethod = typeof(XmlArchiveReaderBackend<TEntityKey>).GetMethod(nameof(ParseTagInternal),
+                                                                                    BindingFlags.Instance | BindingFlags.NonPublic, null, 
+                                                                                    paramTypes, null)
                               ?? throw new InvalidOperationException("Unable to find tag parsing wrapper method");
 
-            componentParserMethod = typeof(XmlArchiveReaderBackend).GetMethod(nameof(ParseComponentInternal),
-                                                                              BindingFlags.Instance | BindingFlags.NonPublic, null, 
-                                                                              paramTypes, null)
+            componentParserMethod = typeof(XmlArchiveReaderBackend<TEntityKey>).GetMethod(nameof(ParseComponentInternal),
+                                                                                          BindingFlags.Instance | BindingFlags.NonPublic, null, 
+                                                                                          paramTypes, null)
                                     ?? throw new InvalidOperationException("Unable to find component parsing wrapper method");
 
             var missingTagParamTypes = new[]
             {
-                typeof(ISnapshotLoader), typeof(XmlReadHandlerRegistration)
+                typeof(ISnapshotLoader<TEntityKey>), typeof(XmlReadHandlerRegistration)
             };
-            missingTagParserMethod = typeof(XmlArchiveReaderBackend).GetMethod(nameof(ParseMissingTagInternal),
-                                                                               BindingFlags.Instance | BindingFlags.NonPublic, null,
-                                                                               missingTagParamTypes, null)
+            missingTagParserMethod = typeof(XmlArchiveReaderBackend<TEntityKey>).GetMethod(nameof(ParseMissingTagInternal),
+                                                                                           BindingFlags.Instance | BindingFlags.NonPublic, null,
+                                                                                           missingTagParamTypes, null)
                                      ?? throw new InvalidOperationException("Unable to find component parsing wrapper method");
         }
 
         public readonly XmlReadHandlerRegistry Registry;
 
-        public EntityKey ReadEntity(XmlReader r)
+        public TEntityKey ReadEntity(XmlReader r,
+                                     Func<EntityKeyData, TEntityKey> entityMapper)
         {
-            return ReadEntity(r, XmlTagNames.Entity);
+            return entityMapper(ReadEntityData(r, XmlTagNames.Entity));
         }
 
-        public EntityKey ReadDestroyedEntity(XmlReader r)
+        public TEntityKey ReadDestroyedEntity(XmlReader r,
+                                              Func<EntityKeyData, TEntityKey> entityMapper)
         {
-            return ReadEntity(r, XmlTagNames.DestroyedEntity);
+            return entityMapper(ReadEntityData(r, XmlTagNames.DestroyedEntity));
         }
 
-        EntityKey ReadEntity(XmlReader r, string tag)
+        EntityKeyData ReadEntityData(XmlReader r, string tag)
         {
             var age = int.Parse(r.GetAttribute("entity-age") ?? throw r.FromMissingAttribute(tag, "entity-age"));
             var key = int.Parse(r.GetAttribute("entity-key") ?? throw r.FromMissingAttribute(tag, "entity-key"));
-
-            var extraRaw = r.GetAttribute("entity-extra");
-            var extra = 0u;
-            if (!string.IsNullOrEmpty(extraRaw))
-            {
-                extra = uint.Parse(r.GetAttribute("extra") ?? "0");
-            }
-
-            var entity = new EntityKey((byte)age, key, extra);
-            return entity;
+            return new EntityKeyData(age, key);
         }
 
 
         public void ReadTagTyped<TComponent>(XmlReader reader,
-                                             Func<EntityKey, EntityKey> entityMapper,
-                                             out EntityKey entity,
+                                             Func<EntityKeyData, TEntityKey> entityMapper,
+                                             out TEntityKey entity,
                                              out TComponent component)
         {
             if (!Registry.TryGetValue(typeof(TComponent), out var handler))
@@ -91,12 +84,12 @@ namespace EnTTSharp.Serialization.Xml
                 throw new InvalidOperationException("Unable to resolve handler for registered type " + typeof(TComponent));
             }
 
-            entity = ReadEntity(reader, XmlTagNames.Tag);
+            entity = entityMapper(ReadEntityData(reader, XmlTagNames.Tag));
             var _ = reader.Read();
-            component = parser(reader, entityMapper);
+            component = parser(reader);
         }
 
-        public void ReadTag(XmlReader reader, ISnapshotLoader loader)
+        public void ReadTag(XmlReader reader, ISnapshotLoader<TEntityKey> loader)
         {
             var type = reader.GetAttribute("type") ?? throw reader.FromMissingAttribute(XmlTagNames.Tag, "type");
             if (!Registry.TryGetValue(type, out var handler))
@@ -112,7 +105,7 @@ namespace EnTTSharp.Serialization.Xml
                 return;
             }
 
-            var entity = ReadEntity(reader, XmlTagNames.Tag);
+            var entity = loader.Map(ReadEntityData(reader, XmlTagNames.Tag));
 
             var _ = reader.Read();
 
@@ -131,8 +124,8 @@ namespace EnTTSharp.Serialization.Xml
         }
 
         public void ReadComponentTyped<TComponent>(XmlReader reader,
-                                                   Func<EntityKey, EntityKey> entityMapper,
-                                                   out EntityKey entity,
+                                                   Func<EntityKeyData, TEntityKey> entityMapper,
+                                                   out TEntityKey entity,
                                                    out TComponent component)
         {
             if (!Registry.TryGetValue(typeof(TComponent), out var handler))
@@ -145,14 +138,14 @@ namespace EnTTSharp.Serialization.Xml
                 throw new SnapshotIOException("Unable to resolve handler for registered type " + typeof(TComponent));
             }
 
-            entity = ReadEntity(reader, XmlTagNames.Component);
+            entity = entityMapper(ReadEntityData(reader, XmlTagNames.Component));
             var _ = reader.Read();
-            component = parser(reader, entityMapper);
+            component = parser(reader);
         }
 
-        public void ReadComponent(XmlReader reader, ISnapshotLoader loader)
+        public void ReadComponent(XmlReader reader, ISnapshotLoader<TEntityKey> loader)
         {
-            var entity = ReadEntity(reader, XmlTagNames.Component);
+            var entity = loader.Map(ReadEntityData(reader, XmlTagNames.Component));
             var type = reader.GetAttribute("type") ?? throw reader.FromMissingAttribute(XmlTagNames.Component, "type");
 
             if (!Registry.TryGetValue(type, out var handler))
@@ -179,9 +172,12 @@ namespace EnTTSharp.Serialization.Xml
             }
         }
 
-        delegate void ParseAction(XmlReader reader, EntityKey entityRaw, ISnapshotLoader loader, XmlReadHandlerRegistration handler);
+        delegate void ParseAction(XmlReader reader, 
+                                  TEntityKey entityRaw, 
+                                  ISnapshotLoader<TEntityKey> loader, 
+                                  XmlReadHandlerRegistration handler);
 
-        void ParseTag(XmlReader reader, EntityKey entityRaw, ISnapshotLoader loader, XmlReadHandlerRegistration handler)
+        void ParseTag(XmlReader reader, TEntityKey entityRaw, ISnapshotLoader<TEntityKey> loader, XmlReadHandlerRegistration handler)
         {
             if (cachedTagDelegates.TryGetValue(handler.TargetType, out var actionRaw))
             {
@@ -196,18 +192,20 @@ namespace EnTTSharp.Serialization.Xml
             actionDelegate(reader, entityRaw, loader, handler);
         }
 
-        void ParseTagInternal<TComponent>(XmlReader reader, EntityKey entityRaw, ISnapshotLoader loader, XmlReadHandlerRegistration handler)
+        void ParseTagInternal<TComponent>(XmlReader reader, TEntityKey entityRaw, 
+                                          ISnapshotLoader<TEntityKey> loader, XmlReadHandlerRegistration handler)
         {
             if (!handler.TryGetParser<TComponent>(out var parser))
             {
                 throw new SnapshotIOException("Unable to resolve handler for registered type " + typeof(TComponent));
             }
 
-            var result = parser(reader, loader.Map);
-            loader.OnTag(loader.Map(entityRaw), in result);
+            var result = parser(reader);
+            loader.OnTag(entityRaw, in result);
         }
 
-        void ParseComponent(XmlReader reader, EntityKey entityRaw, ISnapshotLoader loader, XmlReadHandlerRegistration handler)
+        void ParseComponent(XmlReader reader, TEntityKey entityRaw, ISnapshotLoader<TEntityKey> loader, 
+                            XmlReadHandlerRegistration handler)
         {
             if (cachedComponentDelegates.TryGetValue(handler.TargetType, out var actionRaw))
             {
@@ -222,34 +220,35 @@ namespace EnTTSharp.Serialization.Xml
             actionDelegate(reader, entityRaw, loader, handler);
         }
 
-        void ParseComponentInternal<TComponent>(XmlReader reader, EntityKey entityRaw, ISnapshotLoader loader, XmlReadHandlerRegistration handler)
+        void ParseComponentInternal<TComponent>(XmlReader reader, TEntityKey entityRaw, 
+                                                ISnapshotLoader<TEntityKey> loader, XmlReadHandlerRegistration handler)
         {
             if (!handler.TryGetParser<TComponent>(out var parser))
             {
                 throw new SnapshotIOException("Unable to resolve handler for registered type " + typeof(TComponent));
             }
 
-            var result = parser(reader, loader.Map);
-            loader.OnComponent(loader.Map(entityRaw), in result);
+            var result = parser(reader);
+            loader.OnComponent(entityRaw, in result);
         }
 
-        void ParseMissingTag(ISnapshotLoader loader, XmlReadHandlerRegistration handler)
+        void ParseMissingTag(ISnapshotLoader<TEntityKey> loader, XmlReadHandlerRegistration handler)
         {
             if (cachedMissingTagDelegates.TryGetValue(handler.TargetType, out var actionRaw))
             {
-                var action = (Action<ISnapshotLoader, XmlReadHandlerRegistration>)actionRaw;
+                var action = (Action<ISnapshotLoader<TEntityKey>, XmlReadHandlerRegistration>)actionRaw;
                 action(loader, handler);
                 return;
             }
 
             var method = missingTagParserMethod.MakeGenericMethod(handler.TargetType);
-            var actionDelegate = (Action<ISnapshotLoader, XmlReadHandlerRegistration>)
-                Delegate.CreateDelegate(typeof(Action<ISnapshotLoader, XmlReadHandlerRegistration>), this, method);
+            var actionDelegate = (Action<ISnapshotLoader<TEntityKey>, XmlReadHandlerRegistration>)
+                Delegate.CreateDelegate(typeof(Action<ISnapshotLoader<TEntityKey>, XmlReadHandlerRegistration>), this, method);
             cachedMissingTagDelegates[handler.TargetType] = actionDelegate;
             actionDelegate(loader, handler);
         }
 
-        void ParseMissingTagInternal<TComponent>(ISnapshotLoader loader, XmlReadHandlerRegistration handler)
+        void ParseMissingTagInternal<TComponent>(ISnapshotLoader<TEntityKey> loader, XmlReadHandlerRegistration handler)
         {
             loader.OnTagRemoved<TComponent>();
         }

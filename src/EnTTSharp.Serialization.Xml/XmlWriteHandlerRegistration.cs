@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Xml;
-using EnttSharp.Entities;
 
 namespace EnTTSharp.Serialization.Xml
 {
-    public delegate void WriteHandlerDelegate<TComponent>(XmlWriter writer, EntityKey k, TComponent component);
+    public delegate void WriteHandlerDelegate<TComponent>(XmlWriter writer, TComponent component);
 
     public readonly struct XmlWriteHandlerRegistration
     {

@@ -4,7 +4,6 @@ using System.Runtime.Serialization;
 using System.Xml;
 using EnTTSharp.Annotations;
 using EnTTSharp.Annotations.Impl;
-using EnttSharp.Entities;
 using Serilog;
 
 namespace EnTTSharp.Serialization.Xml
@@ -24,7 +23,6 @@ namespace EnTTSharp.Serialization.Xml
 
             bool hasReadHandler = false;
             bool hasWriteHandler = false;
-            TranslateFunction<TComponent> translator = null;
             var handlerMethods = componentType.GetMethods(BindingFlags.Static | BindingFlags.Public);
             foreach (var m in handlerMethods)
             {
@@ -41,23 +39,18 @@ namespace EnTTSharp.Serialization.Xml
                     var d = (WriteHandlerDelegate<TComponent>)Delegate.CreateDelegate(typeof(WriteHandlerDelegate<TComponent>), null, m, false);
                     r.Store(XmlWriteHandlerRegistration.Create(attr.ComponentTypeId, d, attr.UsedAsTag));
                 }
-
-                if (IsXmlReaderTranslator<TComponent>(m))
-                {
-                    translator = (TranslateFunction<TComponent>)Delegate.CreateDelegate(typeof(TranslateFunction<TComponent>), null, m, false);
-                }
             }
 
             if (!hasReadHandler)
             {
                 if (HasDataContract<TComponent>())
                 {
-                    ReadHandlerDelegate<TComponent> handler = new DefaultDataContractReadHandler<TComponent>(translator).Read;
+                    ReadHandlerDelegate<TComponent> handler = new DefaultDataContractReadHandler<TComponent>().Read;
                     r.Store(XmlReadHandlerRegistration.Create(attr.ComponentTypeId, handler, attr.UsedAsTag));
                 }
                 else
                 {
-                    ReadHandlerDelegate<TComponent> handler = new DefaultReadHandler<TComponent>(translator).Read;
+                    ReadHandlerDelegate<TComponent> handler = new DefaultReadHandler<TComponent>().Read;
                     r.Store(XmlReadHandlerRegistration.Create(attr.ComponentTypeId, handler, attr.UsedAsTag));
                 }
             }
@@ -86,25 +79,18 @@ namespace EnTTSharp.Serialization.Xml
             return componentType.GetCustomAttribute<DataContractAttribute>() != null;
         }
 
-        bool IsXmlReaderTranslator<TComponent>(MethodInfo methodInfo)
-        {
-            var componentType = typeof(TComponent);
-            return methodInfo.GetCustomAttribute<EntityXmlReaderAttribute>() != null
-                   && methodInfo.IsSameFunction(componentType, componentType, typeof(Func<EntityKey,EntityKey>));
-        }
-
         bool IsXmlReader<TComponent>(MethodInfo methodInfo)
         {
             var componentType = typeof(TComponent);
             return methodInfo.GetCustomAttribute<EntityXmlReaderAttribute>() != null
-                   && methodInfo.IsSameFunction(componentType, typeof(XmlReader), typeof(Func<EntityKey, EntityKey>));
+                   && methodInfo.IsSameFunction(componentType, typeof(XmlReader));
         }
 
         bool IsXmlWriter<TComponent>(MethodInfo methodInfo)
         {
             var componentType = typeof(TComponent);
             return methodInfo.GetCustomAttribute<EntityXmlWriterAttribute>() != null
-                   && methodInfo.IsSameAction(typeof(XmlWriter), typeof(EntityKey), componentType);
+                   && methodInfo.IsSameAction(typeof(XmlWriter), componentType);
         }
 
     }

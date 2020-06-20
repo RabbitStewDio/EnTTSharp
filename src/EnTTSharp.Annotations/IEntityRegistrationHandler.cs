@@ -7,8 +7,8 @@ namespace EnTTSharp.Annotations
         void Process(EntityComponentRegistration reg);
     }
 
-    public interface IEntityRegistrationActivator
+    public interface IEntityRegistrationActivator<TEntityKey> where TEntityKey : IEntityKey
     {
-        void Activate(EntityComponentRegistration r, EntityRegistry registry);
+        void Activate(EntityComponentRegistration r, IEntityComponentRegistry<TEntityKey> registry);
     }
 }

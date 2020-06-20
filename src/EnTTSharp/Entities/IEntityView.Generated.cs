@@ -11,86 +11,100 @@
 namespace EnttSharp.Entities
 {
 
-    public interface IEntityView<T1>  : IEntityView
+    public interface IEntityView<TEntityKey, T1>  : IEntityView<TEntityKey>
+        where TEntityKey: IEntityKey
     {
-        void Apply(ViewDelegates.Apply<T1> bulk);
-        void ApplyWithContext<TContext>(TContext t, ViewDelegates.ApplyWithContext<TContext, T1> bulk);
+        void Apply(ViewDelegates.Apply<TEntityKey, T1> bulk);
+        void ApplyWithContext<TContext>(TContext t, ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1> bulk);
 
     }
 
-    public interface IPersistentEntityView<T1>  : IEntityView<T1>
-    {
-        int Count { get; }
-    }
-
-    public interface IEntityView<T1, T2>  : IEntityView
-    {
-        void Apply(ViewDelegates.Apply<T1, T2> bulk);
-        void ApplyWithContext<TContext>(TContext t, ViewDelegates.ApplyWithContext<TContext, T1, T2> bulk);
-
-    }
-
-    public interface IPersistentEntityView<T1, T2>  : IEntityView<T1, T2>
+    public interface IPersistentEntityView<TEntityKey, T1>  : IEntityView<TEntityKey, T1>
+        where TEntityKey: IEntityKey
     {
         int Count { get; }
     }
 
-    public interface IEntityView<T1, T2, T3>  : IEntityView
+    public interface IEntityView<TEntityKey, T1, T2>  : IEntityView<TEntityKey>
+        where TEntityKey: IEntityKey
     {
-        void Apply(ViewDelegates.Apply<T1, T2, T3> bulk);
-        void ApplyWithContext<TContext>(TContext t, ViewDelegates.ApplyWithContext<TContext, T1, T2, T3> bulk);
+        void Apply(ViewDelegates.Apply<TEntityKey, T1, T2> bulk);
+        void ApplyWithContext<TContext>(TContext t, ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1, T2> bulk);
 
     }
 
-    public interface IPersistentEntityView<T1, T2, T3>  : IEntityView<T1, T2, T3>
-    {
-        int Count { get; }
-    }
-
-    public interface IEntityView<T1, T2, T3, T4>  : IEntityView
-    {
-        void Apply(ViewDelegates.Apply<T1, T2, T3, T4> bulk);
-        void ApplyWithContext<TContext>(TContext t, ViewDelegates.ApplyWithContext<TContext, T1, T2, T3, T4> bulk);
-
-    }
-
-    public interface IPersistentEntityView<T1, T2, T3, T4>  : IEntityView<T1, T2, T3, T4>
+    public interface IPersistentEntityView<TEntityKey, T1, T2>  : IEntityView<TEntityKey, T1, T2>
+        where TEntityKey: IEntityKey
     {
         int Count { get; }
     }
 
-    public interface IEntityView<T1, T2, T3, T4, T5>  : IEntityView
+    public interface IEntityView<TEntityKey, T1, T2, T3>  : IEntityView<TEntityKey>
+        where TEntityKey: IEntityKey
     {
-        void Apply(ViewDelegates.Apply<T1, T2, T3, T4, T5> bulk);
-        void ApplyWithContext<TContext>(TContext t, ViewDelegates.ApplyWithContext<TContext, T1, T2, T3, T4, T5> bulk);
+        void Apply(ViewDelegates.Apply<TEntityKey, T1, T2, T3> bulk);
+        void ApplyWithContext<TContext>(TContext t, ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1, T2, T3> bulk);
 
     }
 
-    public interface IPersistentEntityView<T1, T2, T3, T4, T5>  : IEntityView<T1, T2, T3, T4, T5>
-    {
-        int Count { get; }
-    }
-
-    public interface IEntityView<T1, T2, T3, T4, T5, T6>  : IEntityView
-    {
-        void Apply(ViewDelegates.Apply<T1, T2, T3, T4, T5, T6> bulk);
-        void ApplyWithContext<TContext>(TContext t, ViewDelegates.ApplyWithContext<TContext, T1, T2, T3, T4, T5, T6> bulk);
-
-    }
-
-    public interface IPersistentEntityView<T1, T2, T3, T4, T5, T6>  : IEntityView<T1, T2, T3, T4, T5, T6>
+    public interface IPersistentEntityView<TEntityKey, T1, T2, T3>  : IEntityView<TEntityKey, T1, T2, T3>
+        where TEntityKey: IEntityKey
     {
         int Count { get; }
     }
 
-    public interface IEntityView<T1, T2, T3, T4, T5, T6, T7>  : IEntityView
+    public interface IEntityView<TEntityKey, T1, T2, T3, T4>  : IEntityView<TEntityKey>
+        where TEntityKey: IEntityKey
     {
-        void Apply(ViewDelegates.Apply<T1, T2, T3, T4, T5, T6, T7> bulk);
-        void ApplyWithContext<TContext>(TContext t, ViewDelegates.ApplyWithContext<TContext, T1, T2, T3, T4, T5, T6, T7> bulk);
+        void Apply(ViewDelegates.Apply<TEntityKey, T1, T2, T3, T4> bulk);
+        void ApplyWithContext<TContext>(TContext t, ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1, T2, T3, T4> bulk);
 
     }
 
-    public interface IPersistentEntityView<T1, T2, T3, T4, T5, T6, T7>  : IEntityView<T1, T2, T3, T4, T5, T6, T7>
+    public interface IPersistentEntityView<TEntityKey, T1, T2, T3, T4>  : IEntityView<TEntityKey, T1, T2, T3, T4>
+        where TEntityKey: IEntityKey
+    {
+        int Count { get; }
+    }
+
+    public interface IEntityView<TEntityKey, T1, T2, T3, T4, T5>  : IEntityView<TEntityKey>
+        where TEntityKey: IEntityKey
+    {
+        void Apply(ViewDelegates.Apply<TEntityKey, T1, T2, T3, T4, T5> bulk);
+        void ApplyWithContext<TContext>(TContext t, ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1, T2, T3, T4, T5> bulk);
+
+    }
+
+    public interface IPersistentEntityView<TEntityKey, T1, T2, T3, T4, T5>  : IEntityView<TEntityKey, T1, T2, T3, T4, T5>
+        where TEntityKey: IEntityKey
+    {
+        int Count { get; }
+    }
+
+    public interface IEntityView<TEntityKey, T1, T2, T3, T4, T5, T6>  : IEntityView<TEntityKey>
+        where TEntityKey: IEntityKey
+    {
+        void Apply(ViewDelegates.Apply<TEntityKey, T1, T2, T3, T4, T5, T6> bulk);
+        void ApplyWithContext<TContext>(TContext t, ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1, T2, T3, T4, T5, T6> bulk);
+
+    }
+
+    public interface IPersistentEntityView<TEntityKey, T1, T2, T3, T4, T5, T6>  : IEntityView<TEntityKey, T1, T2, T3, T4, T5, T6>
+        where TEntityKey: IEntityKey
+    {
+        int Count { get; }
+    }
+
+    public interface IEntityView<TEntityKey, T1, T2, T3, T4, T5, T6, T7>  : IEntityView<TEntityKey>
+        where TEntityKey: IEntityKey
+    {
+        void Apply(ViewDelegates.Apply<TEntityKey, T1, T2, T3, T4, T5, T6, T7> bulk);
+        void ApplyWithContext<TContext>(TContext t, ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1, T2, T3, T4, T5, T6, T7> bulk);
+
+    }
+
+    public interface IPersistentEntityView<TEntityKey, T1, T2, T3, T4, T5, T6, T7>  : IEntityView<TEntityKey, T1, T2, T3, T4, T5, T6, T7>
+        where TEntityKey: IEntityKey
     {
         int Count { get; }
     }
