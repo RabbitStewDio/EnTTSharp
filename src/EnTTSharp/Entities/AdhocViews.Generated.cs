@@ -7,6 +7,9 @@
 //     the code is regenerated.
 // </auto-generated>
 //------------------------------------------------------------------------------
+
+using EnttSharp.Entities.Helpers;
+
 namespace EnttSharp.Entities
 {
     public sealed class AdhocView<TEntityKey, T1, T2 > : AdhocMultiViewBase<TEntityKey>, IEntityView<TEntityKey, T1, T2>

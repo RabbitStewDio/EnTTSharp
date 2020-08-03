@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using EnTTSharp.Annotations;
 
-namespace EnTTSharp.Serialization.BinaryPack
+namespace EnTTSharp.Serialization.Binary
 {
     public class BinaryReadHandlerRegistry
     {

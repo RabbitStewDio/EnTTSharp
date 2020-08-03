@@ -8,6 +8,8 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using EnttSharp.Entities.Helpers;
+
 namespace EnttSharp.Entities
 {
 

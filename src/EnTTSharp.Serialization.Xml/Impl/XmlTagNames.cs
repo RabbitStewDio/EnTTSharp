@@ -1,4 +1,4 @@
-﻿namespace EnTTSharp.Serialization.Xml
+﻿namespace EnTTSharp.Serialization.Xml.Impl
 {
     internal static class XmlTagNames
     {

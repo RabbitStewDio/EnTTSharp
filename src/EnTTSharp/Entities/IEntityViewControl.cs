@@ -29,6 +29,7 @@
         void AssignOrReplace<TComponent>(TEntityKey entity, in TComponent c);
         bool ReplaceComponent<TComponent>(TEntityKey entity, in TComponent c);
 
+        bool IsValid(TEntityKey entity);
         void Reset(TEntityKey entity);
         bool IsOrphan(TEntityKey entity);
     }

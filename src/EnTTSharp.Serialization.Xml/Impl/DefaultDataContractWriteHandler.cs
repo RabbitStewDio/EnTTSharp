@@ -1,23 +1,22 @@
-﻿using System;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 using System.Xml;
 
-namespace EnTTSharp.Serialization.Xml
+namespace EnTTSharp.Serialization.Xml.Impl
 {
-    public class DefaultDataContractWriteHandler<T>
+    public class DefaultDataContractWriteHandler<TData>
     {
         readonly DataContractSerializer serializer;
 
-        public DefaultDataContractWriteHandler() : this(new DataContractSerializer(typeof(T)))
+        public DefaultDataContractWriteHandler(ObjectSurrogateResolver surrogateResolver = null)
         {
+            var ds = new DataContractSerializerSettings();
+            ds.SerializeReadOnlyTypes = true;
+
+            serializer = new DataContractSerializer(typeof(TData), ds);
+            serializer.SetSerializationSurrogateProvider(surrogateResolver);
         }
 
-        public DefaultDataContractWriteHandler(DataContractSerializer serializer)
-        {
-            this.serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
-        }
-
-        public void Write(XmlWriter writer, T component)
+        public void Write(XmlWriter writer, TData component)
         {
             serializer.WriteObject(writer, component);
         }

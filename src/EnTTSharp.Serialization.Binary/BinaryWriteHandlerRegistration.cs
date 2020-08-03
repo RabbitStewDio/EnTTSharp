@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EnTTSharp.Serialization.BinaryPack
+namespace EnTTSharp.Serialization.Binary
 {
     public readonly struct BinaryWriteHandlerRegistration
     {
@@ -17,9 +17,9 @@ namespace EnTTSharp.Serialization.BinaryPack
             PreProcessor = preProcessor;
         }
 
-        public bool TryGetPreProcessor<TComponent>(out BinaryPostProcessor<TComponent> fn)
+        public bool TryGetPreProcessor<TComponent>(out BinaryPreProcessor<TComponent> fn)
         {
-            if (PreProcessor is BinaryPostProcessor<TComponent> fnx)
+            if (PreProcessor is BinaryPreProcessor<TComponent> fnx)
             {
                 fn = fnx;
                 return true;
@@ -29,18 +29,22 @@ namespace EnTTSharp.Serialization.BinaryPack
             return false;
         }
 
-        public static BinaryWriteHandlerRegistration Create<TComponent>(bool isTag, BinaryPostProcessor<TComponent> postProcessor = null)
+        public static BinaryWriteHandlerRegistration Create<TComponent>(bool isTag, 
+                                                                        BinaryPreProcessor<TComponent> preProcessor = null)
         {
-            return new BinaryWriteHandlerRegistration(typeof(TComponent).FullName, typeof(TComponent), isTag, postProcessor);
+            return new BinaryWriteHandlerRegistration(typeof(TComponent).FullName, typeof(TComponent), isTag, preProcessor);
         }
 
-        public static BinaryWriteHandlerRegistration Create<TComponent>(string typeId, bool isTag, BinaryPostProcessor<TComponent> postProcessor = null)
+        public static BinaryWriteHandlerRegistration Create<TComponent>(string typeId, bool isTag, 
+                                                                        BinaryPreProcessor<TComponent> preProcessor = null,
+                                                                        BinaryPostProcessor<TComponent> postProcessor = null)
         {
             if (string.IsNullOrEmpty(typeId))
             {
                 typeId = typeof(TComponent).FullName;
             }
-            return new BinaryWriteHandlerRegistration(typeId, typeof(TComponent), isTag, postProcessor);
+
+            return new BinaryWriteHandlerRegistration(typeId, typeof(TComponent), isTag, preProcessor);
         }
     }
 }

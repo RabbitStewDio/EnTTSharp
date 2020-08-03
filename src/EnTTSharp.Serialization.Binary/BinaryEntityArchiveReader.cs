@@ -1,9 +1,10 @@
 ﻿using System;
 using System.IO;
 using EnttSharp.Entities;
+using EnTTSharp.Serialization.Binary.Impl;
 using MessagePack;
 
-namespace EnTTSharp.Serialization.BinaryPack
+namespace EnTTSharp.Serialization.Binary
 {
     public class BinaryEntityArchiveReader<TEntityKey>: IEntityArchiveReader<TEntityKey> where TEntityKey : IEntityKey
     {

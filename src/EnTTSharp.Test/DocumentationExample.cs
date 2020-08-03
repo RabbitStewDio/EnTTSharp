@@ -57,7 +57,7 @@ namespace EnTTSharp.Test
         public static void DummyMain(string [] args)
         {
             var random = new Random();
-            var registry = new EntityRegistry<EntityKey>((age, id) => new EntityKey(age, id));
+            var registry = new EntityRegistry<EntityKey>(EntityKey.MaxAge, (age, id) => new EntityKey(age, id));
             registry.Register<Velocity>();
             registry.Register<Position>();
 

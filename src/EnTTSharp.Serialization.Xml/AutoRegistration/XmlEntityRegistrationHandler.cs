@@ -4,13 +4,20 @@ using System.Runtime.Serialization;
 using System.Xml;
 using EnTTSharp.Annotations;
 using EnTTSharp.Annotations.Impl;
+using EnTTSharp.Serialization.Xml.Impl;
 using Serilog;
 
-namespace EnTTSharp.Serialization.Xml
+namespace EnTTSharp.Serialization.Xml.AutoRegistration
 {
     public class XmlEntityRegistrationHandler: EntityRegistrationHandlerBase
     {
         static readonly ILogger Logger = Log.ForContext<XmlEntityRegistrationHandler>();
+        readonly ObjectSurrogateResolver objectResolver;
+
+        public XmlEntityRegistrationHandler(ObjectSurrogateResolver objectResolver = null)
+        {
+            this.objectResolver = objectResolver;
+        }
 
         protected override void ProcessTyped<TComponent>(EntityComponentRegistration r)
         {
@@ -45,7 +52,7 @@ namespace EnTTSharp.Serialization.Xml
             {
                 if (HasDataContract<TComponent>())
                 {
-                    ReadHandlerDelegate<TComponent> handler = new DefaultDataContractReadHandler<TComponent>().Read;
+                    ReadHandlerDelegate<TComponent> handler = new DefaultDataContractReadHandler<TComponent>(objectResolver).Read;
                     r.Store(XmlReadHandlerRegistration.Create(attr.ComponentTypeId, handler, attr.UsedAsTag));
                 }
                 else
@@ -59,7 +66,7 @@ namespace EnTTSharp.Serialization.Xml
             {
                 if (HasDataContract<TComponent>())
                 {
-                    WriteHandlerDelegate<TComponent> handler = new DefaultDataContractWriteHandler<TComponent>().Write;
+                    WriteHandlerDelegate<TComponent> handler = new DefaultDataContractWriteHandler<TComponent>(objectResolver).Write;
                     r.Store(XmlWriteHandlerRegistration.Create(attr.ComponentTypeId, handler, attr.UsedAsTag));
                 }
                 else

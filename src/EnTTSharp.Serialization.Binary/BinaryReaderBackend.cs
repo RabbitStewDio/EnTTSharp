@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using EnttSharp.Entities;
+using EnTTSharp.Serialization.Binary.Impl;
 using MessagePack;
 
-namespace EnTTSharp.Serialization.BinaryPack
+namespace EnTTSharp.Serialization.Binary
 {
     public class BinaryReaderBackend<TEntityKey> where TEntityKey : IEntityKey
     {

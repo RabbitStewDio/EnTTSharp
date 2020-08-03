@@ -2,7 +2,7 @@
 
 namespace EnTTSharp.Annotations
 {
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Enum)]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Enum | AttributeTargets.Interface)]
     public class EntityComponentAttribute: Attribute
     {
         public EntityComponentAttribute(EntityConstructor constructable = EntityConstructor.Auto)

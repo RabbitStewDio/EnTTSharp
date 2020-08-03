@@ -22,8 +22,16 @@ namespace EnttSharp.Entities
         int next;
         int available;
 
-        public EntityRegistry(Func<byte, int, TEntityKey> entityKeyFactory)
+        public int MaxAge { get; }
+
+
+        public EntityRegistry(int maxAge, Func<byte, int, TEntityKey> entityKeyFactory)
         {
+            if (maxAge < 2)
+            {
+                throw new ArgumentException();
+            }
+            MaxAge = maxAge;
             this.entityKeyFactory = entityKeyFactory ?? throw new ArgumentNullException(nameof(entityKeyFactory));
             equalityComparer = EqualityComparer<TEntityKey>.Default;
             componentIndex = new Dictionary<Type, IComponentRegistration>();
@@ -510,10 +518,10 @@ namespace EnttSharp.Entities
             return new EntityKeyEnumerator(entities);
         }
 
-        static byte RollingAgeIncrement(byte value)
+        byte RollingAgeIncrement(byte value)
         {
             value += 1;
-            if (value == 16)
+            if (value == MaxAge)
             {
                 return 1;
             }

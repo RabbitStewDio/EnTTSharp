@@ -2,7 +2,7 @@
 using MessagePack;
 using MessagePack.Formatters;
 
-namespace EnTTSharp.Serialization.BinaryPack
+namespace EnTTSharp.Serialization.Binary.Impl
 {
     public class EntityKeyResolver:IFormatterResolver
     {

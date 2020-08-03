@@ -15,9 +15,10 @@ namespace EnttSharp.Entities
     [Serializable]
     public readonly struct EntityKey : IEquatable<EntityKey>, IEntityKey
     {
+        public static readonly int MaxAge = 255;
         readonly uint keyData;
 
-        public int Key => (int)keyData & 0xFF_FFFF;
+        public int Key => (int)(keyData & 0xFF_FFFF) - 1;
         public byte Age => (byte)((keyData >> 24) & 0xFF);
 
         public EntityKey(byte age, int key)
@@ -25,7 +26,7 @@ namespace EnttSharp.Entities
             if (key < 0) throw new ArgumentException();
 
             keyData = (uint)(age << 24);
-            keyData |= (uint)(key & 0xFF_FFFF);
+            keyData |= (uint)((key + 1) & 0xFF_FFFF);
         }
 
         public bool Equals(EntityKey other)

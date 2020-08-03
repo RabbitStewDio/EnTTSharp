@@ -1,7 +1,7 @@
 ﻿using MessagePack;
 using MessagePack.Resolvers;
 
-namespace EnTTSharp.Serialization.BinaryPack
+namespace EnTTSharp.Serialization.Binary.Impl
 {
     public static class BinaryControlObjects
     {

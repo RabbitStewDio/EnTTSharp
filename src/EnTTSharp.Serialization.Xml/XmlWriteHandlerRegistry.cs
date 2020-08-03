@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using EnTTSharp.Annotations;
+using EnTTSharp.Serialization.Xml.Impl;
 
 namespace EnTTSharp.Serialization.Xml
 {

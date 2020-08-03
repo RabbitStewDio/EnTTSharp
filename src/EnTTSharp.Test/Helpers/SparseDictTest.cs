@@ -15,7 +15,7 @@ namespace EnTTSharp.Test.Helpers
         [Test]
         public void TestViewProcessing()
         {
-            var reg = new EntityRegistry<EntityKey>(EntityKey.Create);
+            var reg = new EntityRegistry<EntityKey>(EntityKey.MaxAge, EntityKey.Create);
             reg.Register<TestStructFixture>();
 
             var entity = reg.Create();

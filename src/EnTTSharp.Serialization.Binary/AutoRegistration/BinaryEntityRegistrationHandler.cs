@@ -6,7 +6,7 @@ using EnTTSharp.Annotations.Impl;
 using MessagePack;
 using Serilog;
 
-namespace EnTTSharp.Serialization.BinaryPack.AutoRegistration
+namespace EnTTSharp.Serialization.Binary.AutoRegistration
 {
     public class BinaryEntityRegistrationHandler: EntityRegistrationHandlerBase
     {
@@ -27,33 +27,23 @@ namespace EnTTSharp.Serialization.BinaryPack.AutoRegistration
             var usedAsTag = attr2?.UsedAsTag ?? false;
 
             var handlerMethods = componentType.GetMethods(BindingFlags.Static | BindingFlags.Public);
-            var registeredWriteHandler = false;
-            var registeredReadHandler = false;
+            BinaryPreProcessor<TComponent> preProcessor = null;
+            BinaryPostProcessor<TComponent> postProcessor = null;
             foreach (var m in handlerMethods)
             {
                 if (IsPostProcessor<TComponent>(m))
                 {
-                    registeredReadHandler = true;
-                    var d = (BinaryPostProcessor<TComponent>)Delegate.CreateDelegate(typeof(BinaryPostProcessor<TComponent>), null, m, false);
-                    r.Store(BinaryReadHandlerRegistration.Create(componentTypeId, usedAsTag, d));
+                    postProcessor = (BinaryPostProcessor<TComponent>)Delegate.CreateDelegate(typeof(BinaryPostProcessor<TComponent>), null, m, false);
                 }
 
                 if (IsPreProcessor<TComponent>(m))
                 {
-                    registeredWriteHandler = true;
-                    var d = (BinaryPostProcessor<TComponent>)Delegate.CreateDelegate(typeof(BinaryPostProcessor<TComponent>), null, m, false);
-                    r.Store(BinaryWriteHandlerRegistration.Create(componentTypeId, usedAsTag, d));
+                    preProcessor = (BinaryPreProcessor<TComponent>)Delegate.CreateDelegate(typeof(BinaryPreProcessor<TComponent>), null, m, false);
                 }
             }
 
-            if (!registeredReadHandler)
-            {
-                r.Store(BinaryReadHandlerRegistration.Create<TComponent>(componentTypeId, usedAsTag));
-            }
-            if (!registeredWriteHandler)
-            {
-                r.Store(BinaryWriteHandlerRegistration.Create<TComponent>(componentTypeId, usedAsTag));
-            }
+            r.Store(BinaryReadHandlerRegistration.Create(componentTypeId, usedAsTag, postProcessor));
+            r.Store(BinaryWriteHandlerRegistration.Create(componentTypeId, usedAsTag, preProcessor));
 
             if (msgPackAttr == null)
             {

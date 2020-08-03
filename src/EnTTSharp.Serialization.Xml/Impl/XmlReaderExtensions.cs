@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Xml;
 
-namespace EnTTSharp.Serialization.Xml
+namespace EnTTSharp.Serialization.Xml.Impl
 {
     public static class XmlReaderExtensions
     {

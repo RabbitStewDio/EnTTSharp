@@ -1,6 +1,8 @@
-﻿using EnTTSharp.Annotations;
+﻿using System.Runtime.Serialization;
+using EnTTSharp.Annotations;
 using EnttSharp.Entities;
 using EnTTSharp.Serialization.Xml;
+using EnTTSharp.Serialization.Xml.AutoRegistration;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -22,6 +24,12 @@ namespace EnTTSharp.Test.Serialisation
 
             var xmlWriteRegistry = new XmlWriteHandlerRegistry();
             xmlWriteRegistry.RegisterRange(components);
+        }
+
+        void Test()
+        {
+           // serializer = new DataContractSerializer(typeof(TData), ds);
+
         }
     }
 }

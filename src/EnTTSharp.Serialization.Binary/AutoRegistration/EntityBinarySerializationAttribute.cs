@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EnTTSharp.Serialization.BinaryPack.AutoRegistration
+namespace EnTTSharp.Serialization.Binary.AutoRegistration
 {
     [AttributeUsage(AttributeTargets.Class| AttributeTargets.Enum | AttributeTargets.Struct)]
     public sealed class EntityBinarySerializationAttribute : Attribute

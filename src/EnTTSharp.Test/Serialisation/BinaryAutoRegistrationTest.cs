@@ -1,6 +1,6 @@
 ﻿using EnTTSharp.Annotations;
-using EnTTSharp.Serialization.BinaryPack;
-using EnTTSharp.Serialization.BinaryPack.AutoRegistration;
+using EnTTSharp.Serialization.Binary;
+using EnTTSharp.Serialization.Binary.AutoRegistration;
 using FluentAssertions;
 using NUnit.Framework;
 

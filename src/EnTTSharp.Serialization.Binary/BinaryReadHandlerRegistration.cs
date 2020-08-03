@@ -1,8 +1,9 @@
 ﻿using System;
 
-namespace EnTTSharp.Serialization.BinaryPack
+namespace EnTTSharp.Serialization.Binary
 {
     public delegate TComponent BinaryPostProcessor<TComponent>(in TComponent data);
+    public delegate TComponent BinaryPreProcessor<TComponent>(in TComponent data);
 
     public readonly struct BinaryReadHandlerRegistration
     {

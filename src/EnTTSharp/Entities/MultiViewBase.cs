@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using EnttSharp.Entities.Helpers;
 
 namespace EnttSharp.Entities
 {
@@ -135,6 +136,11 @@ namespace EnttSharp.Entities
         public virtual bool Contains(TEntityKey e)
         {
             return IsMember(e);
+        }
+
+        public bool IsValid(TEntityKey entity)
+        {
+            return Registry.IsValid(entity);
         }
 
         public bool IsOrphan(TEntityKey entity)

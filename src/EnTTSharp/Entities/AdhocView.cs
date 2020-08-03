@@ -30,6 +30,11 @@ namespace EnttSharp.Entities
             Dispose(false);
         }
 
+        public bool IsValid(TEntityKey entity)
+        {
+            return registry.IsValid(entity);
+        }
+
         public bool IsOrphan(TEntityKey entity)
         {
             return registry.IsOrphan(entity);

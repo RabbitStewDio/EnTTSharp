@@ -2,19 +2,15 @@
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace EnTTSharp.Serialization.Xml
+namespace EnTTSharp.Serialization.Xml.Impl
 {
     public class DefaultWriteHandler<T>
     {
         readonly XmlSerializer serializer;
 
-        public DefaultWriteHandler() : this(new XmlSerializer(typeof(T)))
+        public DefaultWriteHandler()
         {
-        }
-
-        public DefaultWriteHandler(XmlSerializer serializer)
-        {
-            this.serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
+            serializer = new XmlSerializer(typeof(T));
         }
 
         public void Write(XmlWriter writer, T component)
