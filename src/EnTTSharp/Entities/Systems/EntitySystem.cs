@@ -1,4 +1,4 @@
-﻿namespace EnttSharp.Entities.Systems
+﻿namespace EnTTSharp.Entities.Systems
 {
     public static partial class EntitySystem
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EnttSharp.Entities
+namespace EnTTSharp.Entities
 {
     public static class ComponentRegistration
     {

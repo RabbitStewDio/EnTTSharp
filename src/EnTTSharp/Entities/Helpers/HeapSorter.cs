@@ -2,7 +2,7 @@
 
 using System.Collections.Generic;
 
-namespace EnttSharp.Entities.Helpers
+namespace EnTTSharp.Entities.Helpers
 {
     /// <summary>
     ///  Heap sorting on generic lists that support in-place swapping.

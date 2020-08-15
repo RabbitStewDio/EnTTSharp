@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
  
-namespace EnttSharp.Entities
+namespace EnTTSharp.Entities
 {
 
     public interface IEntityView<TEntityKey, T1>  : IEntityView<TEntityKey>

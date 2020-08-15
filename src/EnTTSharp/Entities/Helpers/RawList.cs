@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace EnttSharp.Entities.Helpers
+namespace EnTTSharp.Entities.Helpers
 {
     public class RawList<T> : IReadOnlyList<T>
     {

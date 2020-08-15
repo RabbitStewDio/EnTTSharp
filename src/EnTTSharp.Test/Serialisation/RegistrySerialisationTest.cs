@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using System.Xml;
 using EnttSharp.Entities;
+using EnTTSharp.Entities;
 using EnTTSharp.Serialization;
 using EnTTSharp.Serialization.Xml;
 using EnTTSharp.Serialization.Xml.Impl;
@@ -14,7 +15,7 @@ namespace EnTTSharp.Test.Serialisation
 {
     public class RegistrySerialisationTest
     {
-        EntityRegistry<EntityKey> ereg;
+        Entities.EntityRegistry<EntityKey> ereg;
         XmlWriteHandlerRegistry wreg;
         XmlReadHandlerRegistry rreg;
 
@@ -33,7 +34,7 @@ namespace EnTTSharp.Test.Serialisation
             rreg.Register(XmlReadHandlerRegistration.Create(new DefaultReadHandler<int>().Read, true));
             rreg.Register(XmlReadHandlerRegistration.Create(new DefaultReadHandler<float>().Read, true));
 
-            ereg = new EntityRegistry<EntityKey>(EntityKey.MaxAge, EntityKey.Create);
+            ereg = new Entities.EntityRegistry<EntityKey>(EntityKey.MaxAge, EntityKey.Create);
             ereg.Register<TestStructFixture>();
             ereg.Register<StringBuilder>();
             ereg.Register<int>();
@@ -49,7 +50,7 @@ namespace EnTTSharp.Test.Serialisation
 
             Console.WriteLine(sb);
 
-            var nreg = new EntityRegistry<EntityKey>(EntityKey.MaxAge, EntityKey.Create);
+            var nreg = new Entities.EntityRegistry<EntityKey>(EntityKey.MaxAge, EntityKey.Create);
             nreg.Register<TestStructFixture>();
             nreg.Register<StringBuilder>();
 
@@ -71,7 +72,7 @@ namespace EnTTSharp.Test.Serialisation
 
             Console.WriteLine(sb);
 
-            var nreg = new EntityRegistry<EntityKey>(EntityKey.MaxAge, EntityKey.Create);
+            var nreg = new Entities.EntityRegistry<EntityKey>(EntityKey.MaxAge, EntityKey.Create);
             nreg.Register<TestStructFixture>();
             nreg.Register<StringBuilder>();
 
@@ -98,7 +99,7 @@ namespace EnTTSharp.Test.Serialisation
 
             Console.WriteLine(sb);
 
-            var nreg = new EntityRegistry<EntityKey>(EntityKey.MaxAge, EntityKey.Create);
+            var nreg = new Entities.EntityRegistry<EntityKey>(EntityKey.MaxAge, EntityKey.Create);
             nreg.Register<TestStructFixture>();
             nreg.Register<StringBuilder>();
 
@@ -114,7 +115,7 @@ namespace EnTTSharp.Test.Serialisation
             result.Should().Be(sb);
         }
 
-        static string WriteRegistry(EntityRegistry<EntityKey> ereg,
+        static string WriteRegistry(Entities.EntityRegistry<EntityKey> ereg,
                                     XmlWriteHandlerRegistry writerRegistry,
                                     bool automaticHandlers)
         {

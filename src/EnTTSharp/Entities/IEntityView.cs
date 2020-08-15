@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace EnttSharp.Entities
+namespace EnTTSharp.Entities
 {
     /// <summary>
     ///  This is a read-only view over an component pool.

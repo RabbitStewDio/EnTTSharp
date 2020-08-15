@@ -1,4 +1,4 @@
-﻿namespace EnttSharp.Entities.Helpers
+﻿namespace EnTTSharp.Entities.Helpers
 {
     public interface ISortableCollection<out T>
     {

@@ -10,7 +10,7 @@
 //     the code is regenerated.
 // </auto-generated>
 //------------------------------------------------------------------------------
-namespace EnttSharp.Entities
+namespace EnTTSharp.Entities
 {
     public partial class EntityRegistryExtensions 
     {

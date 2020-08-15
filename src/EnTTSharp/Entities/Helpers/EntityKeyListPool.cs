@@ -2,7 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
-namespace EnttSharp.Entities.Helpers
+namespace EnTTSharp.Entities.Helpers
 {
     public static class EntityKeyListPool<TEntityKey>
     {

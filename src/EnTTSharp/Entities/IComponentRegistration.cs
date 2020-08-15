@@ -1,4 +1,4 @@
-﻿namespace EnttSharp.Entities
+﻿namespace EnTTSharp.Entities
 {
     public interface IComponentRegistration
     {

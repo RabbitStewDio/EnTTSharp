@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace EnttSharp.Entities
+namespace EnTTSharp.Entities
 {
     public interface IEntityViewFactory<TEntityKey> : IEntityViewControl<TEntityKey>
         where TEntityKey: IEntityKey

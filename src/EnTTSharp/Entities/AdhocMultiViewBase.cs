@@ -1,7 +1,8 @@
 ﻿using System;
-using EnttSharp.Entities.Helpers;
+using EnTTSharp.Entities.Helpers;
+using EnTTSharp.Entities.Pools;
 
-namespace EnttSharp.Entities
+namespace EnTTSharp.Entities
 {
     /// <summary>
     ///  Specialisation to avoid boxing when requesting an enumerator.
@@ -10,7 +11,7 @@ namespace EnttSharp.Entities
         where TEntityKey : IEntityKey
     {
         protected AdhocMultiViewBase(IEntityPoolAccess<TEntityKey> registry,
-                                     params ISparsePool<TEntityKey>[] entries) : base(registry, entries)
+                                     params IReadOnlyPool<TEntityKey>[] entries) : base(registry, entries)
         {
         }
 
@@ -38,7 +39,7 @@ namespace EnttSharp.Entities
 
         public override PredicateEnumerator<TEntityKey> GetEnumerator()
         {
-            ISparsePool<TEntityKey> s = null;
+            IReadOnlyPool<TEntityKey> s = null;
             var count = int.MaxValue;
             foreach (var set in Sets)
             {

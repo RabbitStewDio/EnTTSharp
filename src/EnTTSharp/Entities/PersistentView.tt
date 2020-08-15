@@ -10,9 +10,10 @@
 //     the code is regenerated.
 // </auto-generated>
 //------------------------------------------------------------------------------
-using EnttSharp.Entities.Helpers;
+using EnTTSharp.Entities.Helpers;
+using EnTTSharp.Entities.Pools;
 
-namespace EnttSharp.Entities
+namespace EnTTSharp.Entities
 {
 <#
     for (int p = 1; p <= MaxParameterCount; p += 1)
@@ -24,7 +25,7 @@ namespace EnttSharp.Entities
     public sealed class PersistentView<TEntityKey, <#= templateParamsLight #>> : PersistentMultiViewBase<TEntityKey>, IPersistentEntityView<TEntityKey, <#= templateParamsLight #>>
         where TEntityKey: IEntityKey
     {
-        <#= JoinGenericParams(p, "readonly Pools.Pool<TEntityKey, T{0}> pool{0};", "\n             ") #>
+        <#= JoinGenericParams(p, "readonly IPool<TEntityKey, T{0}> pool{0};", "\n             ") #>
 
         public PersistentView(IEntityPoolAccess<TEntityKey> registry) :
             base(registry, 

@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("EnttSharp.Core")]
+[assembly: AssemblyTitle("EnTTSharp.Core")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("EnttSharp.Core")]
+[assembly: AssemblyProduct("EnTTSharp.Core")]
 [assembly: AssemblyCopyright("Copyright ©  2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -22,4 +22,4 @@ using System.Runtime.InteropServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("bbbb8658-2769-4daa-8e9d-2b27cc0d1e5e")]
 
-[assembly: InternalsVisibleTo("EnttSharp.Core.Test")]
+[assembly: InternalsVisibleTo("EnTTSharp.Core.Test")]

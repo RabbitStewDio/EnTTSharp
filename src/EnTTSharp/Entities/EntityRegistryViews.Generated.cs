@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace EnttSharp.Entities
+namespace EnTTSharp.Entities
 {
     public partial class EntityRegistry<TEntityKey>
     {

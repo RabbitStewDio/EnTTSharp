@@ -8,15 +8,16 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using EnttSharp.Entities.Helpers;
+using EnTTSharp.Entities.Helpers;
+using EnTTSharp.Entities.Pools;
 
-namespace EnttSharp.Entities
+namespace EnTTSharp.Entities
 {
     public sealed class AdhocView<TEntityKey, T1, T2 > : AdhocMultiViewBase<TEntityKey>, IEntityView<TEntityKey, T1, T2>
         where TEntityKey : IEntityKey
     {
-        readonly Pools.Pool<TEntityKey, T1> pool1;
-             readonly Pools.Pool<TEntityKey, T2> pool2;
+        readonly IPool<TEntityKey, T1> pool1;
+             readonly IPool<TEntityKey, T2> pool2;
 
         public AdhocView(IEntityPoolAccess<TEntityKey> registry) :
             base(registry, 
@@ -96,9 +97,9 @@ namespace EnttSharp.Entities
     public sealed class AdhocView<TEntityKey, T1, T2, T3 > : AdhocMultiViewBase<TEntityKey>, IEntityView<TEntityKey, T1, T2, T3>
         where TEntityKey : IEntityKey
     {
-        readonly Pools.Pool<TEntityKey, T1> pool1;
-             readonly Pools.Pool<TEntityKey, T2> pool2;
-             readonly Pools.Pool<TEntityKey, T3> pool3;
+        readonly IPool<TEntityKey, T1> pool1;
+             readonly IPool<TEntityKey, T2> pool2;
+             readonly IPool<TEntityKey, T3> pool3;
 
         public AdhocView(IEntityPoolAccess<TEntityKey> registry) :
             base(registry, 
@@ -182,10 +183,10 @@ namespace EnttSharp.Entities
     public sealed class AdhocView<TEntityKey, T1, T2, T3, T4 > : AdhocMultiViewBase<TEntityKey>, IEntityView<TEntityKey, T1, T2, T3, T4>
         where TEntityKey : IEntityKey
     {
-        readonly Pools.Pool<TEntityKey, T1> pool1;
-             readonly Pools.Pool<TEntityKey, T2> pool2;
-             readonly Pools.Pool<TEntityKey, T3> pool3;
-             readonly Pools.Pool<TEntityKey, T4> pool4;
+        readonly IPool<TEntityKey, T1> pool1;
+             readonly IPool<TEntityKey, T2> pool2;
+             readonly IPool<TEntityKey, T3> pool3;
+             readonly IPool<TEntityKey, T4> pool4;
 
         public AdhocView(IEntityPoolAccess<TEntityKey> registry) :
             base(registry, 
@@ -273,11 +274,11 @@ namespace EnttSharp.Entities
     public sealed class AdhocView<TEntityKey, T1, T2, T3, T4, T5 > : AdhocMultiViewBase<TEntityKey>, IEntityView<TEntityKey, T1, T2, T3, T4, T5>
         where TEntityKey : IEntityKey
     {
-        readonly Pools.Pool<TEntityKey, T1> pool1;
-             readonly Pools.Pool<TEntityKey, T2> pool2;
-             readonly Pools.Pool<TEntityKey, T3> pool3;
-             readonly Pools.Pool<TEntityKey, T4> pool4;
-             readonly Pools.Pool<TEntityKey, T5> pool5;
+        readonly IPool<TEntityKey, T1> pool1;
+             readonly IPool<TEntityKey, T2> pool2;
+             readonly IPool<TEntityKey, T3> pool3;
+             readonly IPool<TEntityKey, T4> pool4;
+             readonly IPool<TEntityKey, T5> pool5;
 
         public AdhocView(IEntityPoolAccess<TEntityKey> registry) :
             base(registry, 
@@ -369,12 +370,12 @@ namespace EnttSharp.Entities
     public sealed class AdhocView<TEntityKey, T1, T2, T3, T4, T5, T6 > : AdhocMultiViewBase<TEntityKey>, IEntityView<TEntityKey, T1, T2, T3, T4, T5, T6>
         where TEntityKey : IEntityKey
     {
-        readonly Pools.Pool<TEntityKey, T1> pool1;
-             readonly Pools.Pool<TEntityKey, T2> pool2;
-             readonly Pools.Pool<TEntityKey, T3> pool3;
-             readonly Pools.Pool<TEntityKey, T4> pool4;
-             readonly Pools.Pool<TEntityKey, T5> pool5;
-             readonly Pools.Pool<TEntityKey, T6> pool6;
+        readonly IPool<TEntityKey, T1> pool1;
+             readonly IPool<TEntityKey, T2> pool2;
+             readonly IPool<TEntityKey, T3> pool3;
+             readonly IPool<TEntityKey, T4> pool4;
+             readonly IPool<TEntityKey, T5> pool5;
+             readonly IPool<TEntityKey, T6> pool6;
 
         public AdhocView(IEntityPoolAccess<TEntityKey> registry) :
             base(registry, 
@@ -470,13 +471,13 @@ namespace EnttSharp.Entities
     public sealed class AdhocView<TEntityKey, T1, T2, T3, T4, T5, T6, T7 > : AdhocMultiViewBase<TEntityKey>, IEntityView<TEntityKey, T1, T2, T3, T4, T5, T6, T7>
         where TEntityKey : IEntityKey
     {
-        readonly Pools.Pool<TEntityKey, T1> pool1;
-             readonly Pools.Pool<TEntityKey, T2> pool2;
-             readonly Pools.Pool<TEntityKey, T3> pool3;
-             readonly Pools.Pool<TEntityKey, T4> pool4;
-             readonly Pools.Pool<TEntityKey, T5> pool5;
-             readonly Pools.Pool<TEntityKey, T6> pool6;
-             readonly Pools.Pool<TEntityKey, T7> pool7;
+        readonly IPool<TEntityKey, T1> pool1;
+             readonly IPool<TEntityKey, T2> pool2;
+             readonly IPool<TEntityKey, T3> pool3;
+             readonly IPool<TEntityKey, T4> pool4;
+             readonly IPool<TEntityKey, T5> pool5;
+             readonly IPool<TEntityKey, T6> pool6;
+             readonly IPool<TEntityKey, T7> pool7;
 
         public AdhocView(IEntityPoolAccess<TEntityKey> registry) :
             base(registry, 

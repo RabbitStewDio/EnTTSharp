@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using EnttSharp.Entities.Helpers;
+using EnTTSharp.Entities.Helpers;
+using EnTTSharp.Entities.Pools;
 
-namespace EnttSharp.Entities
+namespace EnTTSharp.Entities
 {
     public abstract class MultiViewBase<TEntityKey, TEnumerator> : IEntityView<TEntityKey> 
         where TEnumerator : IEnumerator<TEntityKey>
@@ -11,7 +12,7 @@ namespace EnttSharp.Entities
     {
         readonly EventHandler<TEntityKey> onCreated;
         readonly EventHandler<TEntityKey> onDestroyed;
-        protected readonly List<ISparsePool<TEntityKey>> Sets;
+        protected readonly List<IReadOnlyPool<TEntityKey>> Sets;
 
         /// <summary>
         ///   Use this as a general fallback during the construction of
@@ -23,7 +24,7 @@ namespace EnttSharp.Entities
         public bool AllowParallelExecution { get; set; }
 
         protected MultiViewBase(IEntityPoolAccess<TEntityKey> registry,
-                                IReadOnlyList<ISparsePool<TEntityKey>> entries)
+                                IReadOnlyList<IReadOnlyPool<TEntityKey>> entries)
         {
             this.Registry = registry ?? throw new ArgumentNullException(nameof(registry));
             if (entries == null || entries.Count == 0)
@@ -33,7 +34,7 @@ namespace EnttSharp.Entities
 
             onCreated = OnCreated;
             onDestroyed = OnDestroyed;
-            this.Sets = new List<ISparsePool<TEntityKey>>(entries);
+            this.Sets = new List<IReadOnlyPool<TEntityKey>>(entries);
             foreach (var pool in Sets)
             {
                 pool.Destroyed += onDestroyed;

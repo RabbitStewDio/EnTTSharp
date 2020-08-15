@@ -1,7 +1,8 @@
 ﻿using System;
-using EnttSharp.Entities.Helpers;
+using EnTTSharp.Entities.Helpers;
+using EnTTSharp.Entities.Pools;
 
-namespace EnttSharp.Entities
+namespace EnTTSharp.Entities
 {
     public abstract class PersistentMultiViewBase<TEntityKey> : MultiViewBase<TEntityKey, PredicateEnumerator<TEntityKey>> 
         where TEntityKey : IEntityKey
@@ -10,7 +11,7 @@ namespace EnttSharp.Entities
         protected readonly Func<TEntityKey, bool> FastIsMemberPredicate;
 
         protected PersistentMultiViewBase(IEntityPoolAccess<TEntityKey> registry,
-                                          params ISparsePool<TEntityKey>[] entries) : base(registry, entries)
+                                          params IReadOnlyPool<TEntityKey>[] entries) : base(registry, entries)
         {
             view = SparseSet<TEntityKey>.CreateFrom(CreateInitialEnumerator(entries));
             FastIsMemberPredicate = view.Contains;
@@ -51,9 +52,9 @@ namespace EnttSharp.Entities
             view.Respect(Registry.GetPool<TComponent>());
         }
 
-        PredicateEnumerator<TEntityKey> CreateInitialEnumerator(ISparsePool<TEntityKey>[] sets)
+        PredicateEnumerator<TEntityKey> CreateInitialEnumerator(IReadOnlyPool<TEntityKey>[] sets)
         {
-            ISparsePool<TEntityKey> s = null;
+            IReadOnlyPool<TEntityKey> s = null;
             var count = int.MaxValue;
             foreach (var set in sets)
             {

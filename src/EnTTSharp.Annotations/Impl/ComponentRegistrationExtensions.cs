@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using EnttSharp.Entities;
+using EnTTSharp.Entities;
 
 namespace EnTTSharp.Annotations.Impl
 {

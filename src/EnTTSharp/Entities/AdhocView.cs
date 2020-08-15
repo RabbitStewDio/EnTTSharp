@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using EnttSharp.Entities.Helpers;
+using EnTTSharp.Entities.Helpers;
+using EnTTSharp.Entities.Pools;
 
-namespace EnttSharp.Entities
+namespace EnTTSharp.Entities
 {
     public sealed class AdhocView<TEntityKey, TComponent> : IEntityView<TEntityKey, TComponent> 
         where TEntityKey : IEntityKey
     {
         readonly IEntityPoolAccess<TEntityKey> registry;
-        readonly Pools.Pool<TEntityKey, TComponent> viewData;
+        readonly IPool<TEntityKey, TComponent> viewData;
         readonly EventHandler<TEntityKey> onCreated;
         readonly EventHandler<TEntityKey> onDestroyed;
         bool disposed;

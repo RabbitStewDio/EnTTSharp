@@ -1,6 +1,7 @@
 ﻿using System;
+using EnTTSharp.Entities;
 
-namespace EnttSharp.Entities.Systems
+namespace EnTTSharp.Entities.Systems
 {
     public readonly partial struct EntitySystemBuilder<TEntityKey, TContext> where TEntityKey : IEntityKey
     {

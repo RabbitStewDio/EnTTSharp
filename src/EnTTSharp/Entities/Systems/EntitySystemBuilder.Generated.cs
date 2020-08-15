@@ -9,7 +9,7 @@ using System;
 // </auto-generated>
 //------------------------------------------------------------------------------
  
-namespace EnttSharp.Entities.Systems
+namespace EnTTSharp.Entities.Systems
 {
     public readonly partial struct EntitySystemBuilder<TEntityKey, TContext>
     {

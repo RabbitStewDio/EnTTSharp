@@ -1,4 +1,4 @@
-﻿namespace EnttSharp.Entities
+﻿namespace EnTTSharp.Entities
 {
     /// <summary>
     ///   A controller interface that allows actions to query and update

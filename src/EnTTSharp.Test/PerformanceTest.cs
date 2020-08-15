@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using EnttSharp.Entities;
+using EnTTSharp.Entities;
 using NUnit.Framework;
 
 namespace EnTTSharp.Test
@@ -34,7 +35,7 @@ namespace EnTTSharp.Test
         [Test]
         public void TestPerformance()
         {
-            var r = new EntityRegistry<EntityKey>(EntityKey.MaxAge, EntityKey.Create);
+            var r = new Entities.EntityRegistry<EntityKey>(EntityKey.MaxAge, EntityKey.Create);
             r.Register<PerformanceTraitPos>();
             r.Register<PerformanceTraitVelocity>();
             var view = r.PersistentView<PerformanceTraitPos, PerformanceTraitVelocity>();

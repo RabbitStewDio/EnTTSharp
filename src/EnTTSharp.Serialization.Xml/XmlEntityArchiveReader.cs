@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Xml;
 using EnttSharp.Entities;
+using EnTTSharp.Entities;
 using EnTTSharp.Serialization.Xml.Impl;
 
 namespace EnTTSharp.Serialization.Xml

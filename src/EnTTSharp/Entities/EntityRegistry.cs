@@ -2,9 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using EnttSharp.Entities.Helpers;
+using EnTTSharp.Entities.Helpers;
+using EnTTSharp.Entities.Pools;
 
-namespace EnttSharp.Entities
+namespace EnTTSharp.Entities
 {
     public partial class EntityRegistry<TEntityKey> : IEntityViewFactory<TEntityKey>,
                                                       IEntityPoolAccess<TEntityKey>,
@@ -13,7 +14,7 @@ namespace EnttSharp.Entities
     {
         readonly EqualityComparer<TEntityKey> equalityComparer;
         readonly List<TEntityKey> entities;
-        readonly List<SparseSet<TEntityKey>> pools;
+        readonly List<IPool<TEntityKey>> pools;
         readonly Dictionary<Type, IComponentRegistration> componentIndex;
         readonly Dictionary<Type, int> tagIndex;
         readonly List<Attachment> tags;
@@ -36,7 +37,7 @@ namespace EnttSharp.Entities
             equalityComparer = EqualityComparer<TEntityKey>.Default;
             componentIndex = new Dictionary<Type, IComponentRegistration>();
             entities = new List<TEntityKey>();
-            pools = new List<SparseSet<TEntityKey>>();
+            pools = new List<IPool<TEntityKey>>();
             tagIndex = new Dictionary<Type, int>();
             tags = new List<Attachment>();
             views = new Dictionary<Type, IEntityView<TEntityKey>>();
@@ -95,13 +96,13 @@ namespace EnttSharp.Entities
             return pools[idx].Count;
         }
 
-        public Pools.Pool<TEntityKey, TComponent> GetPool<TComponent>()
+        public IPool<TEntityKey, TComponent> GetPool<TComponent>()
         {
             var idx = ManagedIndex<TComponent>();
-            return (Pools.Pool<TEntityKey, TComponent>)pools[idx];
+            return (IPool<TEntityKey, TComponent>)pools[idx];
         }
 
-        public Pools.Pool<TEntityKey, TComponent> Register<TComponent>() where TComponent : new()
+        public IPool<TEntityKey, TComponent> Register<TComponent>() where TComponent : new()
         {
             if (IsManaged<TComponent>())
             {
@@ -109,7 +110,35 @@ namespace EnttSharp.Entities
             }
 
             var registration = ComponentRegistration.Create(componentIndex.Count, this, () => new TComponent());
-            var pool = Pools.Create(registration);
+            var pool = PoolFactory.Create(registration);
+            componentIndex[typeof(TComponent)] = registration;
+            pools.StoreAt(registration.Index, pool);
+            return pool;
+        }
+
+        public IPool<TEntityKey, TComponent> RegisterFlag<TComponent>() where TComponent : new()
+        {
+            if (IsManaged<TComponent>())
+            {
+                throw new ArgumentException("Duplicate registration");
+            }
+
+            var registration = ComponentRegistration.Create<TEntityKey, TComponent>(componentIndex.Count, this);
+            var pool = PoolFactory.CreateFlagPool(new TComponent(), registration);
+            componentIndex[typeof(TComponent)] = registration;
+            pools.StoreAt(registration.Index, pool);
+            return pool;
+        }
+
+        public IPool<TEntityKey, TComponent> RegisterFlag<TComponent>(TComponent sharedData)
+        {
+            if (IsManaged<TComponent>())
+            {
+                throw new ArgumentException("Duplicate registration");
+            }
+
+            var registration = ComponentRegistration.Create<TEntityKey, TComponent>(componentIndex.Count, this);
+            var pool = PoolFactory.CreateFlagPool(sharedData, registration);
             componentIndex[typeof(TComponent)] = registration;
             pools.StoreAt(registration.Index, pool);
             return pool;
@@ -121,7 +150,7 @@ namespace EnttSharp.Entities
             Register(constructorFn, destructorFn);
         }
 
-        public Pools.Pool<TEntityKey, TComponent>
+        public IPool<TEntityKey, TComponent>
             Register<TComponent>(Func<TComponent> con,
                                  Action<TEntityKey, EntityRegistry<TEntityKey>, TComponent> destructor = null)
         {
@@ -131,7 +160,7 @@ namespace EnttSharp.Entities
             }
 
             var registration = ComponentRegistration.Create(componentIndex.Count, this, con, destructor);
-            var pool = Pools.Create(registration);
+            var pool = PoolFactory.Create(registration);
             componentIndex[typeof(TComponent)] = registration;
             pools.StoreAt(registration.Index, pool);
             return pool;
@@ -143,7 +172,7 @@ namespace EnttSharp.Entities
             RegisterNonConstructable(destructorFn);
         }
 
-        public Pools.Pool<TEntityKey, TComponent> RegisterNonConstructable<TComponent>(
+        public IPool<TEntityKey, TComponent> RegisterNonConstructable<TComponent>(
             Action<TEntityKey, EntityRegistry<TEntityKey>, TComponent> destructor = null)
         {
             if (IsManaged<TComponent>())
@@ -152,7 +181,7 @@ namespace EnttSharp.Entities
             }
 
             var registration = ComponentRegistration.Create(componentIndex.Count, this, destructor);
-            var pool = Pools.Create(registration);
+            var pool = PoolFactory.Create(registration);
             componentIndex[typeof(TComponent)] = registration;
             pools.StoreAt(registration.Index, pool);
             return pool;
@@ -407,11 +436,7 @@ namespace EnttSharp.Entities
             AssertValid(entity);
 
             var pool = GetPool<TComponent>();
-            if (pool.Contains(entity))
-            {
-                pool.Replace(entity, in c);
-            }
-            else
+            if (!pool.WriteBack(entity, in c))
             {
                 pool.Add(entity, in c);
             }
@@ -437,18 +462,22 @@ namespace EnttSharp.Entities
         public bool ReplaceComponent<TComponent>(TEntityKey entity, in TComponent c)
         {
             AssertValid(entity);
-            return GetPool<TComponent>().Replace(entity, in c);
+            return GetPool<TComponent>().WriteBack(entity, in c);
         }
 
         public void Sort<TComponent>(IComparer<TComponent> comparator)
         {
             var pool = GetPool<TComponent>();
-            pool.HeapSort(comparator);
+            if (pool is ISortableCollection<TComponent> sortablePool)
+            {
+                sortablePool.HeapSort(comparator);
+            }
         }
 
         public void Respect<TComponentTo, TComponentFrom>()
         {
-            GetPool<TComponentTo>().Respect(GetPool<TComponentFrom>());
+            var pool = GetPool<TComponentTo>();
+            pool.Respect(GetPool<TComponentFrom>());
         }
 
         public void ResetComponent<TComponent>()
@@ -529,7 +558,7 @@ namespace EnttSharp.Entities
             return value;
         }
 
-        struct Attachment
+        readonly struct Attachment
         {
             public readonly TEntityKey Entity;
             public readonly object Tag;

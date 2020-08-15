@@ -1,4 +1,6 @@
-﻿namespace EnttSharp.Entities
+﻿using EnTTSharp.Entities;
+
+namespace EnTTSharp.Entities
 {
     public static partial class ViewDelegates
     {

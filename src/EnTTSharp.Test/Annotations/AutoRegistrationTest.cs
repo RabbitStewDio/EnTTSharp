@@ -2,6 +2,7 @@ using System;
 using EnTTSharp.Annotations;
 using EnTTSharp.Annotations.Impl;
 using EnttSharp.Entities;
+using EnTTSharp.Entities;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -28,7 +29,7 @@ namespace EnTTSharp.Test.Annotations
 
             components.Count.Should().Be(6);
 
-            var registry = new EntityRegistry<EntityKey>(EntityKey.MaxAge, EntityKey.Create);
+            var registry = new Entities.EntityRegistry<EntityKey>(EntityKey.MaxAge, EntityKey.Create);
             new EntityComponentActivator<EntityKey>()
                 .With(new ComponentRegistrationActivator<EntityKey>())
                 .ActivateAll(registry, components);

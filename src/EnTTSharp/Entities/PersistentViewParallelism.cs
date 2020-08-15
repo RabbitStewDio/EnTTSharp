@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace EnttSharp.Entities
+namespace EnTTSharp.Entities
 {
     public static class PersistentViewParallelism
     {

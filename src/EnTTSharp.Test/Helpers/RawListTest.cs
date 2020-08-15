@@ -1,4 +1,4 @@
-﻿using EnttSharp.Entities.Helpers;
+﻿using EnTTSharp.Entities.Helpers;
 using FluentAssertions;
 using NUnit.Framework;
 

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EnttSharp.Entities
+namespace EnTTSharp.Entities
 {
     public interface IEntityComponentRegistry<TEntityKey>
         where TEntityKey : IEntityKey

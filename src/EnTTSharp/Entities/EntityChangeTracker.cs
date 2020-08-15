@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EnttSharp.Entities
+namespace EnTTSharp.Entities
 {
     public abstract class EntityChangeTracker<TEntityKey, TEntity>: IDisposable 
         where TEntityKey : IEntityKey

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace EnttSharp.Entities.Helpers
+namespace EnTTSharp.Entities.Helpers
 {
     internal static class CollectionExtensions
     {

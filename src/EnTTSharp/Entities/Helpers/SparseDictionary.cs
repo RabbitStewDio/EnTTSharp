@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
 
-namespace EnttSharp.Entities.Helpers
+namespace EnTTSharp.Entities.Helpers
 {
     public class SparseDictionary<TEntityKey, TComponent> : SparseSet<TEntityKey>, ISortableCollection<TComponent>
         where TEntityKey: IEntityKey
@@ -22,7 +22,7 @@ namespace EnttSharp.Entities.Helpers
             }
         }
 
-        public IEnumerable<TComponent> Instances => instances;
+        // public IEnumerable<TComponent> Instances => instances;
 
         public virtual void Add(TEntityKey e, in TComponent component)
         {
@@ -75,10 +75,11 @@ namespace EnttSharp.Entities.Helpers
                 return true;
             }
 
-            component = default(TComponent);
+            component = default;
             return false;
         }
 
+        [Obsolete("Use WriteBack instead")]
         public virtual bool Replace(TEntityKey entity, in TComponent component)
         {
             return WriteBack(entity, in component);

@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace EnttSharp.Entities.Helpers
+namespace EnTTSharp.Entities.Helpers
 {
     /// <summary>
     ///  Standard sparse-set implementation (see
@@ -14,20 +14,20 @@ namespace EnttSharp.Entities.Helpers
     {
         readonly struct ReverseEntry
         {
-            const int InUseFlag = 1 << 28;
+            const int InUseFlag = 1 << 31;
 
-            readonly int rawData;
-            public int Key => (rawData & 0x0FFF_FFFF) - 1;
-            public bool InUse => ((rawData >> 28) & 0xF) != 0;
+            readonly uint rawData;
+            public int Key => (int)(rawData & 0x7FFF_FFFF) - 1;
+            public bool InUse => (rawData >> 31) != 0;
 
             public ReverseEntry(int key)
             {
-                rawData = ((key + 1) & 0x0FFF_FFFF) | InUseFlag;
+                rawData = (uint)(((key + 1) & 0x7FFF_FFFF) | InUseFlag);
             }
 
             ReverseEntry(ReverseEntry r)
             {
-                rawData = r.Key;
+                rawData = (uint)((r.Key + 1) & 0x7FFF_FFFF);
             }
 
             public ReverseEntry MarkUnused()
@@ -92,7 +92,7 @@ namespace EnttSharp.Entities.Helpers
             return true;
         }
 
-        protected TEntityKey Last => direct[direct.Count - 1];
+        public TEntityKey Last => direct[direct.Count - 1];
 
         /// <summary>
         ///  Increases the capacity of the sparse set. This never reduces the capacity.

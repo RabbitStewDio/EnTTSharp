@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using EnttSharp.Entities;
-using EnttSharp.Entities.Helpers;
+using EnTTSharp.Entities;
+using EnTTSharp.Entities.Helpers;
 
 namespace EnTTSharp.Serialization
 {

@@ -1,5 +1,6 @@
 ﻿using System;
 using EnttSharp.Entities;
+using EntityKey = EnTTSharp.Entities.EntityKey;
 
 namespace EnTTSharp.Test
 {
@@ -29,7 +30,7 @@ namespace EnTTSharp.Test
             }
         }
 
-        public static void UpdatePosition(EntityRegistry<EntityKey> registry, TimeSpan deltaTime)
+        public static void UpdatePosition(Entities.EntityRegistry<EntityKey> registry, TimeSpan deltaTime)
         {
             // view contains all the entities that have both a position and a velocty component ...
             var view = registry.View<Velocity, Position>();
@@ -45,7 +46,7 @@ namespace EnTTSharp.Test
             }
         }
 
-        public static void ClearVelocity(EntityRegistry<EntityKey> registry)
+        public static void ClearVelocity(Entities.EntityRegistry<EntityKey> registry)
         {
             var view = registry.View<Velocity>();
             foreach (var entity in view)
@@ -57,7 +58,7 @@ namespace EnTTSharp.Test
         public static void DummyMain(string [] args)
         {
             var random = new Random();
-            var registry = new EntityRegistry<EntityKey>(EntityKey.MaxAge, (age, id) => new EntityKey(age, id));
+            var registry = new Entities.EntityRegistry<EntityKey>(EntityKey.MaxAge, (age, id) => new EntityKey(age, id));
             registry.Register<Velocity>();
             registry.Register<Position>();
 

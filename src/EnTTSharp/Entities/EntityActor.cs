@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace EnttSharp.Entities
+namespace EnTTSharp.Entities
 {
     public static class EntityActor
     {
