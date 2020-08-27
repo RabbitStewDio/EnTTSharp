@@ -485,9 +485,19 @@ namespace EnTTSharp.Entities
             GetPool<TComponent>().RemoveAll();
         }
 
+        public void CopyTo(List<TEntityKey> k)
+        {
+            k.Clear();
+            k.Capacity = Math.Max(k.Capacity, Count);
+            foreach (var e in this)
+            {
+                k.Add(e);
+            }
+        }
+
         public void Reset()
         {
-            var l = EntityKeyListPool<TEntityKey>.Reserve(GetEnumerator(), Count);
+            var l = EntityKeyListPool<TEntityKey>.Reserve(this);
             foreach (var last in l)
             {
                 if (IsValid(last))

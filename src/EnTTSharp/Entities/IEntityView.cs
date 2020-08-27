@@ -19,5 +19,9 @@ namespace EnTTSharp.Entities
 
         void Respect<TComponent>();
         void Reserve(int capacity);
+
+        int EstimatedSize { get; }
+
+        void CopyTo(List<TEntityKey> k);
     }
 }

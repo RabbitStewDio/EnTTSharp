@@ -4,89 +4,33 @@
     {
         public static bool GlobalAllowParallel = true;
 
-        public static EntitySystemBuilder<TEntityKey, TContext> BuildSystem<TEntityKey, TContext>(this IEntityViewFactory<TEntityKey> registry, 
-                                                                                                bool allowParallel = true) 
+        public readonly struct EntitySystemBuilderWithoutContext<TEntityKey> where TEntityKey : IEntityKey
+        {
+            readonly IEntityViewFactory<TEntityKey> registry;
+            readonly bool allowParallel;
+
+            public EntitySystemBuilderWithoutContext(IEntityViewFactory<TEntityKey> registry, bool allowParallel)
+            {
+                this.registry = registry;
+                this.allowParallel = allowParallel;
+            }
+
+            public EntitySystemBuilderWithoutContext<TEntityKey> AllowParallelExecution()
+            {
+                return new EntitySystemBuilderWithoutContext<TEntityKey>(registry, true);
+            }
+
+            public EntitySystemBuilder<TEntityKey, TGameContext> WithContext<TGameContext>()
+            {
+                return new EntitySystemBuilder<TEntityKey, TGameContext>(registry, GlobalAllowParallel && allowParallel);
+            }
+        }
+
+        public static EntitySystemBuilderWithoutContext<TEntityKey> BuildSystem<TEntityKey>(this IEntityViewFactory<TEntityKey> registry,
+                                                                                                      bool allowParallel = false)
             where TEntityKey : IEntityKey
         {
-            return new EntitySystemBuilder<TEntityKey, TContext>(registry, GlobalAllowParallel && allowParallel);
+            return new EntitySystemBuilderWithoutContext<TEntityKey>(registry, GlobalAllowParallel && allowParallel);
         }
-/*
-        [Obsolete]
-        public static Action<TContext>
-            CreateSystem<TContext, TTrait>(EntityRegistry reg,
-                                           ViewDelegates.ApplyWithContext<TContext, TTrait> action, bool allowParallel = false)
-        {
-            return reg.BuildSystem<TContext>(allowParallel).CreateSystem(action);
-        }
-
-        [Obsolete]
-        public static Action<TContext>
-            CreateSystem<TContext, TTraitA, TTraitB>(
-                EntityRegistry reg,
-                ViewDelegates.ApplyWithContext<TContext, TTraitA, TTraitB> action, bool allowParallel = false)
-        {
-            return reg.BuildSystem<TContext>(allowParallel).CreateSystem(action);
-        }
-
-        [Obsolete]
-        public static Action<TContext> CreateSystem<TContext, TTraitA, TTraitB, TTraitC>(
-            EntityRegistry reg, ViewDelegates.ApplyWithContext<TContext, TTraitA, TTraitB, TTraitC> action, bool allowParallel = false)
-        {
-            var view = reg.PersistentView<TTraitA, TTraitB, TTraitC>();
-            view.AllowParallelExecution = GlobalAllowParallel && allowParallel;
-
-            void Act(TContext context)
-            {
-                view.ApplyWithContext(context, action);
-            }
-
-            return Act;
-        }
-
-        [Obsolete]
-        public static Action<TContext> CreateSystem<TContext, TTraitA, TTraitB, TTraitC, TTraitD>(
-            EntityRegistry reg, ViewDelegates.ApplyWithContext<TContext, TTraitA, TTraitB, TTraitC, TTraitD> action, bool allowParallel = false)
-        {
-            var view = reg.PersistentView<TTraitA, TTraitB, TTraitC, TTraitD>();
-            view.AllowParallelExecution = GlobalAllowParallel && allowParallel;
-
-            void Act(TContext context)
-            {
-                view.ApplyWithContext(context, action);
-            }
-
-            return Act;
-        }
-
-        [Obsolete]
-        public static Action<TContext> CreateSystem<TContext, TTraitA, TTraitB, TTraitC, TTraitD, TTraitE>(
-            EntityRegistry reg, ViewDelegates.ApplyWithContext<TContext, TTraitA, TTraitB, TTraitC, TTraitD, TTraitE> action, bool allowParallel = false)
-        {
-            var view = reg.PersistentView<TTraitA, TTraitB, TTraitC, TTraitD, TTraitE>();
-            view.AllowParallelExecution = GlobalAllowParallel && allowParallel;
-
-            void Act(TContext context)
-            {
-                view.ApplyWithContext(context, action);
-            }
-
-            return Act;
-        }
-
-        [Obsolete]
-        public static Action<TContext> CreateSystem<TContext, TTraitA, TTraitB, TTraitC, TTraitD, TTraitE, TTraitF>(
-            EntityRegistry reg, ViewDelegates.ApplyWithContext<TContext, TTraitA, TTraitB, TTraitC, TTraitD, TTraitE, TTraitF> action, bool allowParallel = false)
-        {
-            var view = reg.PersistentView<TTraitA, TTraitB, TTraitC, TTraitD, TTraitE, TTraitF>();
-            view.AllowParallelExecution = GlobalAllowParallel && allowParallel;
-
-            void Act(TContext context)
-            {
-                view.ApplyWithContext(context, action);
-            }
-
-            return Act;
-        }
-        */
     }
 }

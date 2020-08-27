@@ -30,7 +30,7 @@ namespace EnTTSharp.Entities.Systems
                                            ViewDelegates.ApplyWithContext<TEntityKey, TContext, <#= templateParamsLight #>> action, bool allowParallel = false)
             where TEntityKey: IEntityKey
         {
-            return reg.BuildSystem<TEntityKey, TContext>(allowParallel).CreateSystem(action);
+            return reg.BuildSystem<TEntityKey>(allowParallel).WithContext<TContext>().CreateSystem(action);
         }
 <#
     }

@@ -15,7 +15,7 @@ namespace EnTTSharp.Entities
         {
         }
 
-        protected override int EstimatedSize
+        public override int EstimatedSize
         {
             get
             {

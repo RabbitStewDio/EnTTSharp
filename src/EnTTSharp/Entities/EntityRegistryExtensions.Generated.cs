@@ -11,7 +11,6 @@ namespace EnTTSharp.Entities
 {
     public partial class EntityRegistryExtensions 
     {
-
         public static bool HasComponent<TEntityKey, T1, T2>(this IEntityViewControl<TEntityKey> reg, TEntityKey e)
             where TEntityKey : IEntityKey
         {

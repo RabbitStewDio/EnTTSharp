@@ -37,7 +37,7 @@ namespace EnTTSharp.Entities
 
         public void Apply(ViewDelegates.Apply<TEntityKey, <#= templateParamsLight #> > bulk)
         {
-            var p = EntityKeyListPool<TEntityKey>.Reserve(this.GetEnumerator(), EstimatedSize);
+            var p = EntityKeyListPool<TEntityKey>.Reserve(this);
             try
             {
                 if (AllowParallelExecution)
@@ -68,7 +68,7 @@ namespace EnTTSharp.Entities
 
         public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TEntityKey, TContext, <#= templateParamsLight #>> bulk)
         {
-            var p = EntityKeyListPool<TEntityKey>.Reserve(this.GetEnumerator(), EstimatedSize);
+            var p = EntityKeyListPool<TEntityKey>.Reserve(this);
             try
             {
                 if (AllowParallelExecution)

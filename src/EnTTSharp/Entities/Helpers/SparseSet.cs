@@ -209,5 +209,16 @@ namespace EnTTSharp.Entities.Helpers
 
             return set;
         }
+
+        public void CopyTo(List<TEntityKey> entites)
+        {
+            entites.Capacity = Math.Max(entites.Capacity, Count);
+            entites.Clear();
+            foreach (var e in direct)
+            {
+                entites.Add(e);
+            }
+        }
+
     }
 }

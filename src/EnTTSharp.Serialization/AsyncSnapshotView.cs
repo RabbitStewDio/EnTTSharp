@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using EnTTSharp.Entities;
+using EnTTSharp.Entities.Helpers;
 
 namespace EnTTSharp.Serialization
 {
@@ -58,7 +59,8 @@ namespace EnTTSharp.Serialization
         public async Task<AsyncSnapshotView<TEntityKey>> WriteEntites(IAsyncEntityArchiveWriter<TEntityKey> writer)
         {
             await writer.WriteStartEntityAsync(destroyedEntities.Count);
-            foreach (var d in registry)
+            var p = EntityKeyListPool<TEntityKey>.Reserve(registry);
+            foreach (var d in p)
             {
                 await writer.WriteEntityAsync(d);
             }
@@ -71,6 +73,7 @@ namespace EnTTSharp.Serialization
         {
             var pool = registry.GetPool<TComponent>();
             await writer.WriteStartComponentAsync<TComponent>(pool.Count);
+            var p = EntityKeyListPool.Reserve(pool);
             foreach (var entity in pool)
             {
                 if (pool.TryGet(entity, out var c))

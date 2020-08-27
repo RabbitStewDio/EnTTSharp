@@ -141,7 +141,7 @@ namespace EnTTSharp.Entities
 
         public void Apply(ViewDelegates.Apply<TEntityKey> bulk)
         {
-            var p = EntityKeyListPool<TEntityKey>.Reserve(viewData.GetEnumerator(), viewData.Count);
+            var p = EntityKeyListPool<TEntityKey>.Reserve(this);
             try
             {
                 foreach (var ek in p)
@@ -157,7 +157,7 @@ namespace EnTTSharp.Entities
 
         public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TEntityKey, TContext> bulk)
         {
-            var p = EntityKeyListPool<TEntityKey>.Reserve(viewData.GetEnumerator(), viewData.Count);
+            var p = EntityKeyListPool<TEntityKey>.Reserve(this);
             try
             {
                 foreach (var ek in p)
@@ -173,7 +173,7 @@ namespace EnTTSharp.Entities
 
         public void Apply(ViewDelegates.Apply<TEntityKey, TComponent> bulk)
         {
-            var p = EntityKeyListPool<TEntityKey>.Reserve(viewData.GetEnumerator(), viewData.Count);
+            var p = EntityKeyListPool<TEntityKey>.Reserve(this);
             try
             {
                 foreach (var ek in p)
@@ -193,7 +193,7 @@ namespace EnTTSharp.Entities
         public void ApplyWithContext<TContext>(TContext context,
                                                ViewDelegates.ApplyWithContext<TEntityKey, TContext, TComponent> bulk)
         {
-            var p = EntityKeyListPool<TEntityKey>.Reserve(viewData.GetEnumerator(), viewData.Count);
+            var p = EntityKeyListPool<TEntityKey>.Reserve(this);
             try
             {
                 foreach (var ek in p)
@@ -225,12 +225,7 @@ namespace EnTTSharp.Entities
             return GetEnumerator();
         }
 
-        IEnumerator<TEntityKey> IEnumerable<TEntityKey>.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
-        public RawList<TEntityKey>.Enumerator GetEnumerator()
+        public IEnumerator<TEntityKey> GetEnumerator()
         {
             return viewData.GetEnumerator();
         }
@@ -251,6 +246,15 @@ namespace EnTTSharp.Entities
             disposed = true;
             this.viewData.Destroyed -= onDestroyed;
             this.viewData.Created -= onCreated;
+        }
+
+        public int EstimatedSize => viewData.Count;
+
+        public void CopyTo(List<TEntityKey> k)
+        {
+            k.Clear();
+            k.Capacity = Math.Max(k.Capacity, viewData.Count);
+            viewData.CopyTo(k);
         }
     }
 }

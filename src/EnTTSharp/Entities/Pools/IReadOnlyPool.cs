@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using EnTTSharp.Entities.Helpers;
 
 namespace EnTTSharp.Entities.Pools
 {
@@ -13,6 +12,7 @@ namespace EnTTSharp.Entities.Pools
         bool Contains(TEntityKey k);
         int Count { get; }
         void Reserve(int capacity);
-        new RawList<TEntityKey>.Enumerator GetEnumerator();
+
+        void CopyTo(List<TEntityKey> entites);
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using EnttSharp.Entities;
 using EnTTSharp.Entities;
 
 namespace EnTTSharp.Serialization

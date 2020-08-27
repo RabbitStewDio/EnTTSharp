@@ -31,7 +31,7 @@ namespace EnTTSharp.Entities
 
         public void Apply(ViewDelegates.Apply<TEntityKey, T1, T2 > bulk)
         {
-            var p = EntityKeyListPool<TEntityKey>.Reserve(this.GetEnumerator(), EstimatedSize);
+            var p = EntityKeyListPool<TEntityKey>.Reserve(this);
             try
             {
                 if (AllowParallelExecution)
@@ -63,7 +63,7 @@ namespace EnTTSharp.Entities
 
         public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1, T2> bulk)
         {
-            var p = EntityKeyListPool<TEntityKey>.Reserve(this.GetEnumerator(), EstimatedSize);
+            var p = EntityKeyListPool<TEntityKey>.Reserve(this);
             try
             {
                 if (AllowParallelExecution)
@@ -115,7 +115,7 @@ namespace EnTTSharp.Entities
 
         public void Apply(ViewDelegates.Apply<TEntityKey, T1, T2, T3 > bulk)
         {
-            var p = EntityKeyListPool<TEntityKey>.Reserve(this.GetEnumerator(), EstimatedSize);
+            var p = EntityKeyListPool<TEntityKey>.Reserve(this);
             try
             {
                 if (AllowParallelExecution)
@@ -148,7 +148,7 @@ namespace EnTTSharp.Entities
 
         public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1, T2, T3> bulk)
         {
-            var p = EntityKeyListPool<TEntityKey>.Reserve(this.GetEnumerator(), EstimatedSize);
+            var p = EntityKeyListPool<TEntityKey>.Reserve(this);
             try
             {
                 if (AllowParallelExecution)
@@ -204,7 +204,7 @@ namespace EnTTSharp.Entities
 
         public void Apply(ViewDelegates.Apply<TEntityKey, T1, T2, T3, T4 > bulk)
         {
-            var p = EntityKeyListPool<TEntityKey>.Reserve(this.GetEnumerator(), EstimatedSize);
+            var p = EntityKeyListPool<TEntityKey>.Reserve(this);
             try
             {
                 if (AllowParallelExecution)
@@ -238,7 +238,7 @@ namespace EnTTSharp.Entities
 
         public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1, T2, T3, T4> bulk)
         {
-            var p = EntityKeyListPool<TEntityKey>.Reserve(this.GetEnumerator(), EstimatedSize);
+            var p = EntityKeyListPool<TEntityKey>.Reserve(this);
             try
             {
                 if (AllowParallelExecution)
@@ -298,7 +298,7 @@ namespace EnTTSharp.Entities
 
         public void Apply(ViewDelegates.Apply<TEntityKey, T1, T2, T3, T4, T5 > bulk)
         {
-            var p = EntityKeyListPool<TEntityKey>.Reserve(this.GetEnumerator(), EstimatedSize);
+            var p = EntityKeyListPool<TEntityKey>.Reserve(this);
             try
             {
                 if (AllowParallelExecution)
@@ -333,7 +333,7 @@ namespace EnTTSharp.Entities
 
         public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1, T2, T3, T4, T5> bulk)
         {
-            var p = EntityKeyListPool<TEntityKey>.Reserve(this.GetEnumerator(), EstimatedSize);
+            var p = EntityKeyListPool<TEntityKey>.Reserve(this);
             try
             {
                 if (AllowParallelExecution)
@@ -397,7 +397,7 @@ namespace EnTTSharp.Entities
 
         public void Apply(ViewDelegates.Apply<TEntityKey, T1, T2, T3, T4, T5, T6 > bulk)
         {
-            var p = EntityKeyListPool<TEntityKey>.Reserve(this.GetEnumerator(), EstimatedSize);
+            var p = EntityKeyListPool<TEntityKey>.Reserve(this);
             try
             {
                 if (AllowParallelExecution)
@@ -433,7 +433,7 @@ namespace EnTTSharp.Entities
 
         public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1, T2, T3, T4, T5, T6> bulk)
         {
-            var p = EntityKeyListPool<TEntityKey>.Reserve(this.GetEnumerator(), EstimatedSize);
+            var p = EntityKeyListPool<TEntityKey>.Reserve(this);
             try
             {
                 if (AllowParallelExecution)
@@ -501,7 +501,7 @@ namespace EnTTSharp.Entities
 
         public void Apply(ViewDelegates.Apply<TEntityKey, T1, T2, T3, T4, T5, T6, T7 > bulk)
         {
-            var p = EntityKeyListPool<TEntityKey>.Reserve(this.GetEnumerator(), EstimatedSize);
+            var p = EntityKeyListPool<TEntityKey>.Reserve(this);
             try
             {
                 if (AllowParallelExecution)
@@ -538,7 +538,7 @@ namespace EnTTSharp.Entities
 
         public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1, T2, T3, T4, T5, T6, T7> bulk)
         {
-            var p = EntityKeyListPool<TEntityKey>.Reserve(this.GetEnumerator(), EstimatedSize);
+            var p = EntityKeyListPool<TEntityKey>.Reserve(this);
             try
             {
                 if (AllowParallelExecution)

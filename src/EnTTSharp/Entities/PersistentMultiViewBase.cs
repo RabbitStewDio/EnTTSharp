@@ -17,7 +17,7 @@ namespace EnTTSharp.Entities
             FastIsMemberPredicate = view.Contains;
         }
 
-        protected override int EstimatedSize => view.Count;
+        public override int EstimatedSize => view.Count;
 
         protected override void OnDestroyed(object sender, TEntityKey e)
         {
@@ -35,7 +35,7 @@ namespace EnTTSharp.Entities
             base.OnCreated(sender, e);
         }
 
-        public int Count => EstimatedSize;
+        public int Count => view.Count;
 
         public override bool Contains(TEntityKey e)
         {

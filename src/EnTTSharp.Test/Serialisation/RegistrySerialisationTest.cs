@@ -2,7 +2,6 @@
 using System.IO;
 using System.Text;
 using System.Xml;
-using EnttSharp.Entities;
 using EnTTSharp.Entities;
 using EnTTSharp.Serialization;
 using EnTTSharp.Serialization.Xml;

@@ -1,5 +1,4 @@
 ﻿using System;
-using EnttSharp.Entities;
 using EntityKey = EnTTSharp.Entities.EntityKey;
 
 namespace EnTTSharp.Test

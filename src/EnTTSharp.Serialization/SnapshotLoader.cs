@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using EnttSharp.Entities;
 using EnTTSharp.Entities;
 using EnTTSharp.Entities.Helpers;
 
@@ -54,7 +53,7 @@ namespace EnTTSharp.Serialization
 
         public void CleanOrphans()
         {
-            var p = EntityKeyListPool<TEntityKey>.Reserve(Registry.GetEnumerator(), Registry.Count);
+            var p = EntityKeyListPool<TEntityKey>.Reserve(Registry);
             try
             {
                 foreach (var ek in p)

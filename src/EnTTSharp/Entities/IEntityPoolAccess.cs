@@ -13,5 +13,7 @@ namespace EnTTSharp.Entities
         event EventHandler<TEntityKey> BeforeEntityDestroyed;
         void AssureEntityState(TEntityKey entity, bool destroyed);
         void Destroy(TEntityKey k);
+
+        void CopyTo(List<TEntityKey> k);
     }
 }

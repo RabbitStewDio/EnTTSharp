@@ -117,5 +117,15 @@ namespace EnTTSharp.Entities.Pools
                 Remove(k);
             }
         }
+
+        public void CopyTo(List<TEntityKey> entites)
+        {
+            entites.Capacity = Math.Max(entites.Capacity, Count);
+            entites.Clear();
+            foreach (var e in backend)
+            {
+                entites.Add(e);
+            }
+        }
     }
 }

@@ -114,7 +114,7 @@ namespace EnTTSharp.Entities
 
         public abstract TEnumerator GetEnumerator();
 
-        protected abstract int EstimatedSize { get; }
+        public abstract int EstimatedSize { get; }
 
         protected bool IsMember(TEntityKey e)
         {
@@ -151,7 +151,7 @@ namespace EnTTSharp.Entities
 
         public void Apply(ViewDelegates.Apply<TEntityKey> bulk)
         {
-            var p = EntityKeyListPool<TEntityKey>.Reserve(this.GetEnumerator(), EstimatedSize);
+            var p = EntityKeyListPool<TEntityKey>.Reserve(this);
             try
             {
                 foreach (var e in p)
@@ -167,7 +167,7 @@ namespace EnTTSharp.Entities
 
         public void ApplyWithContext<TContext>(TContext c, ViewDelegates.ApplyWithContext<TEntityKey, TContext> bulk)
         {
-            var p = EntityKeyListPool<TEntityKey>.Reserve(this.GetEnumerator(), EstimatedSize);
+            var p = EntityKeyListPool<TEntityKey>.Reserve(this);
             try
             {
                 foreach (var e in p)
@@ -249,6 +249,17 @@ namespace EnTTSharp.Entities
         TOtherComponent IEntityViewControl<TEntityKey>.AssignOrReplace<TOtherComponent>(TEntityKey entity)
         {
             return Registry.AssignOrReplace<TOtherComponent>(entity);
+        }
+
+        public virtual void CopyTo(List<TEntityKey> k)
+        {
+            k.Clear();
+            k.Capacity = Math.Max(k.Capacity, EstimatedSize);
+
+            foreach (var e in this)
+            {
+                k.Add(e);
+            }
         }
 
         public void Dispose()

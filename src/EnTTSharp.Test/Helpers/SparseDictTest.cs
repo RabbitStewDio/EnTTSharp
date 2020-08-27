@@ -1,5 +1,4 @@
-﻿using EnttSharp.Entities;
-using EnTTSharp.Entities;
+﻿using EnTTSharp.Entities;
 using EnTTSharp.Test.Fixtures;
 using FluentAssertions;
 using NUnit.Framework;

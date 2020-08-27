@@ -1,7 +1,6 @@
 using System;
 using EnTTSharp.Annotations;
 using EnTTSharp.Annotations.Impl;
-using EnttSharp.Entities;
 using EnTTSharp.Entities;
 using FluentAssertions;
 using NUnit.Framework;
