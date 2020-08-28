@@ -25,14 +25,14 @@ namespace EnTTSharp.Entities
     public sealed class AdhocView<TEntityKey, <#= templateParamsLight #> > : AdhocMultiViewBase<TEntityKey>, IEntityView<TEntityKey, <#= templateParamsLight #>>
         where TEntityKey : IEntityKey
     {
-        <#= JoinGenericParams(p, "readonly IPool<TEntityKey, T{0}> pool{0};", "\n             ") #>
+        <#= JoinGenericParams(p, "readonly IReadOnlyPool<TEntityKey, T{0}> pool{0};", "\n        ") #>
 
         public AdhocView(IEntityPoolAccess<TEntityKey> registry) :
             base(registry, 
-                 <#= JoinGenericParams(p, "registry.GetPool<T{0}>()", ",\n             ") #>
+                 <#= JoinGenericParams(p, "registry.GetPool<T{0}>()", ",\n                 ") #>
         )
         {
-            <#= JoinGenericParams(p, "pool{0} = registry.GetPool<T{0}>();", "\n             ") #>
+            <#= JoinGenericParams(p, "pool{0} = registry.GetPool<T{0}>();", "\n           ") #>
         }
 
         public void Apply(ViewDelegates.Apply<TEntityKey, <#= templateParamsLight #> > bulk)

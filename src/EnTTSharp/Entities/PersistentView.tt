@@ -25,7 +25,7 @@ namespace EnTTSharp.Entities
     public sealed class PersistentView<TEntityKey, <#= templateParamsLight #>> : PersistentMultiViewBase<TEntityKey>, IPersistentEntityView<TEntityKey, <#= templateParamsLight #>>
         where TEntityKey: IEntityKey
     {
-        <#= JoinGenericParams(p, "readonly IPool<TEntityKey, T{0}> pool{0};", "\n             ") #>
+        <#= JoinGenericParams(p, "readonly IReadOnlyPool<TEntityKey, T{0}> pool{0};", "\n             ") #>
 
         public PersistentView(IEntityPoolAccess<TEntityKey> registry) :
             base(registry, 

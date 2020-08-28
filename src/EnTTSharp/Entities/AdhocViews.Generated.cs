@@ -16,17 +16,17 @@ namespace EnTTSharp.Entities
     public sealed class AdhocView<TEntityKey, T1, T2 > : AdhocMultiViewBase<TEntityKey>, IEntityView<TEntityKey, T1, T2>
         where TEntityKey : IEntityKey
     {
-        readonly IPool<TEntityKey, T1> pool1;
-             readonly IPool<TEntityKey, T2> pool2;
+        readonly IReadOnlyPool<TEntityKey, T1> pool1;
+        readonly IReadOnlyPool<TEntityKey, T2> pool2;
 
         public AdhocView(IEntityPoolAccess<TEntityKey> registry) :
             base(registry, 
                  registry.GetPool<T1>(),
-             registry.GetPool<T2>()
+                 registry.GetPool<T2>()
         )
         {
             pool1 = registry.GetPool<T1>();
-             pool2 = registry.GetPool<T2>();
+           pool2 = registry.GetPool<T2>();
         }
 
         public void Apply(ViewDelegates.Apply<TEntityKey, T1, T2 > bulk)
@@ -97,20 +97,20 @@ namespace EnTTSharp.Entities
     public sealed class AdhocView<TEntityKey, T1, T2, T3 > : AdhocMultiViewBase<TEntityKey>, IEntityView<TEntityKey, T1, T2, T3>
         where TEntityKey : IEntityKey
     {
-        readonly IPool<TEntityKey, T1> pool1;
-             readonly IPool<TEntityKey, T2> pool2;
-             readonly IPool<TEntityKey, T3> pool3;
+        readonly IReadOnlyPool<TEntityKey, T1> pool1;
+        readonly IReadOnlyPool<TEntityKey, T2> pool2;
+        readonly IReadOnlyPool<TEntityKey, T3> pool3;
 
         public AdhocView(IEntityPoolAccess<TEntityKey> registry) :
             base(registry, 
                  registry.GetPool<T1>(),
-             registry.GetPool<T2>(),
-             registry.GetPool<T3>()
+                 registry.GetPool<T2>(),
+                 registry.GetPool<T3>()
         )
         {
             pool1 = registry.GetPool<T1>();
-             pool2 = registry.GetPool<T2>();
-             pool3 = registry.GetPool<T3>();
+           pool2 = registry.GetPool<T2>();
+           pool3 = registry.GetPool<T3>();
         }
 
         public void Apply(ViewDelegates.Apply<TEntityKey, T1, T2, T3 > bulk)
@@ -183,23 +183,23 @@ namespace EnTTSharp.Entities
     public sealed class AdhocView<TEntityKey, T1, T2, T3, T4 > : AdhocMultiViewBase<TEntityKey>, IEntityView<TEntityKey, T1, T2, T3, T4>
         where TEntityKey : IEntityKey
     {
-        readonly IPool<TEntityKey, T1> pool1;
-             readonly IPool<TEntityKey, T2> pool2;
-             readonly IPool<TEntityKey, T3> pool3;
-             readonly IPool<TEntityKey, T4> pool4;
+        readonly IReadOnlyPool<TEntityKey, T1> pool1;
+        readonly IReadOnlyPool<TEntityKey, T2> pool2;
+        readonly IReadOnlyPool<TEntityKey, T3> pool3;
+        readonly IReadOnlyPool<TEntityKey, T4> pool4;
 
         public AdhocView(IEntityPoolAccess<TEntityKey> registry) :
             base(registry, 
                  registry.GetPool<T1>(),
-             registry.GetPool<T2>(),
-             registry.GetPool<T3>(),
-             registry.GetPool<T4>()
+                 registry.GetPool<T2>(),
+                 registry.GetPool<T3>(),
+                 registry.GetPool<T4>()
         )
         {
             pool1 = registry.GetPool<T1>();
-             pool2 = registry.GetPool<T2>();
-             pool3 = registry.GetPool<T3>();
-             pool4 = registry.GetPool<T4>();
+           pool2 = registry.GetPool<T2>();
+           pool3 = registry.GetPool<T3>();
+           pool4 = registry.GetPool<T4>();
         }
 
         public void Apply(ViewDelegates.Apply<TEntityKey, T1, T2, T3, T4 > bulk)
@@ -274,26 +274,26 @@ namespace EnTTSharp.Entities
     public sealed class AdhocView<TEntityKey, T1, T2, T3, T4, T5 > : AdhocMultiViewBase<TEntityKey>, IEntityView<TEntityKey, T1, T2, T3, T4, T5>
         where TEntityKey : IEntityKey
     {
-        readonly IPool<TEntityKey, T1> pool1;
-             readonly IPool<TEntityKey, T2> pool2;
-             readonly IPool<TEntityKey, T3> pool3;
-             readonly IPool<TEntityKey, T4> pool4;
-             readonly IPool<TEntityKey, T5> pool5;
+        readonly IReadOnlyPool<TEntityKey, T1> pool1;
+        readonly IReadOnlyPool<TEntityKey, T2> pool2;
+        readonly IReadOnlyPool<TEntityKey, T3> pool3;
+        readonly IReadOnlyPool<TEntityKey, T4> pool4;
+        readonly IReadOnlyPool<TEntityKey, T5> pool5;
 
         public AdhocView(IEntityPoolAccess<TEntityKey> registry) :
             base(registry, 
                  registry.GetPool<T1>(),
-             registry.GetPool<T2>(),
-             registry.GetPool<T3>(),
-             registry.GetPool<T4>(),
-             registry.GetPool<T5>()
+                 registry.GetPool<T2>(),
+                 registry.GetPool<T3>(),
+                 registry.GetPool<T4>(),
+                 registry.GetPool<T5>()
         )
         {
             pool1 = registry.GetPool<T1>();
-             pool2 = registry.GetPool<T2>();
-             pool3 = registry.GetPool<T3>();
-             pool4 = registry.GetPool<T4>();
-             pool5 = registry.GetPool<T5>();
+           pool2 = registry.GetPool<T2>();
+           pool3 = registry.GetPool<T3>();
+           pool4 = registry.GetPool<T4>();
+           pool5 = registry.GetPool<T5>();
         }
 
         public void Apply(ViewDelegates.Apply<TEntityKey, T1, T2, T3, T4, T5 > bulk)
@@ -370,29 +370,29 @@ namespace EnTTSharp.Entities
     public sealed class AdhocView<TEntityKey, T1, T2, T3, T4, T5, T6 > : AdhocMultiViewBase<TEntityKey>, IEntityView<TEntityKey, T1, T2, T3, T4, T5, T6>
         where TEntityKey : IEntityKey
     {
-        readonly IPool<TEntityKey, T1> pool1;
-             readonly IPool<TEntityKey, T2> pool2;
-             readonly IPool<TEntityKey, T3> pool3;
-             readonly IPool<TEntityKey, T4> pool4;
-             readonly IPool<TEntityKey, T5> pool5;
-             readonly IPool<TEntityKey, T6> pool6;
+        readonly IReadOnlyPool<TEntityKey, T1> pool1;
+        readonly IReadOnlyPool<TEntityKey, T2> pool2;
+        readonly IReadOnlyPool<TEntityKey, T3> pool3;
+        readonly IReadOnlyPool<TEntityKey, T4> pool4;
+        readonly IReadOnlyPool<TEntityKey, T5> pool5;
+        readonly IReadOnlyPool<TEntityKey, T6> pool6;
 
         public AdhocView(IEntityPoolAccess<TEntityKey> registry) :
             base(registry, 
                  registry.GetPool<T1>(),
-             registry.GetPool<T2>(),
-             registry.GetPool<T3>(),
-             registry.GetPool<T4>(),
-             registry.GetPool<T5>(),
-             registry.GetPool<T6>()
+                 registry.GetPool<T2>(),
+                 registry.GetPool<T3>(),
+                 registry.GetPool<T4>(),
+                 registry.GetPool<T5>(),
+                 registry.GetPool<T6>()
         )
         {
             pool1 = registry.GetPool<T1>();
-             pool2 = registry.GetPool<T2>();
-             pool3 = registry.GetPool<T3>();
-             pool4 = registry.GetPool<T4>();
-             pool5 = registry.GetPool<T5>();
-             pool6 = registry.GetPool<T6>();
+           pool2 = registry.GetPool<T2>();
+           pool3 = registry.GetPool<T3>();
+           pool4 = registry.GetPool<T4>();
+           pool5 = registry.GetPool<T5>();
+           pool6 = registry.GetPool<T6>();
         }
 
         public void Apply(ViewDelegates.Apply<TEntityKey, T1, T2, T3, T4, T5, T6 > bulk)
@@ -471,32 +471,32 @@ namespace EnTTSharp.Entities
     public sealed class AdhocView<TEntityKey, T1, T2, T3, T4, T5, T6, T7 > : AdhocMultiViewBase<TEntityKey>, IEntityView<TEntityKey, T1, T2, T3, T4, T5, T6, T7>
         where TEntityKey : IEntityKey
     {
-        readonly IPool<TEntityKey, T1> pool1;
-             readonly IPool<TEntityKey, T2> pool2;
-             readonly IPool<TEntityKey, T3> pool3;
-             readonly IPool<TEntityKey, T4> pool4;
-             readonly IPool<TEntityKey, T5> pool5;
-             readonly IPool<TEntityKey, T6> pool6;
-             readonly IPool<TEntityKey, T7> pool7;
+        readonly IReadOnlyPool<TEntityKey, T1> pool1;
+        readonly IReadOnlyPool<TEntityKey, T2> pool2;
+        readonly IReadOnlyPool<TEntityKey, T3> pool3;
+        readonly IReadOnlyPool<TEntityKey, T4> pool4;
+        readonly IReadOnlyPool<TEntityKey, T5> pool5;
+        readonly IReadOnlyPool<TEntityKey, T6> pool6;
+        readonly IReadOnlyPool<TEntityKey, T7> pool7;
 
         public AdhocView(IEntityPoolAccess<TEntityKey> registry) :
             base(registry, 
                  registry.GetPool<T1>(),
-             registry.GetPool<T2>(),
-             registry.GetPool<T3>(),
-             registry.GetPool<T4>(),
-             registry.GetPool<T5>(),
-             registry.GetPool<T6>(),
-             registry.GetPool<T7>()
+                 registry.GetPool<T2>(),
+                 registry.GetPool<T3>(),
+                 registry.GetPool<T4>(),
+                 registry.GetPool<T5>(),
+                 registry.GetPool<T6>(),
+                 registry.GetPool<T7>()
         )
         {
             pool1 = registry.GetPool<T1>();
-             pool2 = registry.GetPool<T2>();
-             pool3 = registry.GetPool<T3>();
-             pool4 = registry.GetPool<T4>();
-             pool5 = registry.GetPool<T5>();
-             pool6 = registry.GetPool<T6>();
-             pool7 = registry.GetPool<T7>();
+           pool2 = registry.GetPool<T2>();
+           pool3 = registry.GetPool<T3>();
+           pool4 = registry.GetPool<T4>();
+           pool5 = registry.GetPool<T5>();
+           pool6 = registry.GetPool<T6>();
+           pool7 = registry.GetPool<T7>();
         }
 
         public void Apply(ViewDelegates.Apply<TEntityKey, T1, T2, T3, T4, T5, T6, T7 > bulk)

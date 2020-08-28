@@ -10,7 +10,7 @@ namespace EnTTSharp.Entities
         where TEntityKey : IEntityKey
     {
         readonly IEntityPoolAccess<TEntityKey> registry;
-        readonly IPool<TEntityKey, TComponent> viewData;
+        readonly IReadOnlyPool<TEntityKey, TComponent> viewData;
         readonly EventHandler<TEntityKey> onCreated;
         readonly EventHandler<TEntityKey> onDestroyed;
         bool disposed;
@@ -118,7 +118,10 @@ namespace EnTTSharp.Entities
 
         public void Respect<TOtherComponent>()
         {
-            viewData.Respect(registry.GetPool<TOtherComponent>());
+            if (registry.TryGetWritablePool<TComponent>(out var wpool))
+            {
+                wpool.Respect(registry.GetPool<TOtherComponent>());
+            }
         }
 
         public bool GetComponent<TOtherComponent>(TEntityKey entity, out TOtherComponent data)

@@ -9,10 +9,10 @@ namespace EnTTSharp.Entities.Pools
         where TEntityKey : IEntityKey
     {
         readonly IEntityPoolAccess<TEntityKey> registry;
-        readonly IPool<TEntityKey, TComponent> entityPool;
+        readonly IReadOnlyPool<TEntityKey, TComponent> entityPool;
 
         public NotPool(IEntityPoolAccess<TEntityKey> registry, 
-                       IPool<TEntityKey, TComponent> entityPool)
+                       IReadOnlyPool<TEntityKey, TComponent> entityPool)
         {
             this.registry = registry;
             this.entityPool = entityPool ?? throw new ArgumentNullException(nameof(entityPool));
@@ -118,5 +118,7 @@ namespace EnTTSharp.Entities.Pools
 
             public TEntityKey Current { get; private set; }
         }
+
+
     }
 }

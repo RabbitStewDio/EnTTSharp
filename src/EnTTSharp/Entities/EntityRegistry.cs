@@ -12,9 +12,34 @@ namespace EnTTSharp.Entities
                                                       IEntityComponentRegistry<TEntityKey>
         where TEntityKey : IEntityKey
     {
+        readonly struct PoolEntry
+        {
+            readonly IPool<TEntityKey> pool;
+
+            public PoolEntry(IReadOnlyPool<TEntityKey> readonlyPool)
+            {
+                this.ReadonlyPool = readonlyPool ?? throw new ArgumentNullException(nameof(readonlyPool));
+                this.pool = null;
+            }
+
+            public PoolEntry(IPool<TEntityKey> pool)
+            {
+                this.pool = pool ?? throw new ArgumentNullException(nameof(pool));
+                this.ReadonlyPool = pool;
+            }
+
+            public IReadOnlyPool<TEntityKey> ReadonlyPool { get; }
+
+            public bool TryGetPool(out IPool<TEntityKey> pool)
+            {
+                pool = this.pool;
+                return pool != null;
+            }
+        }
+
         readonly EqualityComparer<TEntityKey> equalityComparer;
         readonly List<TEntityKey> entities;
-        readonly List<IPool<TEntityKey>> pools;
+        readonly List<PoolEntry> pools;
         readonly Dictionary<Type, IComponentRegistration> componentIndex;
         readonly Dictionary<Type, int> tagIndex;
         readonly List<Attachment> tags;
@@ -32,12 +57,13 @@ namespace EnTTSharp.Entities
             {
                 throw new ArgumentException();
             }
+
             MaxAge = maxAge;
             this.entityKeyFactory = entityKeyFactory ?? throw new ArgumentNullException(nameof(entityKeyFactory));
             equalityComparer = EqualityComparer<TEntityKey>.Default;
             componentIndex = new Dictionary<Type, IComponentRegistration>();
             entities = new List<TEntityKey>();
-            pools = new List<IPool<TEntityKey>>();
+            pools = new List<PoolEntry>();
             tagIndex = new Dictionary<Type, int>();
             tags = new List<Attachment>();
             views = new Dictionary<Type, IEntityView<TEntityKey>>();
@@ -93,13 +119,27 @@ namespace EnTTSharp.Entities
         internal int CountComponents<TComponent>()
         {
             var idx = ManagedIndex<TComponent>();
-            return pools[idx].Count;
+            return pools[idx].ReadonlyPool.Count;
         }
 
-        public IPool<TEntityKey, TComponent> GetPool<TComponent>()
+        public IReadOnlyPool<TEntityKey, TComponent> GetPool<TComponent>()
         {
             var idx = ManagedIndex<TComponent>();
-            return (IPool<TEntityKey, TComponent>)pools[idx];
+            return (IPool<TEntityKey, TComponent>)pools[idx].ReadonlyPool;
+        }
+
+        public bool TryGetWritablePool<TComponent>(out IPool<TEntityKey, TComponent> pool)
+        {
+            var idx = ManagedIndex<TComponent>();
+            if (pools[idx].TryGetPool(out var p) &&
+                p is IPool<TEntityKey, TComponent> pp)
+            {
+                pool = pp;
+                return true;
+            }
+
+            pool = default;
+            return false;
         }
 
         public IPool<TEntityKey, TComponent> Register<TComponent>() where TComponent : new()
@@ -112,7 +152,7 @@ namespace EnTTSharp.Entities
             var registration = ComponentRegistration.Create(componentIndex.Count, this, () => new TComponent());
             var pool = PoolFactory.Create(registration);
             componentIndex[typeof(TComponent)] = registration;
-            pools.StoreAt(registration.Index, pool);
+            pools.StoreAt(registration.Index, new PoolEntry(pool));
             return pool;
         }
 
@@ -126,7 +166,7 @@ namespace EnTTSharp.Entities
             var registration = ComponentRegistration.Create<TEntityKey, TComponent>(componentIndex.Count, this);
             var pool = PoolFactory.CreateFlagPool(new TComponent(), registration);
             componentIndex[typeof(TComponent)] = registration;
-            pools.StoreAt(registration.Index, pool);
+            pools.StoreAt(registration.Index, new PoolEntry(pool));
             return pool;
         }
 
@@ -140,7 +180,27 @@ namespace EnTTSharp.Entities
             var registration = ComponentRegistration.Create<TEntityKey, TComponent>(componentIndex.Count, this);
             var pool = PoolFactory.CreateFlagPool(sharedData, registration);
             componentIndex[typeof(TComponent)] = registration;
-            pools.StoreAt(registration.Index, pool);
+            pools.StoreAt(registration.Index, new PoolEntry(pool));
+            return pool;
+        }
+
+        public IReadOnlyPool<TEntityKey, Not<TComponent>> RegisterNonExistingFlag<TComponent>()
+        {
+            if (IsManaged<Not<TComponent>>())
+            {
+                throw new ArgumentException("Duplicate registration");
+            }
+
+            if (!IsManaged<TComponent>())
+            {
+                throw new ArgumentException($"Require component registration of base type {typeof(TComponent)}");
+            }
+
+            var registration = ComponentRegistration.Create<TEntityKey, Not<TComponent>>(componentIndex.Count, this);
+            var basePool = GetPool<TComponent>();
+            var pool = new NotPool<TEntityKey, TComponent>(this, basePool);
+            componentIndex[typeof(Not<TComponent>)] = registration;
+            pools.StoreAt(registration.Index, new PoolEntry(pool));
             return pool;
         }
 
@@ -162,7 +222,7 @@ namespace EnTTSharp.Entities
             var registration = ComponentRegistration.Create(componentIndex.Count, this, con, destructor);
             var pool = PoolFactory.Create(registration);
             componentIndex[typeof(TComponent)] = registration;
-            pools.StoreAt(registration.Index, pool);
+            pools.StoreAt(registration.Index, new PoolEntry(pool));
             return pool;
         }
 
@@ -183,7 +243,7 @@ namespace EnTTSharp.Entities
             var registration = ComponentRegistration.Create(componentIndex.Count, this, destructor);
             var pool = PoolFactory.Create(registration);
             componentIndex[typeof(TComponent)] = registration;
-            pools.StoreAt(registration.Index, pool);
+            pools.StoreAt(registration.Index, new PoolEntry(pool));
             return pool;
         }
 
@@ -244,7 +304,10 @@ namespace EnTTSharp.Entities
 
             foreach (var pool in pools)
             {
-                pool.Remove(entity);
+                if (pool.TryGetPool(out var p))
+                {
+                    p.Remove(entity);
+                }
             }
         }
 
@@ -400,14 +463,22 @@ namespace EnTTSharp.Entities
         {
             AssertManaged<TComponent>();
             AssertValid(entity);
-            GetPool<TComponent>().Add(entity, in c);
+
+            if (TryGetWritablePool<TComponent>(out var p))
+            {
+                p.Add(entity, in c);
+            }
         }
 
         public void RemoveComponent<TComponent>(TEntityKey entity)
         {
             AssertManaged<TComponent>();
             AssertValid(entity);
-            GetPool<TComponent>().Remove(entity);
+
+            if (TryGetWritablePool<TComponent>(out var p))
+            {
+                p.Remove(entity);
+            }
         }
 
         public bool HasComponent<TComponent>(TEntityKey entity)
@@ -434,11 +505,14 @@ namespace EnTTSharp.Entities
         public void AssignOrReplace<TComponent>(TEntityKey entity, in TComponent c)
         {
             AssertValid(entity);
+            AssertManaged<TComponent>();
 
-            var pool = GetPool<TComponent>();
-            if (!pool.WriteBack(entity, in c))
+            if (TryGetWritablePool<TComponent>(out var p))
             {
-                pool.Add(entity, in c);
+                if (!p.WriteBack(entity, in c))
+                {
+                    p.Add(entity, in c);
+                }
             }
         }
 
@@ -451,7 +525,12 @@ namespace EnTTSharp.Entities
         public void WriteBack<TComponent>(TEntityKey entity, in TComponent data)
         {
             AssertValid(entity);
-            GetPool<TComponent>().WriteBack(entity, in data);
+            AssertManaged<TComponent>();
+
+            if (TryGetWritablePool<TComponent>(out var p))
+            {
+                p.WriteBack(entity, in data);
+            }
         }
 
         public bool ReplaceComponent<TComponent>(TEntityKey entity)
@@ -462,7 +541,14 @@ namespace EnTTSharp.Entities
         public bool ReplaceComponent<TComponent>(TEntityKey entity, in TComponent c)
         {
             AssertValid(entity);
-            return GetPool<TComponent>().WriteBack(entity, in c);
+            AssertManaged<TComponent>();
+
+            if (TryGetWritablePool<TComponent>(out var p))
+            {
+                return p.WriteBack(entity, in c);
+            }
+
+            return false;
         }
 
         public void Sort<TComponent>(IComparer<TComponent> comparator)
@@ -476,13 +562,18 @@ namespace EnTTSharp.Entities
 
         public void Respect<TComponentTo, TComponentFrom>()
         {
-            var pool = GetPool<TComponentTo>();
-            pool.Respect(GetPool<TComponentFrom>());
+            if (TryGetWritablePool<TComponentTo>(out var pool))
+            {
+                pool.Respect(GetPool<TComponentFrom>());
+            }
         }
 
         public void ResetComponent<TComponent>()
         {
-            GetPool<TComponent>().RemoveAll();
+            if (TryGetWritablePool<TComponent>(out var pool))
+            {
+                pool.RemoveAll();
+            }
         }
 
         public void CopyTo(List<TEntityKey> k)
@@ -515,7 +606,10 @@ namespace EnTTSharp.Entities
 
                 foreach (var pool in pools)
                 {
-                    pool.RemoveAll();
+                    if (pool.TryGetPool(out var p))
+                    {
+                        p.RemoveAll();
+                    }
                 }
 
                 entities.Clear();
@@ -528,9 +622,9 @@ namespace EnTTSharp.Entities
         {
             foreach (var pool in pools)
             {
-                if (pool.Contains(entity))
+                if (pool.TryGetPool(out var p))
                 {
-                    pool.Remove(entity);
+                    p.Remove(entity);
                 }
             }
         }
@@ -541,7 +635,7 @@ namespace EnTTSharp.Entities
             var orphan = true;
             foreach (var pool in pools)
             {
-                orphan &= !pool.Contains(e);
+                orphan &= !pool.ReadonlyPool.Contains(e);
             }
 
             foreach (var tag in tags)
