@@ -60,6 +60,13 @@ namespace EnTTSharp.Annotations
             return retval;
         }
 
+        public bool TryRegisterEntity<TData>(out EntityComponentRegistration result)
+        {
+            var type = typeof(TData);
+            var typeInfo = type.GetTypeInfo();
+            return TryRegisterEntity(typeInfo, out result);
+        }
+
         public bool TryRegisterEntity(TypeInfo typeInfo, out EntityComponentRegistration result)
         {
             if (typeInfo.IsAbstract)

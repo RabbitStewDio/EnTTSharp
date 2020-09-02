@@ -17,7 +17,7 @@ namespace EnTTSharp.Serialization.Xml
             this.readerConfiguration = readerConfiguration;
         }
 
-        public void ReadAll(XmlReader reader, ISnapshotLoader<TEntityKey> loader)
+        public void ReadAllFragment(XmlReader reader, ISnapshotLoader<TEntityKey> loader)
         {
             if (reader.IsEmptyElement)
             {
@@ -29,6 +29,33 @@ namespace EnTTSharp.Serialization.Xml
                 if (reader.NodeType == XmlNodeType.Element)
                 {
                     if (!HandleRootElement(reader, loader))
+                    {
+                        reader.Skip();
+                    }
+                }
+                else if (reader.NodeType == XmlNodeType.EndElement)
+                {
+                    return;
+                }
+            }
+        }
+
+        public void ReadAll(XmlReader reader, ISnapshotLoader<TEntityKey> loader)
+        {
+            if (reader.IsEmptyElement)
+            {
+                return;
+            }
+
+            while (reader.Read())
+            {
+                if (reader.NodeType == XmlNodeType.Element)
+                {
+                    if (reader.Name == "snapshot")
+                    {
+                        ReadAllFragment(reader, loader);
+                    }
+                    else
                     {
                         reader.Skip();
                     }

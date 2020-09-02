@@ -16,38 +16,43 @@ namespace EnTTSharp.Serialization.Xml
 
         public IEnumerable<XmlWriteHandlerRegistration> Handlers => handlers.Values;
 
-        public void RegisterRange(IEnumerable<EntityComponentRegistration> range)
+        public XmlWriteHandlerRegistry RegisterRange(IEnumerable<EntityComponentRegistration> range)
         {
             foreach (var r in range)
             {
                 Register(r);
             }
+            return this;
         }
 
-        public void Register(EntityComponentRegistration reg)
+        public XmlWriteHandlerRegistry Register(EntityComponentRegistration reg)
         {
             if (reg.TryGet(out XmlWriteHandlerRegistration r))
             {
                 Register(r);
             }
+            return this;
         }
 
-        public void Register(in XmlWriteHandlerRegistration reg)
+        public XmlWriteHandlerRegistry Register(in XmlWriteHandlerRegistration reg)
         {
             handlers.Add(reg.TargetType, reg);
+            return this;
         }
 
-        public void RegisterRange(IEnumerable<XmlWriteHandlerRegistration> range)
+        public XmlWriteHandlerRegistry RegisterRange(IEnumerable<XmlWriteHandlerRegistration> range)
         {
             foreach (var r in range)
             {
                 Register(r);
             }
+            return this;
         }
 
-        public void Register<TComponent>(string typeId, bool useAsTag = false)
+        public XmlWriteHandlerRegistry Register<TComponent>(string typeId, bool useAsTag = false)
         {
             Register(XmlWriteHandlerRegistration.Create<TComponent>(typeId, new DefaultWriteHandler<TComponent>().Write, useAsTag));
+            return this;
         }
 
         public XmlWriteHandlerRegistration QueryHandler<TComponent>()

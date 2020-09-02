@@ -11,7 +11,12 @@ namespace EnTTSharp.Serialization.Xml
 
         XmlWriteHandlerRegistration(Type targetType, string typeId, object handler, bool tag)
         {
-            this.TargetType = targetType;
+            if (string.IsNullOrWhiteSpace(typeId))
+            {
+                throw new ArgumentException("Type id should never be an empty string.");
+            }
+            
+            this.TargetType = targetType ?? throw new ArgumentNullException(nameof(targetType));
             this.TypeId = typeId;
             this.handler = handler;
             this.Tag = tag;

@@ -131,5 +131,7 @@ namespace EnTTSharp.Entities
         {
             registry.WriteBack(entity, in c);
         }
+
+        public static implicit operator TEntityKey(EntityActor<TEntityKey> self) => self.Entity;
     }
 }

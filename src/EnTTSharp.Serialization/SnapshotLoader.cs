@@ -5,7 +5,7 @@ using EnTTSharp.Entities.Helpers;
 
 namespace EnTTSharp.Serialization
 {
-    public class SnapshotLoader<TEntityKey> : ISnapshotLoader<TEntityKey> 
+    public class SnapshotLoader<TEntityKey> : ISnapshotLoader<TEntityKey>, IDisposable 
         where TEntityKey : IEntityKey
     {
         readonly Dictionary<EntityKeyData, TEntityKey> remoteMapping;

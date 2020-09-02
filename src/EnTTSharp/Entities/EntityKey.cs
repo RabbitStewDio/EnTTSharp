@@ -10,6 +10,8 @@ namespace EnTTSharp.Entities
     {
         byte Age { get; }
         int Key { get; }
+        
+        int GetHashCode();
     }
     
     [Serializable]

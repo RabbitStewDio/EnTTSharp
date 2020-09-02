@@ -1,4 +1,6 @@
-﻿using EnTTSharp.Entities;
+﻿using System;
+using System.Reflection;
+using EnTTSharp.Entities;
 
 namespace EnTTSharp.Serialization
 {
@@ -21,5 +23,26 @@ namespace EnTTSharp.Serialization
         {
             return new SnapshotLoader<TEntityKey>(reg);
         }
+
+        public static (MethodInfo, MethodInfo) ReflectWriteHooks<TEntityKey>() where TEntityKey : IEntityKey
+        {
+            var writeComponentMethod = typeof(SnapshotView<TEntityKey>).GetMethod(nameof(SnapshotView<TEntityKey>.WriteComponent),
+                                                                                  BindingFlags.Instance | BindingFlags.Public,
+                                                                                  null,
+                                                                                  new[] { typeof(IEntityArchiveWriter<TEntityKey>) },
+                                                                                  null) ??
+                                       throw new InvalidOperationException($"Unable to find required public method {nameof(SnapshotView<TEntityKey>.WriteComponent)}");
+
+            var writeTagMethod = typeof(SnapshotView<TEntityKey>).GetMethod(nameof(SnapshotView<TEntityKey>.WriteTag),
+                                                                            BindingFlags.Instance | BindingFlags.Public,
+                                                                            null,
+                                                                            new[] { typeof(IEntityArchiveWriter<TEntityKey>) },
+                                                                            null) ??
+                                 throw new InvalidOperationException($"Unable to find required public method {nameof(SnapshotView<TEntityKey>.WriteTag)}");
+
+            return (writeComponentMethod, writeTagMethod);
+        }
+
+
     }
 }

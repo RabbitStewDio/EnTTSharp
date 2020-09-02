@@ -34,9 +34,9 @@ namespace EnTTSharp.Serialization.Xml.AutoRegistration
             }
 
             ReadHandlerDelegate<TComponent> readHandler = new DefaultDataContractReadHandler<TComponent>(objectResolver).Read;
-            r.Store(XmlReadHandlerRegistration.Create("", readHandler, false));
+            r.Store(XmlReadHandlerRegistration.Create(null, readHandler, false));
             WriteHandlerDelegate<TComponent> writeHandler = new DefaultDataContractWriteHandler<TComponent>(objectResolver).Write;
-            r.Store(XmlWriteHandlerRegistration.Create("", writeHandler, false));
+            r.Store(XmlWriteHandlerRegistration.Create(null, writeHandler, false));
 
             Logger.Debug("Registered Xml DataContract Handling for {ComponentType}", componentType);
         }

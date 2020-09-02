@@ -21,7 +21,7 @@ namespace EnTTSharp.Annotations
         }
 
         public void ActivateAll(IEntityComponentRegistry<TEntityKey> registry,
-                                IEnumerable<EntityComponentRegistration> components) 
+                                IEnumerable<EntityComponentRegistration> components)
         {
             registry = registry ?? throw new ArgumentNullException(nameof(registry));
             foreach (var c in components)
@@ -31,6 +31,25 @@ namespace EnTTSharp.Annotations
                     a.Activate(c, registry);
                 }
             }
+        }
+
+        public void Activate(IEntityComponentRegistry<TEntityKey> registry,
+                             EntityComponentRegistration components)
+        {
+            registry = registry ?? throw new ArgumentNullException(nameof(registry));
+            foreach (var a in activators)
+            {
+                a.Activate(components, registry);
+            }
+        }
+    }
+
+    public static class EntityComponentActivator
+    {
+        public static EntityComponentActivator<TEntityKey> Create<TEntityKey>(params IEntityRegistrationActivator<TEntityKey>[] activators)
+            where TEntityKey : IEntityKey
+        {
+            return new EntityComponentActivator<TEntityKey>(activators);
         }
     }
 }

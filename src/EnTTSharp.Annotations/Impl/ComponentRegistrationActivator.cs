@@ -1,9 +1,13 @@
-﻿using EnTTSharp.Entities;
+﻿using System;
+using EnTTSharp.Entities;
 
 namespace EnTTSharp.Annotations.Impl
 {
     public class ComponentRegistrationActivator<TEntityKey> : EntityActivatorBase<TEntityKey> where TEntityKey : IEntityKey
     {
+        static readonly Lazy<ComponentRegistrationActivator<TEntityKey>> InstanceHolder = new Lazy<ComponentRegistrationActivator<TEntityKey>>();
+        public static ComponentRegistrationActivator<TEntityKey> Instance => InstanceHolder.Value; 
+
         protected override void ProcessTyped<TComponent>(EntityComponentRegistration r, IEntityComponentRegistry<TEntityKey> reg)
         {
             bool hasConstructor = r.TryGet(out ConstructorRegistration<TComponent> constructor);

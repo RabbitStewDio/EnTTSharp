@@ -28,8 +28,8 @@ namespace EnTTSharp.Test.Annotations
 
             components.Count.Should().Be(6);
 
-            var registry = new Entities.EntityRegistry<EntityKey>(EntityKey.MaxAge, EntityKey.Create);
-            new EntityComponentActivator<EntityKey>()
+            var registry = new EntityRegistry<EntityKey>(EntityKey.MaxAge, EntityKey.Create);
+            EntityComponentActivator.Create<EntityKey>()
                 .With(new ComponentRegistrationActivator<EntityKey>())
                 .ActivateAll(registry, components);
         }

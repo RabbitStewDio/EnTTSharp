@@ -10,6 +10,8 @@ namespace EnTTSharp.Serialization.Xml
     {
         readonly XmlWriter writer;
 
+        public XmlWriteHandlerRegistry Registry { get; }
+
         public XmlArchiveWriter(XmlWriteHandlerRegistry registry, XmlWriter writer)
         {
             this.Registry = registry;
@@ -30,7 +32,6 @@ namespace EnTTSharp.Serialization.Xml
             writer.WriteEndDocument();
         }
 
-        public XmlWriteHandlerRegistry Registry { get; }
 
         public void WriteStartDestroyed(in int entityCount)
         {

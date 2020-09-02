@@ -259,10 +259,14 @@ namespace EnTTSharp.Entities
 
         public bool IsValid(TEntityKey key)
         {
+            if (key.Key < 0 || key.Key >= Count)
+            {
+               return false;
+            }
             return equalityComparer.Equals(entities[key.Key], key);
         }
 
-        public int StoredVersion(EntityKey key)
+        internal int StoredVersion(EntityKey key)
         {
             return entities[key.Key].Age;
         }
@@ -586,7 +590,7 @@ namespace EnTTSharp.Entities
             }
         }
 
-        public void Reset()
+        public void Clear()
         {
             var l = EntityKeyListPool<TEntityKey>.Reserve(this);
             foreach (var last in l)

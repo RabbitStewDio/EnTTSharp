@@ -12,6 +12,11 @@ namespace EnTTSharp.Serialization.Binary
         readonly Stream writer;
         readonly MessagePackSerializerOptions options;
 
+        public BinaryWriteHandlerRegistry Registry
+        {
+            get { return registry; }
+        }
+
         public BinaryArchiveWriter(BinaryWriteHandlerRegistry registry, 
                                    Stream writer, MessagePackSerializerOptions options = null)
         {

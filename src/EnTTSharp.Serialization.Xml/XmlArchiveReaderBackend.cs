@@ -64,7 +64,7 @@ namespace EnTTSharp.Serialization.Xml
 
         EntityKeyData ReadEntityData(XmlReader r, string tag)
         {
-            var age = int.Parse(r.GetAttribute("entity-age") ?? throw r.FromMissingAttribute(tag, "entity-age"));
+            var age = byte.Parse(r.GetAttribute("entity-age") ?? throw r.FromMissingAttribute(tag, "entity-age"));
             var key = int.Parse(r.GetAttribute("entity-key") ?? throw r.FromMissingAttribute(tag, "entity-key"));
             return new EntityKeyData(age, key);
         }

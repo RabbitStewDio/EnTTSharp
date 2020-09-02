@@ -13,6 +13,11 @@ namespace EnTTSharp.Serialization.Xml
             surrogateMappings = new Dictionary<Type, ISerializationSurrogateProvider>();
         }
 
+        public void Register<TTarget, TSurrogate>(SerializationSurrogateProviderBase<TTarget, TSurrogate> provider)
+        {
+            Register(typeof(TTarget), provider);
+        }
+
         public void Register(Type targetType, ISerializationSurrogateProvider provider)
         {
             if (provider == null)
@@ -30,7 +35,6 @@ namespace EnTTSharp.Serialization.Xml
 
         public object GetDeserializedObject(object obj, Type targetType)
         {
-            Console.WriteLine("GetDeserializedObject " + obj + " -> " + targetType);
             if (!surrogateMappings.TryGetValue(targetType, out var reg))
             {
                 return obj;
@@ -41,7 +45,6 @@ namespace EnTTSharp.Serialization.Xml
 
         public object GetObjectToSerialize(object obj, Type surrogateType)
         {
-            Console.WriteLine("GetObjectToSerialize " + obj + " -> " + surrogateType);
             if (obj == null)
             {
                 return null;
@@ -61,11 +64,9 @@ namespace EnTTSharp.Serialization.Xml
             // return targetType;
             if (!surrogateMappings.TryGetValue(targetType, out var reg))
             {
-                Console.WriteLine("  GetSurrogateType " + targetType);
                 return targetType;
             }
 
-            Console.WriteLine("*  GetSurrogateType " + targetType + " -> " + reg.GetSurrogateType(targetType));
             return reg.GetSurrogateType(targetType);
         }
     }
