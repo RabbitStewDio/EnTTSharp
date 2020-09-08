@@ -9,12 +9,16 @@ namespace EnTTSharp.Serialization.Binary
     public class BinaryBulkArchiveReader<TEntityKey> where TEntityKey : IEntityKey
     {
         readonly MessagePackSerializerOptions options;
-        readonly BinaryReaderBackend<TEntityKey> registry;
+        readonly BinaryReaderBackend<TEntityKey> readerBackend;
 
-        public BinaryBulkArchiveReader(BinaryReaderBackend<TEntityKey> registry, MessagePackSerializerOptions optionsRaw = null)
+        public BinaryBulkArchiveReader(BinaryReadHandlerRegistry reg, MessagePackSerializerOptions optionsRaw = null): this(new BinaryReaderBackend<TEntityKey>(reg), optionsRaw)
         {
-            this.registry = registry;
-            this.options = BinaryControlObjects.CreateOptions(optionsRaw);
+        }
+
+        public BinaryBulkArchiveReader(BinaryReaderBackend<TEntityKey> readerBackend, MessagePackSerializerOptions optionsRaw = null)
+        {
+            this.readerBackend = readerBackend;
+            this.options = optionsRaw;
         }
 
         public void ReadAll(Stream reader, ISnapshotLoader<TEntityKey> loader)
@@ -46,20 +50,20 @@ namespace EnTTSharp.Serialization.Binary
 
         void ReadTag(Stream reader, ISnapshotLoader<TEntityKey> loader)
         {
-            registry.ReadTag(reader, loader, options);
+            readerBackend.ReadTag(reader, loader, options);
         }
 
         void ReadComponents(Stream reader, ISnapshotLoader<TEntityKey> loader)
         {
             var startRecord = MessagePackSerializer.Deserialize<BinaryControlObjects.StartComponentRecord>(reader, options);
-            if (!registry.Registry.TryGetValue(startRecord.ComponentId, out var handler))
+            if (!readerBackend.Registry.TryGetValue(startRecord.ComponentId, out var handler))
             {
                 throw new BinaryReaderException($"Corrupted stream state: No handler for component type {startRecord.ComponentId}");
             }
 
             for (int c = 0; c < startRecord.ComponentCount; c += 1)
             {
-                registry.ReadComponent(reader, loader, handler, options);
+                readerBackend.ReadComponent(reader, loader, handler, options);
             }
         }
 

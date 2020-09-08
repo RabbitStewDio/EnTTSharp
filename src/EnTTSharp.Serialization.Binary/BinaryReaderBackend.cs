@@ -136,7 +136,9 @@ namespace EnTTSharp.Serialization.Binary
             loader.OnTag(entity, component);
         }
 
-        public void ReadComponent(Stream stream, ISnapshotLoader<TEntityKey> loader, BinaryReadHandlerRegistration registration,
+        public void ReadComponent(Stream stream, 
+                                  ISnapshotLoader<TEntityKey> loader, 
+                                  BinaryReadHandlerRegistration registration,
                                   MessagePackSerializerOptions options)
         {
             var entityKeyData = MessagePackSerializer.Deserialize<EntityKeyData>(stream, options);

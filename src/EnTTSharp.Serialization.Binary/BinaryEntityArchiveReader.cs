@@ -19,7 +19,7 @@ namespace EnTTSharp.Serialization.Binary
         {
             this.registry = registry;
             this.reader = reader;
-            this.options = BinaryControlObjects.CreateOptions(optionsRaw);
+            this.options = optionsRaw;
         }
 
         public int ReadEntityCount()
@@ -59,6 +59,7 @@ namespace EnTTSharp.Serialization.Binary
         public bool TryReadComponent<TComponent>(Func<EntityKeyData, TEntityKey> entityMapper, 
                                                  out TEntityKey key, out TComponent component)
         {
+
             var entityKey = MessagePackSerializer.Deserialize<EntityKeyData>(reader, options);
             component = MessagePackSerializer.Deserialize<TComponent>(reader, options);
             if (readHandlerRegistration.TryGetPostProcessor<TComponent>(out var pp))

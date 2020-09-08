@@ -14,15 +14,19 @@ namespace EnTTSharp.Serialization.Binary
 
             var (writeComponent, writeTag) = SnapshotExtensions.ReflectWriteHooks<TEntityKey>();
             var parameters = new object[] { output };
-            foreach (var r in output.Registry.Handlers.Where(e => !e.Tag).OrderBy(e => e.TypeId))
+            var componentHandlers = output.Registry.Handlers.Where(e => !e.Tag).OrderBy(e => e.TypeId).ToList();
+            foreach (var r in componentHandlers)
             {
                 writeComponent.MakeGenericMethod(r.TargetType).Invoke(v, parameters);
             }
 
-            foreach (var r in output.Registry.Handlers.Where(e => e.Tag).OrderBy(e => e.TypeId))
+            var tagHandlers = output.Registry.Handlers.Where(e => e.Tag).OrderBy(e => e.TypeId).ToList();
+            foreach (var r in tagHandlers)
             {
                 writeTag.MakeGenericMethod(r.TargetType).Invoke(v, parameters);
             }
+
+            v.WriteEndOfFrame(output, false);
             return v;
         }
 

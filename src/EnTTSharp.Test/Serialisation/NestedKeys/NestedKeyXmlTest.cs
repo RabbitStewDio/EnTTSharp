@@ -15,7 +15,7 @@ using NUnit.Framework;
 
 namespace EnTTSharp.Test.Serialisation.NestedKeys
 {
-    public class NestedKeyTest
+    public class NestedKeyXmlTest
     {
         EntityRegistry<EntityKey> CreteEntityRegistry()
         {
@@ -65,10 +65,8 @@ namespace EnTTSharp.Test.Serialisation.NestedKeys
 
         void Deserialize(EntityRegistry<EntityKey> registry, string xmlString)
         {
-            var loader = registry.CreateLoader();
-            try
+            using (var loader = registry.CreateLoader())
             {
-
                 var surrogateResolver = new ObjectSurrogateResolver();
                 surrogateResolver.Register(new EntityKeySurrogateProvider(loader.Map));
                 surrogateResolver.Register(new DummyEnumObjectSurrogateProvider());
@@ -86,10 +84,6 @@ namespace EnTTSharp.Test.Serialisation.NestedKeys
                 var reader = new XmlBulkArchiveReader<EntityKey>(readerRegistry);
                 var xmlReader = XmlReader.Create(new StringReader(xmlString));
                 reader.ReadAll(xmlReader, loader);
-            }
-            finally
-            {
-                loader.Dispose();
             }
         }
 

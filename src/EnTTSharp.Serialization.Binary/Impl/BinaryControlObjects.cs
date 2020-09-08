@@ -1,33 +1,9 @@
 ﻿using MessagePack;
-using MessagePack.Resolvers;
 
 namespace EnTTSharp.Serialization.Binary.Impl
 {
     public static class BinaryControlObjects
     {
-        public static MessagePackSerializerOptions CreateOptions(MessagePackSerializerOptions optionsRaw)
-        {
-            MessagePackSerializerOptions options;
-            if (optionsRaw == null)
-            {
-                options = MessagePackSerializer.DefaultOptions.WithResolver(
-                    CompositeResolver.Create(
-                        new EntityKeyResolver(),
-                        MessagePackSerializer.DefaultOptions.Resolver
-                    ));
-            }
-            else
-            {
-                options = optionsRaw.WithResolver(
-                    CompositeResolver.Create(
-                        new EntityKeyResolver(),
-                        optionsRaw.Resolver
-                    ));
-            }
-
-            return options;
-        }
-
         public enum BinaryStreamState
         {
             DestroyedEntities = 0,
@@ -40,7 +16,9 @@ namespace EnTTSharp.Serialization.Binary.Impl
         [MessagePackObject]
         public readonly struct StartComponentRecord
         {
+            [Key(0)]
             public readonly int ComponentCount;
+            [Key(1)]
             public readonly string ComponentId;
 
             public StartComponentRecord(int componentCount, string componentId)
@@ -53,7 +31,9 @@ namespace EnTTSharp.Serialization.Binary.Impl
         [MessagePackObject]
         public readonly struct StartTagRecord
         {
+            [Key(0)]
             public readonly bool ComponentExists;
+            [Key(1)]
             public readonly string ComponentId;
 
             public StartTagRecord(bool componentExists, string componentId)

@@ -4,7 +4,7 @@ using EnTTSharp.Entities;
 
 namespace EnTTSharp.Serialization
 {
-    public class SnapshotView<TEntityKey> where TEntityKey : IEntityKey
+    public class SnapshotView<TEntityKey>: IDisposable where TEntityKey : IEntityKey
     {
         readonly IEntityPoolAccess<TEntityKey> registry;
         readonly List<TEntityKey> destroyedEntities;
