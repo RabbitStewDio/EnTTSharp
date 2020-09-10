@@ -15,36 +15,43 @@ namespace EnTTSharp.Serialization.Binary
             handlersByType = new Dictionary<Type, BinaryReadHandlerRegistration>();
         }
 
-        public void RegisterRange(IEnumerable<EntityComponentRegistration> range)
+        public BinaryReadHandlerRegistry RegisterRange(IEnumerable<EntityComponentRegistration> range)
         {
             foreach (var r in range)
             {
                 Register(r);
             }
+
+            return this;
         }
 
         public IEnumerable<BinaryReadHandlerRegistration> Handlers => handlersByType.Values;
 
-        public void Register(EntityComponentRegistration reg)
+        public BinaryReadHandlerRegistry Register(EntityComponentRegistration reg)
         {
             if (reg.TryGet(out BinaryReadHandlerRegistration r))
             {
                 Register(r);
             }
+
+            return this;
         }
 
-        public void RegisterRange(IEnumerable<BinaryReadHandlerRegistration> range)
+        public BinaryReadHandlerRegistry RegisterRange(IEnumerable<BinaryReadHandlerRegistration> range)
         {
             foreach (var r in range)
             {
                 Register(r);
             }
+
+            return this;
         }
 
-        public void Register(BinaryReadHandlerRegistration r)
+        public BinaryReadHandlerRegistry Register(BinaryReadHandlerRegistration r)
         {
             handlers.Add(r.TypeId, r);
             handlersByType.Add(r.TargetType, r);
+            return this;
         }
 
         public bool TryGetValue(Type typeId, out BinaryReadHandlerRegistration o)

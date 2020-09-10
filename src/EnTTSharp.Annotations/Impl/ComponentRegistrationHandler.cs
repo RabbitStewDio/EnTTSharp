@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using EnTTSharp.Entities;
+using EnTTSharp.Entities.Attributes;
 using Serilog;
 
 namespace EnTTSharp.Annotations.Impl

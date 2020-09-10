@@ -1,4 +1,4 @@
-﻿namespace EnTTSharp.Annotations
+﻿namespace EnTTSharp.Entities.Attributes
 {
     public enum EntityConstructor
     {

@@ -1,4 +1,5 @@
 ﻿using System;
+using EnTTSharp.Entities.Attributes;
 
 namespace EnTTSharp.Entities
 {
@@ -14,6 +15,7 @@ namespace EnTTSharp.Entities
         int GetHashCode();
     }
     
+    [EntityKey]
     [Serializable]
     public readonly struct EntityKey : IEquatable<EntityKey>, IEntityKey
     {
@@ -75,6 +77,7 @@ namespace EnTTSharp.Entities
         }
     }
 
+    [EntityKey]
     [Serializable]
     public readonly struct EntityKey<TPayLoad> : IEquatable<EntityKey<TPayLoad>>, IEntityKey
     {

@@ -13,7 +13,7 @@ namespace EnTTSharp.Test.Serialisation
         public void TestRegisterHandlers()
         {
             var components = new EntityRegistrationScanner()
-                             .With(new XmlEntityRegistrationHandler())
+                             .With(new XmlEntityRegistrationHandler<EntityKey>())
                              .With(new XmlDataContractRegistrationHandler<EntityKey>())
                              .RegisterEntitiesFromAllAssemblies();
             components.Count.Should().Be(1);

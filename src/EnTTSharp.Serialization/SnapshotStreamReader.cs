@@ -9,7 +9,7 @@ namespace EnTTSharp.Serialization
     public class SnapshotStreamReader<TEntityKey> where TEntityKey : IEntityKey
     {
         readonly ISnapshotLoader<TEntityKey> loader;
-        readonly Func<EntityKeyData, TEntityKey> entityMapper;
+        readonly EntityKeyMapper<TEntityKey> entityMapper;
 
         public SnapshotStreamReader(ISnapshotLoader<TEntityKey> loader)
         {

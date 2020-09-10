@@ -4,33 +4,48 @@ using System.Runtime.Serialization;
 using EnTTSharp.Annotations;
 using EnTTSharp.Annotations.Impl;
 using MessagePack;
+using MessagePack.Formatters;
 using Serilog;
 
 namespace EnTTSharp.Serialization.Binary.AutoRegistration
 {
-    public class BinaryEntityRegistrationHandler: EntityRegistrationHandlerBase
+    public class BinaryEntityRegistrationHandler<TEntityKey> : EntityRegistrationHandlerBase
     {
-        static readonly ILogger Logger = Log.ForContext<BinaryEntityRegistrationHandler>();
+        static readonly ILogger Logger = Log.ForContext<BinaryEntityRegistrationHandler<TEntityKey>>();
 
         protected override void ProcessTyped<TComponent>(EntityComponentRegistration r)
         {
             var componentType = typeof(TComponent);
             var msgPackAttr = componentType.GetCustomAttribute<MessagePackObjectAttribute>();
             var dataContractAttr = componentType.GetCustomAttribute<DataContractAttribute>();
-            if (msgPackAttr == null && dataContractAttr == null)
+            var binarySerializationAttribute = componentType.GetCustomAttribute<EntityBinarySerializationAttribute>();
+
+            if (msgPackAttr == null && dataContractAttr == null && binarySerializationAttribute == null)
             {
                 return;
             }
 
-            var attr2 = componentType.GetCustomAttribute<EntityBinarySerializationAttribute>();
-            var componentTypeId = attr2?.ComponentTypeId ?? componentType.FullName;
-            var usedAsTag = attr2?.UsedAsTag ?? false;
+            var componentTypeId = binarySerializationAttribute?.ComponentTypeId ?? componentType.FullName;
+            var usedAsTag = binarySerializationAttribute?.UsedAsTag ?? false;
 
             var handlerMethods = componentType.GetMethods(BindingFlags.Static | BindingFlags.Public);
             BinaryPreProcessor<TComponent> preProcessor = null;
             BinaryPostProcessor<TComponent> postProcessor = null;
+            FormatterResolverFactory<TEntityKey> resolverFactory = null;
+            MessagePackFormatterFactory<TEntityKey> messageFormatterFactory = null;
+
             foreach (var m in handlerMethods)
             {
+                if (IsResolverFactory(m))
+                {
+                    resolverFactory = (FormatterResolverFactory<TEntityKey>)Delegate.CreateDelegate(typeof(FormatterResolverFactory<TEntityKey>), null, m, false);
+                }
+
+                if (IsMessageFormatterFactory(m))
+                {
+                    messageFormatterFactory = (MessagePackFormatterFactory<TEntityKey>)Delegate.CreateDelegate(typeof(MessagePackFormatterFactory<TEntityKey>), null, m, false);
+                }
+
                 if (IsPostProcessor<TComponent>(m))
                 {
                     postProcessor = (BinaryPostProcessor<TComponent>)Delegate.CreateDelegate(typeof(BinaryPostProcessor<TComponent>), null, m, false);
@@ -42,8 +57,14 @@ namespace EnTTSharp.Serialization.Binary.AutoRegistration
                 }
             }
 
-            r.Store(BinaryReadHandlerRegistration.Create(componentTypeId, usedAsTag, postProcessor));
-            r.Store(BinaryWriteHandlerRegistration.Create(componentTypeId, usedAsTag, preProcessor));
+            r.Store(BinaryReadHandlerRegistration.Create(componentTypeId, usedAsTag, postProcessor)
+                                                 .WithFormatterResolver(resolverFactory)
+                                                 .WithMessagePackFormatter(messageFormatterFactory)
+            );
+            r.Store(BinaryWriteHandlerRegistration.Create(componentTypeId, usedAsTag, preProcessor)
+                                                  .WithFormatterResolver(resolverFactory)
+                                                  .WithMessagePackFormatter(messageFormatterFactory)
+            );
 
             if (msgPackAttr == null)
             {
@@ -52,8 +73,23 @@ namespace EnTTSharp.Serialization.Binary.AutoRegistration
             else
             {
                 Logger.Debug("Registered Binary MessagePack Handling for {ComponentType}", componentType);
-
             }
+        }
+
+        bool IsMessageFormatterFactory(MethodInfo methodInfo)
+        {
+            var paramType = typeof(EntityKeyMapper<TEntityKey>);
+            var returnType = typeof(IMessagePackFormatter);
+            return methodInfo.GetCustomAttribute<EntityBinaryFormatterAttribute>() != null
+                   && methodInfo.IsSameFunction(returnType, paramType);
+        }
+
+        bool IsResolverFactory(MethodInfo methodInfo)
+        {
+            var paramType = typeof(EntityKeyMapper<TEntityKey>);
+            var returnType = typeof(IFormatterResolver);
+            return methodInfo.GetCustomAttribute<EntityBinaryFormatterResolverAttribute>() != null
+                   && methodInfo.IsSameFunction(returnType, paramType);
         }
 
         bool IsPreProcessor<TComponent>(MethodInfo methodInfo)
@@ -69,6 +105,5 @@ namespace EnTTSharp.Serialization.Binary.AutoRegistration
             return methodInfo.GetCustomAttribute<EntityBinaryPostProcessorAttribute>() != null
                    && methodInfo.IsSameFunction(componentType, componentType);
         }
-
     }
 }

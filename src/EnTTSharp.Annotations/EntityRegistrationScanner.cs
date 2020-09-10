@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using EnTTSharp.Entities;
+using EnTTSharp.Entities.Attributes;
 
 namespace EnTTSharp.Annotations
 {
@@ -15,6 +17,7 @@ namespace EnTTSharp.Annotations
             {
                 throw new ArgumentNullException(nameof(handlers));
             }
+
             this.handlers = handlers.ToList();
         }
 
@@ -30,6 +33,7 @@ namespace EnTTSharp.Annotations
             {
                 throw new ArgumentNullException(nameof(handler));
             }
+
             this.handlers.Add(handler);
         }
 
@@ -39,19 +43,19 @@ namespace EnTTSharp.Annotations
             var retval = new List<EntityComponentRegistration>();
             foreach (var assembly in assemblies)
             {
-                retval.AddRange(RegisterEntitiesFromAssembly(assembly));
+                retval.AddRange(RegisterComponentsFromAssembly(assembly));
             }
 
             return retval;
         }
 
-        public List<EntityComponentRegistration> RegisterEntitiesFromAssembly(Assembly a,
-                                                                              List<EntityComponentRegistration> retval = null)
+        public List<EntityComponentRegistration> RegisterComponentsFromAssembly(Assembly a,
+                                                                                List<EntityComponentRegistration> retval = null)
         {
             retval = retval ?? new List<EntityComponentRegistration>();
             foreach (var typeInfo in a.DefinedTypes)
             {
-                if (TryRegisterEntity(typeInfo, out var r))
+                if (TryRegisterComponent(typeInfo, out var r))
                 {
                     retval.Add(r);
                 }
@@ -60,14 +64,21 @@ namespace EnTTSharp.Annotations
             return retval;
         }
 
-        public bool TryRegisterEntity<TData>(out EntityComponentRegistration result)
+        public bool TryRegisterComponent<TData>(out EntityComponentRegistration result)
         {
             var type = typeof(TData);
             var typeInfo = type.GetTypeInfo();
-            return TryRegisterEntity(typeInfo, out result);
+            return TryRegisterComponent(typeInfo, out result);
         }
 
-        public bool TryRegisterEntity(TypeInfo typeInfo, out EntityComponentRegistration result)
+        public bool TryRegisterKey<TData>(out EntityComponentRegistration result)
+        {
+            var type = typeof(TData);
+            var typeInfo = type.GetTypeInfo();
+            return TryRegisterKey(typeInfo, out result);
+        }
+
+        public bool TryRegisterComponent(TypeInfo typeInfo, out EntityComponentRegistration result)
         {
             if (typeInfo.IsAbstract)
             {
@@ -76,6 +87,29 @@ namespace EnTTSharp.Annotations
             }
 
             if (!typeInfo.IsDefined(typeof(EntityComponentAttribute)))
+            {
+                result = default;
+                return false;
+            }
+
+            result = new EntityComponentRegistration(typeInfo);
+            foreach (var h in handlers)
+            {
+                h.Process(result);
+            }
+
+            return !result.IsEmpty;
+        }
+
+        public bool TryRegisterKey(TypeInfo typeInfo, out EntityComponentRegistration result)
+        {
+            if (typeInfo.IsAbstract)
+            {
+                result = default;
+                return false;
+            }
+
+            if (!typeInfo.IsDefined(typeof(EntityKeyAttribute)))
             {
                 result = default;
                 return false;

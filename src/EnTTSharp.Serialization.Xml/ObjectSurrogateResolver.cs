@@ -45,6 +45,7 @@ namespace EnTTSharp.Serialization.Xml
 
         public object GetObjectToSerialize(object obj, Type surrogateType)
         {
+            Console.WriteLine("GetObjectToSerialize " + obj + " " + surrogateType);
             if (obj == null)
             {
                 return null;
@@ -64,10 +65,13 @@ namespace EnTTSharp.Serialization.Xml
             // return targetType;
             if (!surrogateMappings.TryGetValue(targetType, out var reg))
             {
+                Console.WriteLine("GetSurrogateType " + targetType + " -> Original: " + targetType);
                 return targetType;
             }
 
-            return reg.GetSurrogateType(targetType);
+            var surrogateType = reg.GetSurrogateType(targetType);
+            Console.WriteLine("GetSurrogateType " + targetType + " -> Mapped: " + surrogateType);
+            return surrogateType;
         }
     }
 }

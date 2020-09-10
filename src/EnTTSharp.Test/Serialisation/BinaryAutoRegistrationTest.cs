@@ -1,4 +1,5 @@
 ﻿using EnTTSharp.Annotations;
+using EnTTSharp.Entities;
 using EnTTSharp.Serialization.Binary;
 using EnTTSharp.Serialization.Binary.AutoRegistration;
 using FluentAssertions;
@@ -12,7 +13,7 @@ namespace EnTTSharp.Test.Serialisation
         public void TestRegisterHandlers()
         {
             var components = new EntityRegistrationScanner()
-                             .With(new BinaryEntityRegistrationHandler())
+                             .With(new BinaryEntityRegistrationHandler<EntityKey>())
                              .RegisterEntitiesFromAllAssemblies();
             components.Count.Should().Be(1);
 

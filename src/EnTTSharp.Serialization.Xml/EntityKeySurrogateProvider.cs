@@ -1,13 +1,12 @@
-﻿using System;
-using EnTTSharp.Entities;
+﻿using EnTTSharp.Entities;
 
 namespace EnTTSharp.Serialization.Xml
 {
     public class EntityKeySurrogateProvider: SerializationSurrogateProviderBase<EntityKey, EntityKeyData>
     {
-        readonly Func<EntityKeyData, EntityKey> entityMapper;
+        readonly EntityKeyMapper<EntityKey> entityMapper;
 
-        public EntityKeySurrogateProvider(Func<EntityKeyData, EntityKey> entityMapper = null)
+        public EntityKeySurrogateProvider(EntityKeyMapper<EntityKey> entityMapper = null)
         {
             this.entityMapper = entityMapper ?? Map;
         }

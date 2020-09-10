@@ -35,6 +35,11 @@ namespace EnTTSharp.Entities
                 pool = this.pool;
                 return pool != null;
             }
+
+            public override string ToString()
+            {
+                return $"(Pool: {pool})";
+            }
         }
 
         readonly EqualityComparer<TEntityKey> equalityComparer;

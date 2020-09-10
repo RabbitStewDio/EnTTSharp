@@ -86,7 +86,6 @@ namespace EnTTSharp.Serialization.Xml
             writer.WriteStartElement(XmlTagNames.Component);
             writer.WriteAttributeString("entity-key", entity.Key.ToString("X"));
             writer.WriteAttributeString("entity-age", entity.Age.ToString("X"));
-            writer.WriteAttributeString("type", handler.TypeId);
             handler.GetHandler<TComponent>().Invoke(writer, c);
             writer.WriteEndElement();
         }

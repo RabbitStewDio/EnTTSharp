@@ -46,9 +46,9 @@ namespace EnTTSharp.Serialization
             this.Registry.RemoveTag<TComponent>();
         }
 
-        public virtual TEntityKey Map(EntityKey input)
+        public TEntityKey Map(TEntityKey input)
         {
-            return Registry.Create();
+            return Map(new EntityKeyData(input.Age, input.Key));
         }
 
         public void CleanOrphans()
@@ -95,6 +95,16 @@ namespace EnTTSharp.Serialization
             remoteMapping[input] = local;
             localMapping[local] = input;
             return local;
+        }
+
+        public bool TryLookupMapping(TEntityKey input, out TEntityKey mapped)
+        {
+            return TryLookupMapping(new EntityKeyData(input.Age, input.Key), out mapped);
+        }
+
+        public bool TryLookupMapping(EntityKeyData input, out TEntityKey mapped)
+        {
+            return remoteMapping.TryGetValue(input, out mapped);
         }
 
         public void Dispose()

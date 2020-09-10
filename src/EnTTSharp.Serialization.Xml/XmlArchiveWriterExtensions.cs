@@ -6,7 +6,7 @@ namespace EnTTSharp.Serialization.Xml
     public static class XmlArchiveWriterExtensions
     {
         public static SnapshotView<TEntityKey> WriteAllAsFragment<TEntityKey>(this SnapshotView<TEntityKey> v,
-                                                                    XmlArchiveWriter<TEntityKey> output)
+                                                                              XmlArchiveWriter<TEntityKey> output)
             where TEntityKey : IEntityKey
         {
             v.WriteDestroyed(output);
@@ -30,7 +30,7 @@ namespace EnTTSharp.Serialization.Xml
         }
 
         public static SnapshotView<TEntityKey> WriteAll<TEntityKey>(this SnapshotView<TEntityKey> v,
-                                                                            XmlArchiveWriter<TEntityKey> output)
+                                                                    XmlArchiveWriter<TEntityKey> output)
             where TEntityKey : IEntityKey
         {
             output.WriteDefaultSnapshotDocumentHeader();

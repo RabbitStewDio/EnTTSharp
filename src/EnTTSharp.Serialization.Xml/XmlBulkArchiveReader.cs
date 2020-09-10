@@ -1,14 +1,16 @@
 ﻿using System.Xml;
 using EnTTSharp.Entities;
 using EnTTSharp.Serialization.Xml.Impl;
+using Serilog;
 
 namespace EnTTSharp.Serialization.Xml
 {
     public class XmlBulkArchiveReader<TEntityKey> where TEntityKey : IEntityKey
     {
+        static readonly ILogger Logger = LogHelper.ForContext<XmlBulkArchiveReader<TEntityKey>>();
         readonly XmlArchiveReaderBackend<TEntityKey> readerConfiguration;
 
-        public XmlBulkArchiveReader(XmlReadHandlerRegistry registry): this(new XmlArchiveReaderBackend<TEntityKey>(registry))
+        public XmlBulkArchiveReader(XmlReadHandlerRegistry registry) : this(new XmlArchiveReaderBackend<TEntityKey>(registry))
         {
         }
 
@@ -24,19 +26,27 @@ namespace EnTTSharp.Serialization.Xml
                 return;
             }
 
-            while (reader.Read())
+            Logger.Verbose("Begin ReadAllFragment");
+            try
             {
-                if (reader.NodeType == XmlNodeType.Element)
+                while (reader.Read())
                 {
-                    if (!HandleRootElement(reader, loader))
+                    if (reader.NodeType == XmlNodeType.Element)
                     {
-                        reader.Skip();
+                        if (!HandleRootElement(reader, loader))
+                        {
+                            reader.Skip();
+                        }
+                    }
+                    else if (reader.NodeType == XmlNodeType.EndElement)
+                    {
+                        return;
                     }
                 }
-                else if (reader.NodeType == XmlNodeType.EndElement)
-                {
-                    return;
-                }
+            }
+            finally
+            {
+                Logger.Verbose("End ReadAllFragment");
             }
         }
 
@@ -83,7 +93,13 @@ namespace EnTTSharp.Serialization.Xml
                 }
                 case XmlTagNames.Components:
                 {
-                    ReadComponent(reader, loader);
+                    var attr = reader.GetAttribute("type");
+                    if (string.IsNullOrEmpty(attr))
+                    {
+                        throw reader.FromMissingAttribute(XmlTagNames.Component, "type");
+                    }
+
+                    ReadComponent(reader, loader, attr);
                     return true;
                 }
                 case XmlTagNames.Tag:
@@ -92,6 +108,7 @@ namespace EnTTSharp.Serialization.Xml
                     return true;
                 }
             }
+
             return false;
         }
 
@@ -103,24 +120,32 @@ namespace EnTTSharp.Serialization.Xml
                 return;
             }
 
-            while (reader.Read())
+            Logger.Verbose("Begin ReadEntities");
+            try
             {
-                if (reader.NodeType == XmlNodeType.Element)
+                while (reader.Read())
                 {
-                    if (reader.Name == XmlTagNames.Entity)
+                    if (reader.NodeType == XmlNodeType.Element)
                     {
-                        var entity = readerConfiguration.ReadEntity(reader, loader.Map);
-                        loader.OnEntity(entity);
+                        if (reader.Name == XmlTagNames.Entity)
+                        {
+                            var entity = readerConfiguration.ReadEntity(reader, loader.Map);
+                            loader.OnEntity(entity);
+                        }
+                        else
+                        {
+                            reader.Skip();
+                        }
                     }
-                    else
+                    else if (reader.NodeType == XmlNodeType.EndElement)
                     {
-                        reader.Skip();
+                        return;
                     }
                 }
-                else if (reader.NodeType == XmlNodeType.EndElement)
-                {
-                    return;
-                }
+            }
+            finally
+            {
+                Logger.Verbose("End ReadEntities");
             }
         }
 
@@ -131,53 +156,68 @@ namespace EnTTSharp.Serialization.Xml
                 return;
             }
 
-            while (reader.Read())
+            Logger.Verbose("Begin ReadDestroyed");
+            try
             {
-                if (reader.NodeType == XmlNodeType.Element)
+                while (reader.Read())
                 {
-                    if (reader.Name == XmlTagNames.DestroyedEntity)
+                    if (reader.NodeType == XmlNodeType.Element)
                     {
-                        var entity = readerConfiguration.ReadDestroyedEntity(reader, loader.Map);
-                        loader.OnDestroyedEntity(entity);
+                        if (reader.Name == XmlTagNames.DestroyedEntity)
+                        {
+                            var entity = readerConfiguration.ReadDestroyedEntity(reader, loader.Map);
+                            loader.OnDestroyedEntity(entity);
+                        }
+                        else
+                        {
+                            reader.Skip();
+                        }
                     }
-                    else
+                    else if (reader.NodeType == XmlNodeType.EndElement)
                     {
-                        reader.Skip();
+                        return;
                     }
                 }
-                else if (reader.NodeType == XmlNodeType.EndElement)
-                {
-                    return;
-                }
+            }
+            finally
+            {
+                Logger.Verbose("End ReadDestroyed");
             }
         }
 
-        void ReadComponent(XmlReader reader, ISnapshotLoader<TEntityKey> loader)
+        void ReadComponent(XmlReader reader, ISnapshotLoader<TEntityKey> loader, string type)
         {
             if (reader.IsEmptyElement)
             {
                 return;
             }
 
-            while (reader.Read())
+            Logger.Verbose("Begin ReadComponent");
+            try
             {
-                if (reader.NodeType == XmlNodeType.Element)
+                while (reader.Read())
                 {
-                    if (reader.Name == XmlTagNames.Component)
+                    if (reader.NodeType == XmlNodeType.Element)
                     {
-                        readerConfiguration.ReadComponent(reader, loader);
+                        if (reader.Name == XmlTagNames.Component)
+                        {
+                            readerConfiguration.ReadComponent(reader, loader, type);
+                        }
+                        else
+                        {
+                            reader.Skip();
+                        }
                     }
-                    else
+                    else if (reader.NodeType == XmlNodeType.EndElement)
                     {
-                        reader.Skip();
+                        return;
                     }
-                }
-                else if (reader.NodeType == XmlNodeType.EndElement)
-                {
-                    return;
                 }
             }
-        }        
-
+            finally
+            {
+                Logger.Verbose("End ReadComponent");
+            }
+        }
     }
 }

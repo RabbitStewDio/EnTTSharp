@@ -11,7 +11,8 @@ namespace EnTTSharp.Serialization.Binary
     public class BinaryReaderBackend<TEntityKey> where TEntityKey : IEntityKey
     {
         delegate void ParseFunctionDelegate(Stream s, TEntityKey k, 
-                                            ISnapshotLoader<TEntityKey> l, BinaryReadHandlerRegistration r, 
+                                            ISnapshotLoader<TEntityKey> l, 
+                                            BinaryReadHandlerRegistration r, 
                                             MessagePackSerializerOptions options);
 
         public readonly BinaryReadHandlerRegistry Registry;

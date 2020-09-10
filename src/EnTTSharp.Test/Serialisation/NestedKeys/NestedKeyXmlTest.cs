@@ -20,7 +20,7 @@ namespace EnTTSharp.Test.Serialisation.NestedKeys
         EntityRegistry<EntityKey> CreteEntityRegistry()
         {
             var scanner = new EntityRegistrationScanner(new ComponentRegistrationHandler<EntityKey>());
-            if (!scanner.TryRegisterEntity<NestedKeyComponent>(out var reg))
+            if (!scanner.TryRegisterComponent<NestedKeyComponent>(out var reg))
             {
                 Assert.Fail();
             }
@@ -72,8 +72,8 @@ namespace EnTTSharp.Test.Serialisation.NestedKeys
                 surrogateResolver.Register(new DummyEnumObjectSurrogateProvider());
 
                 var xmlScanner = new EntityRegistrationScanner(new XmlDataContractRegistrationHandler<EntityKey>(surrogateResolver),
-                                                               new XmlEntityRegistrationHandler(surrogateResolver));
-                if (!xmlScanner.TryRegisterEntity<NestedKeyComponent>(out var xmlRegistration))
+                                                               new XmlEntityRegistrationHandler<EntityKey>(surrogateResolver));
+                if (!xmlScanner.TryRegisterComponent<NestedKeyComponent>(out var xmlRegistration))
                 {
                     Assert.Fail();
                 }
@@ -94,8 +94,8 @@ namespace EnTTSharp.Test.Serialisation.NestedKeys
             surrogateResolver.Register(new DummyEnumObjectSurrogateProvider());
 
             var xmlScanner = new EntityRegistrationScanner(new XmlDataContractRegistrationHandler<EntityKey>(surrogateResolver),
-                                                           new XmlEntityRegistrationHandler(surrogateResolver));
-            if (!xmlScanner.TryRegisterEntity<NestedKeyComponent>(out var xmlRegistration))
+                                                           new XmlEntityRegistrationHandler<EntityKey>(surrogateResolver));
+            if (!xmlScanner.TryRegisterComponent<NestedKeyComponent>(out var xmlRegistration))
             {
                 Assert.Fail();
             }

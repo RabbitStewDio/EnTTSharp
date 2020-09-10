@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using EnTTSharp.Entities;
 using EnTTSharp.Serialization.Binary.Impl;
 using MessagePack;
@@ -33,7 +32,7 @@ namespace EnTTSharp.Serialization.Binary
             return MessagePackSerializer.Deserialize<int>(reader, options);
         }
 
-        public TEntityKey ReadEntity(Func<EntityKeyData, TEntityKey> entityMapper)
+        public TEntityKey ReadEntity(EntityKeyMapper<TEntityKey> entityMapper)
         {
             var key = MessagePackSerializer.Deserialize<EntityKeyData>(reader, options);
             return entityMapper(key);
@@ -56,7 +55,7 @@ namespace EnTTSharp.Serialization.Binary
             return c.ComponentCount;
         }
 
-        public bool TryReadComponent<TComponent>(Func<EntityKeyData, TEntityKey> entityMapper, 
+        public bool TryReadComponent<TComponent>(EntityKeyMapper<TEntityKey> entityMapper, 
                                                  out TEntityKey key, out TComponent component)
         {
 
@@ -88,7 +87,7 @@ namespace EnTTSharp.Serialization.Binary
             return c.ComponentExists;
         }
 
-        public bool TryReadTag<TComponent>(Func<EntityKeyData, TEntityKey> entityMapper, out TEntityKey key, out TComponent component)
+        public bool TryReadTag<TComponent>(EntityKeyMapper<TEntityKey> entityMapper, out TEntityKey key, out TComponent component)
         {
             var entityKey = MessagePackSerializer.Deserialize<EntityKeyData>(reader, options);
             component = MessagePackSerializer.Deserialize<TComponent>(reader, options);
@@ -112,7 +111,7 @@ namespace EnTTSharp.Serialization.Binary
             return MessagePackSerializer.Deserialize<int>(reader, options);
         }
 
-        public TEntityKey ReadDestroyed(Func<EntityKeyData, TEntityKey> entityMapper)
+        public TEntityKey ReadDestroyed(EntityKeyMapper<TEntityKey> entityMapper)
         {
             var key = MessagePackSerializer.Deserialize<EntityKeyData>(reader, options);
             return entityMapper(key);

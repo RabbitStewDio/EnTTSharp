@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EnTTSharp.Annotations
+namespace EnTTSharp.Entities.Attributes
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Enum | AttributeTargets.Interface)]
     public class EntityComponentAttribute: Attribute
@@ -12,10 +12,4 @@ namespace EnTTSharp.Annotations
 
         public EntityConstructor Constructor { get; set; } 
     }
-
-    [AttributeUsage(AttributeTargets.Method)]
-    public sealed class EntityDestructorAttribute : Attribute
-    {
-    }
-
 }

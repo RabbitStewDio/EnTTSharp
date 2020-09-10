@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using EnTTSharp.Annotations;
 using EnTTSharp.Annotations.Impl;
 using EnTTSharp.Entities;
@@ -20,7 +18,7 @@ namespace EnTTSharp.Test.Serialisation.NestedKeys
         EntityRegistry<EntityKey> CreteEntityRegistry()
         {
             var scanner = new EntityRegistrationScanner(new ComponentRegistrationHandler<EntityKey>());
-            if (!scanner.TryRegisterEntity<NestedKeyComponent>(out var reg))
+            if (!scanner.TryRegisterComponent<NestedKeyComponent>(out var reg))
             {
                 Assert.Fail();
             }
@@ -62,8 +60,8 @@ namespace EnTTSharp.Test.Serialisation.NestedKeys
 
         byte[] Serialize(EntityRegistry<EntityKey> registry)
         {
-            var scanner = new EntityRegistrationScanner().With(new BinaryEntityRegistrationHandler());
-            if (!scanner.TryRegisterEntity<NestedKeyComponent>(out var registration))
+            var scanner = new EntityRegistrationScanner().With(new BinaryEntityRegistrationHandler<EntityKey>());
+            if (!scanner.TryRegisterComponent<NestedKeyComponent>(out var registration))
             {
                 Assert.Fail();
             }
@@ -71,18 +69,21 @@ namespace EnTTSharp.Test.Serialisation.NestedKeys
             var handlerRegistry = new BinaryWriteHandlerRegistry();
             handlerRegistry.Register(registration);
 
-            var resolver = CompositeResolver.Create(
-                new EntityKeyResolver(),
-                StandardResolver.Instance
-            );
-
-            var msgPackOptions = MessagePackSerializerOptions.Standard
-                                                             .WithResolver(resolver)
-                                                             .WithCompression(MessagePackCompression.None);
             var stream = new MemoryStream();
-            var writer = new BinaryArchiveWriter<EntityKey>(handlerRegistry, stream, msgPackOptions);
+
             using (var snapshot = registry.CreateSnapshot())
             {
+                var resolver = CompositeResolver.Create(
+                    new EntityKeyDataResolver(),
+                    new EntityKeyResolver(),
+                    StandardResolver.Instance
+                );
+
+                var msgPackOptions = MessagePackSerializerOptions.Standard
+                                                                 .WithResolver(resolver)
+                                                                 .WithCompression(MessagePackCompression.None);
+                var writer = new BinaryArchiveWriter<EntityKey>(handlerRegistry, stream, msgPackOptions);
+
                 snapshot.WriteAll(writer);
             }
 
@@ -93,8 +94,8 @@ namespace EnTTSharp.Test.Serialisation.NestedKeys
 
         void Deserialize(EntityRegistry<EntityKey> registry, byte[] data)
         {
-            var scanner = new EntityRegistrationScanner().With(new BinaryEntityRegistrationHandler());
-            if (!scanner.TryRegisterEntity<NestedKeyComponent>(out var registration))
+            var scanner = new EntityRegistrationScanner().With(new BinaryEntityRegistrationHandler<EntityKey>());
+            if (!scanner.TryRegisterComponent<NestedKeyComponent>(out var registration))
             {
                 Assert.Fail();
             }
@@ -107,6 +108,7 @@ namespace EnTTSharp.Test.Serialisation.NestedKeys
             using (var loader = registry.CreateLoader())
             {
                 var resolver = CompositeResolver.Create(
+                    new EntityKeyDataResolver(),
                     new EntityKeyResolver(loader.Map),
                     StandardResolver.Instance
                 );

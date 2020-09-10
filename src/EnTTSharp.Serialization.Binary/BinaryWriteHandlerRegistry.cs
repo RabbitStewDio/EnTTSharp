@@ -15,38 +15,45 @@ namespace EnTTSharp.Serialization.Binary
 
         public IEnumerable<BinaryWriteHandlerRegistration> Handlers => handlers.Values;
 
-        public void RegisterRange(IEnumerable<EntityComponentRegistration> range)
+        public BinaryWriteHandlerRegistry RegisterRange(IEnumerable<EntityComponentRegistration> range)
         {
             foreach (var r in range)
             {
                 Register(r);
             }
+
+            return this;
         }
 
-        public void Register(EntityComponentRegistration reg)
+        public BinaryWriteHandlerRegistry Register(EntityComponentRegistration reg)
         {
             if (reg.TryGet(out BinaryWriteHandlerRegistration r))
             {
                 Register(r);
             }
+
+            return this;
         }
 
-        public void Register(in BinaryWriteHandlerRegistration reg)
+        public BinaryWriteHandlerRegistry Register(in BinaryWriteHandlerRegistration reg)
         {
             handlers.Add(reg.TargetType, reg);
+            return this;
         }
 
-        public void RegisterRange(IEnumerable<BinaryWriteHandlerRegistration> range)
+        public BinaryWriteHandlerRegistry RegisterRange(IEnumerable<BinaryWriteHandlerRegistration> range)
         {
             foreach (var r in range)
             {
                 Register(r);
             }
+            return this;
         }
 
-        public void Register<TComponent>(string typeId, bool useAsTag = false)
+        public BinaryWriteHandlerRegistry Register<TComponent>(string typeId, bool useAsTag = false)
         {
             Register(BinaryWriteHandlerRegistration.Create<TComponent>(typeId, useAsTag));
+            return this;
         }
 
         public BinaryWriteHandlerRegistration QueryHandler<TComponent>()

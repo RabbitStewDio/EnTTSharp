@@ -9,9 +9,9 @@ using Serilog;
 
 namespace EnTTSharp.Serialization.Xml.AutoRegistration
 {
-    public class XmlEntityRegistrationHandler: EntityRegistrationHandlerBase
+    public class XmlEntityRegistrationHandler<TEntityKey>: EntityRegistrationHandlerBase
     {
-        static readonly ILogger Logger = Log.ForContext<XmlEntityRegistrationHandler>();
+        static readonly ILogger Logger = Log.ForContext<XmlEntityRegistrationHandler<TEntityKey>>();
         readonly ObjectSurrogateResolver objectResolver;
 
         public XmlEntityRegistrationHandler(ObjectSurrogateResolver objectResolver = null)
@@ -28,53 +28,55 @@ namespace EnTTSharp.Serialization.Xml.AutoRegistration
                 return;
             }
 
-            bool hasReadHandler = false;
-            bool hasWriteHandler = false;
+            ReadHandlerDelegate<TComponent> readHandler = null;
+            WriteHandlerDelegate<TComponent> writeHandler = null;
+            FormatterResolverFactory<TEntityKey> formatterResolver = null;
+
             var handlerMethods = componentType.GetMethods(BindingFlags.Static | BindingFlags.Public);
             foreach (var m in handlerMethods)
             {
                 if (IsXmlReader<TComponent>(m))
                 {
-                    hasReadHandler = true;
-                    var d = (ReadHandlerDelegate<TComponent>) Delegate.CreateDelegate(typeof(ReadHandlerDelegate<TComponent>), null, m, false);
-                    r.Store(XmlReadHandlerRegistration.Create(attr.ComponentTypeId, d, attr.UsedAsTag));
+                    readHandler = (ReadHandlerDelegate<TComponent>) Delegate.CreateDelegate(typeof(ReadHandlerDelegate<TComponent>), null, m, false);
                 }
 
                 if (IsXmlWriter<TComponent>(m))
                 {
-                    hasWriteHandler = true;
-                    var d = (WriteHandlerDelegate<TComponent>)Delegate.CreateDelegate(typeof(WriteHandlerDelegate<TComponent>), null, m, false);
-                    r.Store(XmlWriteHandlerRegistration.Create(attr.ComponentTypeId, d, attr.UsedAsTag));
+                    writeHandler = (WriteHandlerDelegate<TComponent>)Delegate.CreateDelegate(typeof(WriteHandlerDelegate<TComponent>), null, m, false);
+                }
+
+                if (IsSurrogateProvider(m))
+                {
+                    formatterResolver = (FormatterResolverFactory<TEntityKey>)Delegate.CreateDelegate(typeof(FormatterResolverFactory<TEntityKey>), null, m, false);
                 }
             }
 
-            if (!hasReadHandler)
+            if (readHandler == null)
             {
                 if (HasDataContract<TComponent>())
                 {
-                    ReadHandlerDelegate<TComponent> handler = new DefaultDataContractReadHandler<TComponent>(objectResolver).Read;
-                    r.Store(XmlReadHandlerRegistration.Create(attr.ComponentTypeId, handler, attr.UsedAsTag));
+                    readHandler = new DefaultDataContractReadHandler<TComponent>(objectResolver).Read;
                 }
                 else
                 {
-                    ReadHandlerDelegate<TComponent> handler = new DefaultReadHandler<TComponent>().Read;
-                    r.Store(XmlReadHandlerRegistration.Create(attr.ComponentTypeId, handler, attr.UsedAsTag));
+                    readHandler = new DefaultReadHandler<TComponent>().Read;
                 }
             }
 
-            if (!hasWriteHandler)
+            if (writeHandler == null)
             {
                 if (HasDataContract<TComponent>())
                 {
-                    WriteHandlerDelegate<TComponent> handler = new DefaultDataContractWriteHandler<TComponent>(objectResolver).Write;
-                    r.Store(XmlWriteHandlerRegistration.Create(attr.ComponentTypeId, handler, attr.UsedAsTag));
+                    writeHandler = new DefaultDataContractWriteHandler<TComponent>(objectResolver).Write;
                 }
                 else
                 {
-                    WriteHandlerDelegate<TComponent> handler = new DefaultWriteHandler<TComponent>().Write;
-                    r.Store(XmlWriteHandlerRegistration.Create(attr.ComponentTypeId, handler, attr.UsedAsTag));
+                    writeHandler = new DefaultWriteHandler<TComponent>().Write;
                 }
             }
+
+            r.Store(XmlReadHandlerRegistration.Create(attr.ComponentTypeId, readHandler, attr.UsedAsTag).WithFormatterResolver(formatterResolver));
+            r.Store(XmlWriteHandlerRegistration.Create(attr.ComponentTypeId, writeHandler, attr.UsedAsTag).WithFormatterResolver(formatterResolver));
 
             Logger.Debug("Registered Xml Handling for {ComponentType}", componentType);
 
@@ -98,6 +100,14 @@ namespace EnTTSharp.Serialization.Xml.AutoRegistration
             var componentType = typeof(TComponent);
             return methodInfo.GetCustomAttribute<EntityXmlWriterAttribute>() != null
                    && methodInfo.IsSameAction(typeof(XmlWriter), componentType);
+        }
+
+        bool IsSurrogateProvider(MethodInfo methodInfo)
+        {
+            var paramType = typeof(EntityKeyMapper<TEntityKey>);
+            var returnType = typeof(ISerializationSurrogateProvider);
+            return methodInfo.GetCustomAttribute<EntityXmlSurrogateProviderAttribute>() != null
+                   && methodInfo.IsSameFunction(returnType, paramType);
         }
 
     }

@@ -4,11 +4,14 @@ using System.Reflection;
 using System.Xml;
 using EnTTSharp.Entities;
 using EnTTSharp.Serialization.Xml.Impl;
+using Serilog;
 
 namespace EnTTSharp.Serialization.Xml
 {
     public class XmlArchiveReaderBackend<TEntityKey> where TEntityKey : IEntityKey
     {
+        static readonly ILogger Logger = LogHelper.ForContext<XmlArchiveReaderBackend<TEntityKey>>();
+        
         readonly MethodInfo tagParserMethod;
         readonly MethodInfo missingTagParserMethod;
         readonly MethodInfo componentParserMethod;
@@ -51,13 +54,13 @@ namespace EnTTSharp.Serialization.Xml
         public readonly XmlReadHandlerRegistry Registry;
 
         public TEntityKey ReadEntity(XmlReader r,
-                                     Func<EntityKeyData, TEntityKey> entityMapper)
+                                     EntityKeyMapper<TEntityKey> entityMapper)
         {
             return entityMapper(ReadEntityData(r, XmlTagNames.Entity));
         }
 
         public TEntityKey ReadDestroyedEntity(XmlReader r,
-                                              Func<EntityKeyData, TEntityKey> entityMapper)
+                                              EntityKeyMapper<TEntityKey> entityMapper)
         {
             return entityMapper(ReadEntityData(r, XmlTagNames.DestroyedEntity));
         }
@@ -66,12 +69,13 @@ namespace EnTTSharp.Serialization.Xml
         {
             var age = byte.Parse(r.GetAttribute("entity-age") ?? throw r.FromMissingAttribute(tag, "entity-age"));
             var key = int.Parse(r.GetAttribute("entity-key") ?? throw r.FromMissingAttribute(tag, "entity-key"));
+            Logger.Verbose("Reading Entity Data: Age: {Age}, Key: {Key}", age, key);
             return new EntityKeyData(age, key);
         }
 
 
         public void ReadTagTyped<TComponent>(XmlReader reader,
-                                             Func<EntityKeyData, TEntityKey> entityMapper,
+                                             EntityKeyMapper<TEntityKey> entityMapper,
                                              out TEntityKey entity,
                                              out TComponent component)
         {
@@ -87,6 +91,7 @@ namespace EnTTSharp.Serialization.Xml
 
             entity = entityMapper(ReadEntityData(reader, XmlTagNames.Tag));
             var _ = reader.Read();
+            Logger.Verbose("Reading Component for {Entity}", entity);
             component = parser(reader);
         }
 
@@ -125,7 +130,7 @@ namespace EnTTSharp.Serialization.Xml
         }
 
         public void ReadComponentTyped<TComponent>(XmlReader reader,
-                                                   Func<EntityKeyData, TEntityKey> entityMapper,
+                                                   EntityKeyMapper<TEntityKey> entityMapper,
                                                    out TEntityKey entity,
                                                    out TComponent component)
         {
@@ -144,10 +149,9 @@ namespace EnTTSharp.Serialization.Xml
             component = parser(reader);
         }
 
-        public void ReadComponent(XmlReader reader, ISnapshotLoader<TEntityKey> loader)
+        public void ReadComponent(XmlReader reader, ISnapshotLoader<TEntityKey> loader, string type)
         {
             var entity = loader.Map(ReadEntityData(reader, XmlTagNames.Component));
-            var type = reader.GetAttribute("type") ?? throw reader.FromMissingAttribute(XmlTagNames.Component, "type");
 
             if (!Registry.TryGetValue(type, out var handler))
             {

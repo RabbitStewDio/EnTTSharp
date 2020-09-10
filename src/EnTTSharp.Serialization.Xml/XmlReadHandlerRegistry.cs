@@ -25,26 +25,32 @@ namespace EnTTSharp.Serialization.Xml
 
         public IEnumerable<XmlReadHandlerRegistration> Handlers => handlersByType.Values;
 
-        public void Register(EntityComponentRegistration reg)
+        public XmlReadHandlerRegistry Register(EntityComponentRegistration reg)
         {
             if (reg.TryGet(out XmlReadHandlerRegistration r))
             {
                 Register(r);
             }
+
+            return this;
         }
 
-        public void RegisterRange(IEnumerable<XmlReadHandlerRegistration> range)
+        public XmlReadHandlerRegistry RegisterRange(IEnumerable<XmlReadHandlerRegistration> range)
         {
             foreach (var r in range)
             {
                 Register(r);
             }
+
+            return this;
         }
 
-        public void Register(XmlReadHandlerRegistration r)
+        public XmlReadHandlerRegistry Register(XmlReadHandlerRegistration r)
         {
             handlers.Add(r.TypeId, r);
             handlersByType.Add(r.TargetType, r);
+
+            return this;
         }
 
         public bool TryGetValue(Type typeId, out XmlReadHandlerRegistration o)
