@@ -18,7 +18,7 @@ namespace EnTTSharp.Entities
     for (var p = 1; p <= MaxParameterCount; p += 1)
     {
         var templateParamsLight = BuildLightTemplate(p);
-        var templateParams = BuildTemplate(p);
+        // var templateParams = BuildTemplate(p);
 #>
     public interface IEntityView<TEntityKey, <#= templateParamsLight #>>  : IEntityView<TEntityKey>
         where TEntityKey: IEntityKey

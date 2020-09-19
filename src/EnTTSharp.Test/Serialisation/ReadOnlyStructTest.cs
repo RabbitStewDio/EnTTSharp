@@ -56,7 +56,7 @@ namespace EnTTSharp.Test.Serialisation
                                              });
 
 
-            var dc = new DefaultDataContractWriteHandler<Model>(null);
+            var dc = new DefaultDataContractWriteHandler<Model>();
             dc.Write(xmlWriter, model);
             xmlWriter.Flush();
 
@@ -65,7 +65,7 @@ namespace EnTTSharp.Test.Serialisation
             Console.WriteLine("----------------------");
 
             var xmlReader = XmlReader.Create(new StringReader(sb.ToString()));
-            var dr = new DefaultDataContractReadHandler<Model>(null);
+            var dr = new DefaultDataContractReadHandler<Model>();
             var loaded = dr.Read(xmlReader);
             loaded.Number.Should().Be(10);
             loaded.Text.Should().Be("Test");

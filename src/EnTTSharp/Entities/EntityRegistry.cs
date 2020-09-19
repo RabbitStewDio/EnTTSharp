@@ -30,10 +30,10 @@ namespace EnTTSharp.Entities
 
             public IReadOnlyPool<TEntityKey> ReadonlyPool { get; }
 
-            public bool TryGetPool(out IPool<TEntityKey> pool)
+            public bool TryGetPool(out IPool<TEntityKey> poolResult)
             {
-                pool = this.pool;
-                return pool != null;
+                poolResult = this.pool;
+                return poolResult != null;
             }
 
             public override string ToString()

@@ -51,8 +51,7 @@ namespace EnTTSharp.Serialization.Binary
 
             var missingTagParamTypes = new[]
             {
-                typeof(ISnapshotLoader<TEntityKey>),
-                typeof(BinaryReadHandlerRegistration)
+                typeof(ISnapshotLoader<TEntityKey>)
             };
 
             missingTagParserMethod = typeof(BinaryReaderBackend<TEntityKey>).GetMethod(nameof(ParseMissingTagInternal),
@@ -98,7 +97,7 @@ namespace EnTTSharp.Serialization.Binary
 
         }
 
-        void ParseMissingTagInternal<TComponent>(ISnapshotLoader<TEntityKey> loader, BinaryReadHandlerRegistration reg)
+        void ParseMissingTagInternal<TComponent>(ISnapshotLoader<TEntityKey> loader)
         {
             loader.OnTagRemoved<TComponent>();
         }

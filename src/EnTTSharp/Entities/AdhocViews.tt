@@ -19,7 +19,7 @@ namespace EnTTSharp.Entities
 <#
     for (int p = 2; p <= MaxParameterCount; p += 1)
     {
-        var templateParams = BuildTemplate(p);
+        //var templateParams = BuildTemplate(p);
         var templateParamsLight = BuildLightTemplate(p);
 #>
     public sealed class AdhocView<TEntityKey, <#= templateParamsLight #> > : AdhocMultiViewBase<TEntityKey>, IEntityView<TEntityKey, <#= templateParamsLight #>>

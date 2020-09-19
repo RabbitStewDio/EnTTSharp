@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using EnTTSharp.Entities.Helpers;
 using EnTTSharp.Entities.Pools;
 
@@ -239,6 +240,7 @@ namespace EnTTSharp.Entities
             GC.SuppressFinalize(this);
         }
 
+        [SuppressMessage("ReSharper", "UnusedParameter.Local")]
         void Dispose(bool disposing)
         {
             if (disposed)

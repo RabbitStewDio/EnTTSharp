@@ -74,14 +74,22 @@ namespace EnTTSharp.Serialization
             var pool = registry.GetPool<TComponent>();
             await writer.WriteStartComponentAsync<TComponent>(pool.Count);
             var p = EntityKeyListPool.Reserve(pool);
-            foreach (var entity in pool)
+            try
             {
-                if (pool.TryGet(entity, out var c))
+                foreach (var entity in p)
                 {
-                    await writer.WriteComponentAsync(entity, c);
+                    if (pool.TryGet(entity, out var c))
+                    {
+                        await writer.WriteComponentAsync(entity, c);
+                    }
                 }
+
+                await writer.WriteEndComponentAsync<TComponent>();
             }
-            await writer.WriteEndComponentAsync<TComponent>();
+            finally
+            {
+                EntityKeyListPool.Release(p);
+            }
 
             return this;
         }

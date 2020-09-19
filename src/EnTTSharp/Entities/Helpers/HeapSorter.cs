@@ -62,7 +62,7 @@ namespace EnTTSharp.Entities.Helpers
 
         /// <summary>
         /// Private Max-Heap Builder.
-        /// Builds a max heap from an IList<T> collection.
+        /// Builds a max heap from an IList[T] collection.
         /// </summary>
         static void BuildMaxHeap<T>(this ISortableCollection<T> collection, int firstIndex, int lastIndex, IComparer<T> comparer)
         {
@@ -103,7 +103,7 @@ namespace EnTTSharp.Entities.Helpers
 
         /// <summary>
         /// Private Min-Heap Builder.
-        /// Builds a min heap from an IList<T> collection.
+        /// Builds a min heap from an IList[T] collection.
         /// </summary>
         static void BuildMinHeap<T>(this ISortableCollection<T> collection, int firstIndex, int lastIndex, IComparer<T> comparer)
         {

@@ -4,7 +4,7 @@ using EnTTSharp.Entities;
 
 namespace EnTTSharp.Serialization
 {
-    public class SnapshotView<TEntityKey>: IDisposable where TEntityKey : IEntityKey
+    public class SnapshotView<TEntityKey> : IDisposable where TEntityKey : IEntityKey
     {
         readonly IEntityPoolAccess<TEntityKey> registry;
         readonly List<TEntityKey> destroyedEntities;
@@ -59,6 +59,7 @@ namespace EnTTSharp.Serialization
             {
                 writer.WriteDestroyed(d);
             }
+
             writer.WriteEndDestroyed();
 
             destroyedEntities.Clear();
@@ -72,6 +73,7 @@ namespace EnTTSharp.Serialization
             {
                 writer.WriteEntity(d);
             }
+
             writer.WriteEndEntity();
 
             return this;
@@ -79,16 +81,25 @@ namespace EnTTSharp.Serialization
 
         public SnapshotView<TEntityKey> WriteComponent<TComponent>(IEntityArchiveWriter<TEntityKey> writer)
         {
-            var pool = registry.GetPool<TComponent>();
-            writer.WriteStartComponent<TComponent>(pool.Count);
-            foreach (var entity in pool)
+            try
             {
-                if (pool.TryGet(entity, out var c))
+                var pool = registry.GetPool<TComponent>();
+                writer.WriteStartComponent<TComponent>(pool.Count);
+                foreach (var entity in pool)
                 {
-                    writer.WriteComponent(entity, c);
+                    if (pool.TryGet(entity, out var c))
+                    {
+                        writer.WriteComponent(entity, c);
+                    }
                 }
+
+                writer.WriteEndComponent<TComponent>();
             }
-            writer.WriteEndComponent<TComponent>();
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
 
             return this;
         }

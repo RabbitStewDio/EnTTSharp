@@ -7,13 +7,13 @@ namespace EnTTSharp.Serialization
 
     [Serializable]
     [DataContract]
-    public struct EntityKeyData : IEquatable<EntityKeyData>
+    public readonly struct EntityKeyData : IEquatable<EntityKeyData>
     {
         [DataMember(Name = "key", Order = 0)]
-        public int Key;
+        public readonly int Key;
 
         [DataMember(Name = "age", Order = 1)]
-        public byte Age;
+        public readonly byte Age;
 
         public EntityKeyData(byte age, int key)
         {

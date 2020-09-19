@@ -1,6 +1,5 @@
 <#@ template language="C#" #>
 <#@ import namespace="System.Text" #>
-<#@ import namespace="System.Collections.Generic" #>
 <#@ include file="../../T4Includes/GeneratorHelpers.ttinclude" #>
 using System;
 
@@ -21,7 +20,7 @@ namespace EnTTSharp.Entities.Systems
     for (var p = 1; p <= MaxParameterCount; p += 1)
     {
         var templateParamsLight = BuildLightTemplate(p);
-        var templateParams = BuildTemplate(p);
+        // var templateParams = BuildTemplate(p);
 #>
 
         public Action<TContext> CreateSystem<<#= templateParamsLight #>>(ViewDelegates.ApplyWithContext<TEntityKey, TContext, <#= templateParamsLight #>> action)

@@ -43,7 +43,7 @@ namespace EnTTSharp.Serialization.Xml
 
             var missingTagParamTypes = new[]
             {
-                typeof(ISnapshotLoader<TEntityKey>), typeof(XmlReadHandlerRegistration)
+                typeof(ISnapshotLoader<TEntityKey>)
             };
             missingTagParserMethod = typeof(XmlArchiveReaderBackend<TEntityKey>).GetMethod(nameof(ParseMissingTagInternal),
                                                                                            BindingFlags.Instance | BindingFlags.NonPublic, null,
@@ -253,7 +253,7 @@ namespace EnTTSharp.Serialization.Xml
             actionDelegate(loader, handler);
         }
 
-        void ParseMissingTagInternal<TComponent>(ISnapshotLoader<TEntityKey> loader, XmlReadHandlerRegistration handler)
+        void ParseMissingTagInternal<TComponent>(ISnapshotLoader<TEntityKey> loader)
         {
             loader.OnTagRemoved<TComponent>();
         }

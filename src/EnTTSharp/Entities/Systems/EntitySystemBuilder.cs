@@ -1,8 +1,8 @@
-﻿using System;
-using EnTTSharp.Entities;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace EnTTSharp.Entities.Systems
 {
+    [SuppressMessage("ReSharper", "UnusedTypeParameter")]
     public readonly partial struct EntitySystemBuilder<TEntityKey, TContext> where TEntityKey : IEntityKey
     {
         readonly IEntityViewFactory<TEntityKey> reg;

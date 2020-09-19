@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Runtime.Serialization;
-using EnTTSharp.Annotations;
 using EnTTSharp.Entities.Attributes;
 
 namespace EnTTSharp.Test.Fixtures

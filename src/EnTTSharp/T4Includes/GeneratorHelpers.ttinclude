@@ -1,4 +1,3 @@
-<#@ template language="C#" #>
 <#@ import namespace="System.Text" #>
 <#+
     public const int MaxParameterCount = 7;

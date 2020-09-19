@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using EnTTSharp.Entities.Helpers;
 
 namespace EnTTSharp.Entities.Pools

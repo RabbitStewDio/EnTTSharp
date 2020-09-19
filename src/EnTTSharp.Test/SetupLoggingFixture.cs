@@ -1,8 +1,10 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.Configuration;
 using NUnit.Framework;
 using Serilog;
 
 [SetUpFixture]
+[SuppressMessage("ReSharper", "CheckNamespace")]
 public class SetupLoggingFixture
 {
     [OneTimeSetUp]

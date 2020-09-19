@@ -19,7 +19,7 @@ namespace EnTTSharp.Entities
     for (var p = 1; p <= MaxParameterCount; p += 1)
     {
         var templateParamsLight = BuildLightTemplate(p);
-        var templateParams = BuildTemplate(p);
+        // var templateParams = BuildTemplate(p);
 #>
         public delegate void Apply<TEntityKey, <#= templateParamsLight #>>(IEntityViewControl<TEntityKey> v, TEntityKey k,
                         <#= JoinGenericParams(p, "in T{0} c{0}", ", ") #> )

@@ -23,12 +23,8 @@ namespace EnTTSharp.Test.Serialisation
 
             var xmlWriteRegistry = new XmlWriteHandlerRegistry();
             xmlWriteRegistry.RegisterRange(components);
-        }
-
-        void Test()
-        {
-           // serializer = new DataContractSerializer(typeof(TData), ds);
-
+            
+            // todo: Not really a test without asserts
         }
     }
 }

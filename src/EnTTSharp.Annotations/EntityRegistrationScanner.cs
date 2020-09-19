@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using EnTTSharp.Entities;
 using EnTTSharp.Entities.Attributes;
 
 namespace EnTTSharp.Annotations

@@ -1,5 +1,4 @@
 ﻿using System.Runtime.Serialization;
-using EnTTSharp.Annotations;
 using EnTTSharp.Entities;
 using EnTTSharp.Entities.Attributes;
 

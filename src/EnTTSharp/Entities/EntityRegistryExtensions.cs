@@ -1,6 +1,4 @@
-﻿using EnTTSharp.Entities;
-
-namespace EnTTSharp.Entities
+﻿namespace EnTTSharp.Entities
 {
     public static partial class EntityRegistryExtensions
     {

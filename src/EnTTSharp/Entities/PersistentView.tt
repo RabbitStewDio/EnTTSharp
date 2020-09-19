@@ -18,7 +18,7 @@ namespace EnTTSharp.Entities
 <#
     for (int p = 1; p <= MaxParameterCount; p += 1)
     {
-        var templateParams = BuildTemplate(p);
+        // var templateParams = BuildTemplate(p);
         var templateParamsLight = BuildLightTemplate(p);
 #>
 
