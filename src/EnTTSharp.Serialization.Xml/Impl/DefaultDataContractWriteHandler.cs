@@ -13,7 +13,10 @@ namespace EnTTSharp.Serialization.Xml.Impl
             ds.SerializeReadOnlyTypes = true;
 
             serializer = new DataContractSerializer(typeof(TData), ds);
-            serializer.SetSerializationSurrogateProvider(surrogateResolver);
+            if (surrogateResolver != null)
+            {
+                serializer.SetSerializationSurrogateProvider(surrogateResolver);
+            }
         }
 
         public void Write(XmlWriter writer, TData component)

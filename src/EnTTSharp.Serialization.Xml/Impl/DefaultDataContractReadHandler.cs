@@ -15,7 +15,10 @@ namespace EnTTSharp.Serialization.Xml.Impl
             };
 
             serializer = new DataContractSerializer(typeof(TComponent), serializerSettings);
-            serializer.SetSerializationSurrogateProvider(objectResolver);
+            if (objectResolver != null)
+            {
+                serializer.SetSerializationSurrogateProvider(objectResolver);
+            }
         }
 
         public TComponent Read(XmlReader reader)

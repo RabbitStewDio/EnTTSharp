@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using Serilog;
 
 namespace EnTTSharp.Serialization.Xml
 {
     public class ObjectSurrogateResolver : ISerializationSurrogateProvider
     {
+        static readonly ILogger Logger = LogHelper.ForContext<ObjectSurrogateResolver>();
         readonly Dictionary<Type, ISerializationSurrogateProvider> surrogateMappings;
 
         public ObjectSurrogateResolver()
@@ -45,7 +47,7 @@ namespace EnTTSharp.Serialization.Xml
 
         public object GetObjectToSerialize(object obj, Type surrogateType)
         {
-            Console.WriteLine("GetObjectToSerialize " + obj + " " + surrogateType);
+            Logger.Verbose("GetObjectToSerialize {obj} of type {surrogateType}", obj, surrogateType);
             if (obj == null)
             {
                 return null;
@@ -65,12 +67,12 @@ namespace EnTTSharp.Serialization.Xml
             // return targetType;
             if (!surrogateMappings.TryGetValue(targetType, out var reg))
             {
-                Console.WriteLine("GetSurrogateType " + targetType + " -> Original: " + targetType);
+                Logger.Verbose("GetSurrogateType {targetType} -> Original: {targetType}", targetType, targetType);
                 return targetType;
             }
 
             var surrogateType = reg.GetSurrogateType(targetType);
-            Console.WriteLine("GetSurrogateType " + targetType + " -> Mapped: " + surrogateType);
+            Logger.Verbose("GetSurrogateType {targetType} -> Mapped: {targetType}", targetType, surrogateType);
             return surrogateType;
         }
     }

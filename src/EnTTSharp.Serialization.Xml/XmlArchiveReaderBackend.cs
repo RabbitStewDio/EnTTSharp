@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Xml;
 using EnTTSharp.Entities;
@@ -241,18 +242,19 @@ namespace EnTTSharp.Serialization.Xml
         {
             if (cachedMissingTagDelegates.TryGetValue(handler.TargetType, out var actionRaw))
             {
-                var action = (Action<ISnapshotLoader<TEntityKey>, XmlReadHandlerRegistration>)actionRaw;
-                action(loader, handler);
+                var action = (Action<ISnapshotLoader<TEntityKey>>)actionRaw;
+                action(loader);
                 return;
             }
 
             var method = missingTagParserMethod.MakeGenericMethod(handler.TargetType);
-            var actionDelegate = (Action<ISnapshotLoader<TEntityKey>, XmlReadHandlerRegistration>)
-                Delegate.CreateDelegate(typeof(Action<ISnapshotLoader<TEntityKey>, XmlReadHandlerRegistration>), this, method);
+            
+            var actionDelegate = (Action<ISnapshotLoader<TEntityKey>>)Delegate.CreateDelegate(typeof(Action<ISnapshotLoader<TEntityKey>>), this, method);
             cachedMissingTagDelegates[handler.TargetType] = actionDelegate;
-            actionDelegate(loader, handler);
+            actionDelegate(loader);
         }
 
+        [SuppressMessage("ReSharper", "UnusedParameter.Local")]
         void ParseMissingTagInternal<TComponent>(ISnapshotLoader<TEntityKey> loader)
         {
             loader.OnTagRemoved<TComponent>();

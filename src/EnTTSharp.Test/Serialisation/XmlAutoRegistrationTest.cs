@@ -16,7 +16,7 @@ namespace EnTTSharp.Test.Serialisation
                              .With(new XmlEntityRegistrationHandler<EntityKey>())
                              .With(new XmlDataContractRegistrationHandler<EntityKey>())
                              .RegisterEntitiesFromAllAssemblies();
-            components.Count.Should().Be(1);
+            components.Count.Should().Be(2);
 
             var xmlReadRegistry = new XmlReadHandlerRegistry();
             xmlReadRegistry.RegisterRange(components);

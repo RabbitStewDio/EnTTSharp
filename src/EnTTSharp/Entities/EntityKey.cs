@@ -7,14 +7,6 @@ namespace EnTTSharp.Entities
     {
     }
 
-    public interface IEntityKey: IEquatable<IEntityKey>
-    {
-        byte Age { get; }
-        int Key { get; }
-        
-        int GetHashCode();
-    }
-    
     [EntityKey]
     [Serializable]
     public readonly struct EntityKey : IEquatable<EntityKey>, IEntityKey

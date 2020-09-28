@@ -264,7 +264,7 @@ namespace EnTTSharp.Entities
 
         public bool IsValid(TEntityKey key)
         {
-            if (key.Key < 0 || key.Key >= Count)
+            if (key.Key < 0 || key.Key >= entities.Count)
             {
                return false;
             }
@@ -620,11 +620,11 @@ namespace EnTTSharp.Entities
                         p.RemoveAll();
                     }
                 }
-
-                entities.Clear();
-                available = 0;
-                next = default;
             }
+            
+            entities.Clear();
+            available = 0;
+            next = default;
         }
 
         public void Reset(TEntityKey entity)

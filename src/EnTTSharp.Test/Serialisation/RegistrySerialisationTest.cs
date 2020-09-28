@@ -54,8 +54,6 @@ namespace EnTTSharp.Test.Serialisation
             nreg.Register<StringBuilder>();
 
             var xmlReader = XmlReader.Create(new StringReader(sb));
-            xmlReader.AdvanceToElement("snapshot");
-
             var readerConfig = new XmlBulkArchiveReader<EntityKey>(rreg);
             readerConfig.ReadAll(xmlReader, nreg.CreateLoader());
 

@@ -26,7 +26,7 @@ namespace EnTTSharp.Test.Annotations
                 Console.WriteLine(c);
             }
 
-            components.Count.Should().Be(6);
+            components.Count.Should().Be(7);
 
             var registry = new EntityRegistry<EntityKey>(EntityKey.MaxAge, EntityKey.Create);
             EntityComponentActivator.Create<EntityKey>()
