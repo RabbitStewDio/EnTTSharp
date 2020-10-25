@@ -6,7 +6,11 @@ namespace EnTTSharp.Annotations.Impl
 {
     public static class ComponentRegistrationExtensions
     {
-        class NonConstructibleMarker
+        public struct NotConstructableMarker
+        {
+        }
+        
+        public struct FlagMarker
         {
         }
 
@@ -26,7 +30,13 @@ namespace EnTTSharp.Annotations.Impl
 
         public static EntityComponentRegistration WithoutConstruction(this EntityComponentRegistration reg)
         {
-            reg.Store(new NonConstructibleMarker());
+            reg.Store(new NotConstructableMarker());
+            return reg;
+        }
+
+        public static EntityComponentRegistration WithFlag(this EntityComponentRegistration reg)
+        {
+            reg.Store(new FlagMarker());
             return reg;
         }
 

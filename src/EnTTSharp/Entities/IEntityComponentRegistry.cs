@@ -5,6 +5,8 @@ namespace EnTTSharp.Entities
     public interface IEntityComponentRegistry<TEntityKey>
         where TEntityKey : IEntityKey
     {
+        void RegisterFlag<TComponent>();
+        
         void Register<TComponent>(Func<TComponent> constructorFn,
                                   Action<TEntityKey, IEntityViewControl<TEntityKey>, TComponent> destructorFn = null);
 

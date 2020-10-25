@@ -209,6 +209,11 @@ namespace EnTTSharp.Entities
             return pool;
         }
 
+        void IEntityComponentRegistry<TEntityKey>.RegisterFlag<TComponent>()
+        {
+            RegisterFlag(default(TComponent));
+        }
+
         void IEntityComponentRegistry<TEntityKey>.Register<TComponent>(Func<TComponent> constructorFn,
                                                                        Action<TEntityKey, IEntityViewControl<TEntityKey>, TComponent> destructorFn)
         {

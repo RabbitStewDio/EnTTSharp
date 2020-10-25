@@ -14,8 +14,16 @@ namespace EnTTSharp.Annotations.Impl
         {
             if (HasDefaultConstructor<TComponent>())
             {
-                Logger.Debug("Type {ComponentType} has default constructor.", typeof(TComponent));
-                r.WithConstructor(Activator.CreateInstance<TComponent>);
+                if (IsFlag<TComponent>())
+                {
+                    Logger.Debug("Type {ComponentType} has default constructor.", typeof(TComponent));
+                    r.WithFlag();
+                }
+                else
+                {
+                    Logger.Debug("Type {ComponentType} has default constructor.", typeof(TComponent));
+                    r.WithConstructor(Activator.CreateInstance<TComponent>);
+                }
             }
             else
             {
@@ -34,6 +42,18 @@ namespace EnTTSharp.Annotations.Impl
             }
         }
 
+        bool IsFlag<TComponent>()
+        {
+            var componentType = typeof(TComponent);
+            var attr = componentType.GetCustomAttribute<EntityComponentAttribute>();
+            if (attr == null)
+            {
+                return false;
+            }
+
+            return attr.Constructor == EntityConstructor.Flag;
+        }
+        
         bool HasDefaultConstructor<TComponent>()
         {
             var componentType = typeof(TComponent);
@@ -51,7 +71,15 @@ namespace EnTTSharp.Annotations.Impl
 
             if (componentType.IsValueType)
             {
-                return true;
+                // Value types that have at least one other constructor are not considered default constructable.
+                if (componentType.GetConstructors().Length == 0)
+                {
+                    Logger.Verbose("Type {ComponentType} is a value type without user constructors.", typeof(TComponent));
+                    return true;
+                }
+                
+                Logger.Debug("Type {ComponentType} is a value type with user constructors. This type is considered NonConstructable.", typeof(TComponent));
+                return false;
             }
 
             var c = componentType.GetConstructor(Type.EmptyTypes);
