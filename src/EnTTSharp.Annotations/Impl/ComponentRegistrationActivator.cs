@@ -13,7 +13,7 @@ namespace EnTTSharp.Annotations.Impl
             bool hasConstructor = r.TryGet(out ConstructorRegistration<TComponent> constructor);
             bool hasDestructor = r.TryGet(out DestructorRegistration<TEntityKey, TComponent> destructor);
 
-            if (r.TryGet(out ComponentRegistrationExtensions.FlagMarker m))
+            if (r.TryGet(out ComponentRegistrationExtensions.FlagMarker _))
             {
                 reg.RegisterFlag<TComponent>();
             }
