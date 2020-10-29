@@ -168,7 +168,7 @@ namespace EnTTSharp.Entities
                 throw new ArgumentException("Duplicate registration");
             }
 
-            var registration = ComponentRegistration.Create<TEntityKey, TComponent>(componentIndex.Count, this, () => new TComponent());
+            var registration = ComponentRegistration.Create(componentIndex.Count, this, () => new TComponent());
             var pool = PoolFactory.CreateFlagPool(new TComponent(), registration);
             componentIndex[typeof(TComponent)] = registration;
             pools.StoreAt(registration.Index, new PoolEntry(pool));

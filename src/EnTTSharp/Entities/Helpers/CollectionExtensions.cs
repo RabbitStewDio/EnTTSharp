@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace EnTTSharp.Entities.Helpers
 {
-    internal static class CollectionExtensions
+    static class CollectionExtensions
     {
         internal static void StoreAt<T>(this List<T> l, int index, T data)
         {

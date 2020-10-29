@@ -1,6 +1,6 @@
 ﻿namespace EnTTSharp.Serialization.Xml.Impl
 {
-    internal static class XmlTagNames
+    static class XmlTagNames
     {
         public const string CountAttribute = "count";
 
