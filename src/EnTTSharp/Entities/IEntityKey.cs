@@ -8,5 +8,6 @@ namespace EnTTSharp.Entities
         int Key { get; }
         
         int GetHashCode();
+        bool IsEmpty { get; }
     }
 }

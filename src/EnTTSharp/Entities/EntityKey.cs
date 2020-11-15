@@ -25,6 +25,8 @@ namespace EnTTSharp.Entities
             keyData |= (uint)((key + 1) & 0xFF_FFFF);
         }
 
+        public bool IsEmpty => keyData == 0;
+
         public bool Equals(EntityKey other)
         {
             return keyData == other.keyData;
@@ -88,6 +90,8 @@ namespace EnTTSharp.Entities
             keyData |= (uint)(key & 0xFF_FFFF);
         }
 
+        public bool IsEmpty => keyData == 0;
+        
         public bool Equals(EntityKey<TPayLoad> other)
         {
             return keyData == other.keyData;
