@@ -19,5 +19,16 @@ namespace EnTTSharp.Serialization.Xml
         {
             Content = content;
         }
+
+        public static implicit operator TContent(SurrogateContainer<TContent> p)
+        {
+            return p.Content;
+        }
+           
+        public static implicit operator SurrogateContainer<TContent>(TContent p)
+        {
+            return new SurrogateContainer<TContent>(p);
+        }
+           
     }
 }
