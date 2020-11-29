@@ -403,7 +403,7 @@ namespace EnTTSharp.Entities
                     GetRegistration<TTag>().Destruct(e.Entity, (TTag)e.Tag);
                 }
 
-                tags[idx] = default(Attachment);
+                tags[idx] = default;
             }
         }
 

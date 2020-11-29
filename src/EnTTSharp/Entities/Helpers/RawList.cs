@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace EnTTSharp.Entities.Helpers
 {
@@ -30,78 +31,12 @@ namespace EnTTSharp.Entities.Helpers
             }
         }
 
-        public void StoreAt(int index, T element)
+        public void StoreAt(int index, in T input)
         {
-            if (Count <= index)
-            {
-                Capacity = Math.Max(Capacity, index + 1);
-                var def = default(T);
-                while (Count <= index)
-                {
-                    Add(def);
-                }
-            }
-
-            this[index] = element;
-        }
-
-        public struct Enumerator : IEnumerator<T>
-        {
-            readonly RawList<T> contents;
-            readonly int versionAtStart;
-            int index;
-            T current;
-
-            internal Enumerator(RawList<T> widget) : this()
-            {
-                this.contents = widget;
-                this.versionAtStart = widget.version;
-                index = -1;
-                current = default(T);
-            }
-
-            public void Dispose()
-            {
-            }
-
-            public bool MoveNext()
-            {
-                if (versionAtStart != contents.version)
-                {
-                    throw new InvalidOperationException("Concurrent Modification of RawList while iterating.");
-                }
-
-                if (index + 1 < contents.Count)
-                {
-                    index += 1;
-                    current = contents[index];
-                    return true;
-                }
-
-                current = default(T);
-                return false;
-            }
-
-            public void Reset()
-            {
-                index = -1;
-                current = default(T);
-            }
-
-            object IEnumerator.Current => Current;
-
-            public T Current
-            {
-                get
-                {
-                    if (index < 0 || index >= contents.Count)
-                    {
-                        throw new InvalidOperationException();
-                    }
-
-                    return current;
-                }
-            }
+            EnsureCapacity(index + 1);
+            this.data[index] = input;
+            this.Count = Math.Max(index + 1, Count);
+            this.version += 1;
         }
 
         public int Version
@@ -135,8 +70,7 @@ namespace EnTTSharp.Entities.Helpers
             get { return data[index]; }
             set
             {
-                data[index] = value;
-                this.version += 1;
+                StoreAt(index, in value);
             }
         }
 
@@ -160,7 +94,13 @@ namespace EnTTSharp.Entities.Helpers
             this.version += 1;
         }
 
-        public bool TryGet(int index, ref T output)
+        public ref T ReferenceOf(int index)
+        {
+            EnsureCapacity(index + 1);
+            return ref data[index];
+        }
+        
+        public bool TryGet(int index, out T output)
         {
             if (index >= 0 && index < Count)
             {
@@ -168,17 +108,27 @@ namespace EnTTSharp.Entities.Helpers
                 return true;
             }
 
+            output = default;
             return false;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        void EnsureCapacity(int minIndexNeeded)
+        {
+            if (minIndexNeeded < Capacity)
+            {
+                return;
+            }
+            
+            var capacityDynamic = Math.Min(minIndexNeeded + 10000, Capacity * 150 / 100);
+            var capacityStatic = Count + 500;
+            Capacity = Math.Max(capacityStatic, capacityDynamic);
+            
+        }
+        
         public void Add(in T e)
         {
-            if ((Count + 1) >= Capacity)
-            {
-                // lets not be conservative here ..
-                // resizing is expensive after all.
-                Capacity = Math.Min(Capacity + 10000, Capacity * 150 / 100);
-            }
+            EnsureCapacity(Count + 1);
 
             this.data[Count] = e;
             Count += 1;
@@ -187,9 +137,69 @@ namespace EnTTSharp.Entities.Helpers
 
         public void RemoveLast()
         {
-            this.data[Count - 1] = default(T);
+            this.data[Count - 1] = default;
             this.Count -= 1;
             this.version += 1;
         }
+        
+        public struct Enumerator : IEnumerator<T>
+        {
+            readonly RawList<T> contents;
+            readonly int versionAtStart;
+            int index;
+            T current;
+
+            internal Enumerator(RawList<T> widget) : this()
+            {
+                this.contents = widget;
+                this.versionAtStart = widget.version;
+                index = -1;
+                current = default;
+            }
+
+            public void Dispose()
+            {
+            }
+
+            public bool MoveNext()
+            {
+                if (versionAtStart != contents.version)
+                {
+                    throw new InvalidOperationException("Concurrent Modification of RawList while iterating.");
+                }
+
+                if (index + 1 < contents.Count)
+                {
+                    index += 1;
+                    current = contents[index];
+                    return true;
+                }
+
+                current = default;
+                return false;
+            }
+
+            public void Reset()
+            {
+                index = -1;
+                current = default;
+            }
+
+            object IEnumerator.Current => Current;
+
+            public T Current
+            {
+                get
+                {
+                    if (index < 0 || index >= contents.Count)
+                    {
+                        throw new InvalidOperationException();
+                    }
+
+                    return current;
+                }
+            }
+        }
+
     }
 }
