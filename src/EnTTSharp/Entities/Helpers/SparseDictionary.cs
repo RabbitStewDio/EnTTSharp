@@ -79,6 +79,19 @@ namespace EnTTSharp.Entities.Helpers
             return false;
         }
 
+        public ref TComponent TryGetRef(TEntityKey entity, ref TComponent defaultValue, out bool success)
+        {
+            var idx = IndexOf(entity);
+            if (idx >= 0)
+            {
+                success = true;
+                return ref instances.TryGetRef(idx);
+            }
+
+            success = false;
+            return ref defaultValue;
+        }
+        
         [Obsolete("Use WriteBack instead")]
         public virtual bool Replace(TEntityKey entity, in TComponent component)
         {

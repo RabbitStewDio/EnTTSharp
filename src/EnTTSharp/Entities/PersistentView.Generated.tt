@@ -16,40 +16,43 @@ using EnTTSharp.Entities.Pools;
 namespace EnTTSharp.Entities
 {
 <#
-    for (int p = 1; p <= MaxParameterCount; p += 1)
+    foreach (var p in ProduceParameterVariants())
     {
-        // var templateParams = BuildTemplate(p);
-        var templateParamsLight = BuildLightTemplate(p);
+        var templateParamsLight = p.ToDeclaration();
 #>
-
     public sealed class PersistentView<TEntityKey, <#= templateParamsLight #>> : PersistentMultiViewBase<TEntityKey>, IPersistentEntityView<TEntityKey, <#= templateParamsLight #>>
         where TEntityKey: IEntityKey
     {
-        <#= JoinGenericParams(p, "readonly IReadOnlyPool<TEntityKey, T{0}> pool{0};", "\n             ") #>
+        <#= p.ToCode("readonly IReadOnlyPool<TEntityKey, {1}> pool{1};", "\n        ") #>
 
         public PersistentView(IEntityPoolAccess<TEntityKey> registry) :
             base(registry, 
-                 <#= JoinGenericParams(p, "registry.GetPool<T{0}>()", ",\n             ") #>
-            )
+                 <#= p.ToCode("registry.GetPool<{1}>()", ",\n                 ") #>
+        )
         {
-            <#= JoinGenericParams(p, "pool{0} = registry.GetPool<T{0}>();", "\n             ") #>
+            <#= p.ToCode("pool{1} = registry.GetPool<{1}>();", "\n            ") #>
         }
 
-        public void Apply(ViewDelegates.Apply<TEntityKey, <#= templateParamsLight #>> bulk)
+<#
+        foreach (var x in p.ProduceParameterConfig())
         {
+            var qualifier = x.ToQualifier();
+#>
+
+        public void Apply(ViewDelegates.Apply<#=qualifier #><TEntityKey, <#= templateParamsLight #> > bulk)
+        {
+            if (AllowParallelExecution)
+            {
+                ApplyParallel(bulk);
+                return;  
+            }
+
             var p = EntityKeyListPool<TEntityKey>.Reserve(this);
             try
             {
-                if (AllowParallelExecution)
+                foreach (var ek in p)
                 {
-                    PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOne(bulk, ek));
-                }
-                else
-                {
-                    foreach (var ek in p)
-                    {
-                        ApplyOne(bulk, ek);
-                    }
+                    ApplyOne(bulk, ek);
                 }
             }
             finally
@@ -58,29 +61,46 @@ namespace EnTTSharp.Entities
             }
         }
 
-        void ApplyOne(ViewDelegates.Apply<TEntityKey, <#= templateParamsLight #>> bulk, TEntityKey ek)
-        {
-            if (<#= JoinGenericParams(p, "pool{0}.TryGet(ek, out var c{0})", " && \n             ") #>)
-            {
-                bulk(this, ek, <#= JoinGenericParams(p, "in c{0}", ", ") #>);
-            }
-        }
-
-        public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TEntityKey, TContext, <#= templateParamsLight #>> bulk)
+        void ApplyParallel(ViewDelegates.Apply<#=qualifier #><TEntityKey, <#= templateParamsLight #> > bulk)
         {
             var p = EntityKeyListPool<TEntityKey>.Reserve(this);
             try
             {
-                if (AllowParallelExecution)
+                var b = bulk;
+                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOne(b, ek));
+            }
+            finally
+            {
+                EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+
+        void ApplyOne(ViewDelegates.Apply<#=qualifier #><TEntityKey, <#= templateParamsLight #> > bulk, TEntityKey ek)
+        {
+            // declare default values for each query
+            <#= x.ToCode("{1} d{0} = default;", "\n            ") #>
+            <#= x.ToCode("ref var r{0} = ref pool{1}.TryGetRef(ek, ref d{0}, out var s{0});", "\n            ") #>
+
+            if (<#= x.ToCode("s{0}", " && \n                ") #>)
+            {
+                bulk(this, ek, <#= x.ToCode2("in r{0}", "ref r{0}", ", ") #>);
+            }
+        }
+
+        public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<#=qualifier #><TEntityKey, TContext, <#= templateParamsLight #>> bulk)
+        {
+            if (AllowParallelExecution)
+            {
+                ApplyParallelWithContext(context, bulk);
+            }
+
+            var p = EntityKeyListPool<TEntityKey>.Reserve(this);
+            try
+            {
+                foreach (var ek in p)
                 {
-                    PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOneWithContext(context, bulk, ek));
-                }
-                else
-                {
-                    foreach (var ek in p)
-                    {
-                        ApplyOneWithContext(context, bulk, ek);
-                    }
+                    ApplyOneWithContext(context, bulk, ek);
                 }
             }
             finally
@@ -89,13 +109,36 @@ namespace EnTTSharp.Entities
             }
         }
 
-        void ApplyOneWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TEntityKey, TContext, <#= templateParamsLight #>> bulk, TEntityKey ek)
+        void ApplyParallelWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<#=qualifier #><TEntityKey, TContext, <#= templateParamsLight #>> bulk)
         {
-            if (<#= JoinGenericParams(p, "pool{0}.TryGet(ek, out var c{0})", " && \n             ") #>)
+            var p = EntityKeyListPool<TEntityKey>.Reserve(this);
+            try
             {
-                bulk(this, context, ek, <#= JoinGenericParams(p, "in c{0}", ", ") #>);
+                var b = bulk;
+                var c = context;
+                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOneWithContext(c, b, ek));
+            }
+            finally
+            {
+                EntityKeyListPool<TEntityKey>.Release(p);
             }
         }
+
+        void ApplyOneWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<#=qualifier #><TEntityKey, TContext, <#= templateParamsLight #>> bulk, TEntityKey ek)
+        {
+            // declare default values for each query
+            <#= x.ToCode("{1} d{0} = default;", "\n            ") #>
+            <#= x.ToCode("ref var r{0} = ref pool{1}.TryGetRef(ek, ref d{0}, out var s{0});", "\n            ") #>
+
+            if (<#= x.ToCode("s{0}", " && \n                ") #>)
+            {
+                bulk(this, context, ek, <#= x.ToCode2("in r{0}", "ref r{0}", ", ") #>);
+            }
+        }
+<#
+    }
+#>
+
     }
 <#
     }

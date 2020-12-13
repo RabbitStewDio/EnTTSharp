@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using EnTTSharp.Entities.Helpers;
 using EnTTSharp.Entities.Pools;
 
@@ -34,6 +35,29 @@ namespace EnTTSharp.Entities
                 }
 
                 return count;
+            }
+        }
+
+        public override void CopyTo(List<TEntityKey> k)
+        {
+            k.Clear();
+            k.Capacity = Math.Max(k.Capacity, EstimatedSize);
+
+            var s = FindMinimumEntrySet(Sets);
+            var p = EntityKeyListPool.Reserve(s);
+            try
+            {
+                foreach (var e in p)
+                {
+                    if (IsMember(e))
+                    {
+                        k.Add(e);
+                    }
+                }
+            }
+            finally
+            {
+                EntityKeyListPool.Release(p);
             }
         }
 

@@ -1,17 +1,29 @@
-﻿using System.Diagnostics.CodeAnalysis;
-
 namespace EnTTSharp.Entities.Systems
 {
-    [SuppressMessage("ReSharper", "UnusedTypeParameter")]
-    public readonly partial struct EntitySystemBuilder<TEntityKey, TContext> where TEntityKey : IEntityKey
+    public readonly struct EntitySystemBuilder<TEntityKey> where TEntityKey : IEntityKey
     {
         readonly IEntityViewFactory<TEntityKey> reg;
         readonly bool allowParallel;
 
-        public EntitySystemBuilder(IEntityViewFactory<TEntityKey> registry, bool allowParallelExecution)
+        public EntitySystemBuilder(IEntityViewFactory<TEntityKey> reg, bool allowParallel)
         {
-            this.allowParallel = allowParallelExecution;
-            this.reg = registry;
+            this.reg = reg;
+            this.allowParallel = allowParallel;
+        }
+
+        public EntitySystemBuilder<TEntityKey> AllowParallelExecution()
+        {
+            return new EntitySystemBuilder<TEntityKey>(reg, true);
+        }
+
+        public EntitySystemBuilderWithContext<TEntityKey, TGameContext> WithContext<TGameContext>()
+        {
+            return new EntitySystemBuilderWithContext<TEntityKey, TGameContext>(reg, EntitySystem.GlobalAllowParallel && allowParallel);
+        }
+
+        public EntitySystemBuilderWithoutContext<TEntityKey> WithoutContext()
+        {
+            return new EntitySystemBuilderWithoutContext<TEntityKey>(reg, EntitySystem.GlobalAllowParallel && allowParallel);
         }
     }
 }

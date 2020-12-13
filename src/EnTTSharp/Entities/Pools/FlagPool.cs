@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using EnTTSharp.Entities.Helpers;
 
 namespace EnTTSharp.Entities.Pools
@@ -115,6 +116,31 @@ namespace EnTTSharp.Entities.Pools
             {
                 var k = backend.Last;
                 Remove(k);
+            }
+        }
+
+        [SuppressMessage("ReSharper", "RedundantAssignment")]
+        public ref TData TryGetRef(TEntityKey entity, ref TData defaultValue, out bool success)
+        {
+            if (Contains(entity))
+            {
+                defaultValue = sharedData;
+                success = true;
+            }
+            else
+            {
+                success = false;
+            }
+            return ref defaultValue;
+        }
+
+        public void CopyTo(SparseSet<TEntityKey> entites)
+        {
+            entites.Capacity = Math.Max(entites.Capacity, Count);
+            entites.RemoveAll();
+            foreach (var e in backend)
+            {
+                entites.Add(e);
             }
         }
 

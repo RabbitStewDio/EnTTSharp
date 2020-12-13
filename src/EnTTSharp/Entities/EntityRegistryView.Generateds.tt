@@ -20,14 +20,14 @@ namespace EnTTSharp.Entities
     for (var p = 1; p <= MaxParameterCount; p += 1)
     {
         var templateParamsLight = BuildLightTemplate(p);
-        var templateParams = BuildTemplate(p);
+
 #>
-        public IEntityView<TEntityKey, <#= templateParamsLight #>> View<#= templateParams #>()
+        public IEntityView<TEntityKey, <#= templateParamsLight #>> View<<#= templateParamsLight #>>()
         {
             return new AdhocView<TEntityKey, <#= templateParamsLight #>>(this);
         }
 
-        public IPersistentEntityView<TEntityKey, <#= templateParamsLight #>> PersistentView<#= templateParams #>()
+        public IPersistentEntityView<TEntityKey, <#= templateParamsLight #>> PersistentView<<#= templateParamsLight #>>()
         {
             var type = typeof(PersistentView<TEntityKey, <#= templateParamsLight #>>);
             if (views.TryGetValue(type, out var view))

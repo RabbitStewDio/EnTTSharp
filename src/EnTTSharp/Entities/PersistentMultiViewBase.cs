@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using EnTTSharp.Entities.Helpers;
 using EnTTSharp.Entities.Pools;
 
@@ -13,7 +14,7 @@ namespace EnTTSharp.Entities
         protected PersistentMultiViewBase(IEntityPoolAccess<TEntityKey> registry,
                                           params IReadOnlyPool<TEntityKey>[] entries) : base(registry, entries)
         {
-            view = SparseSet<TEntityKey>.CreateFrom(CreateInitialEnumerator(entries));
+            view = CreateInitialEntrySet(entries);
             FastIsMemberPredicate = view.Contains;
         }
 
@@ -52,25 +53,40 @@ namespace EnTTSharp.Entities
             view.Respect(Registry.GetPool<TComponent>());
         }
 
-        PredicateEnumerator<TEntityKey> CreateInitialEnumerator(IReadOnlyPool<TEntityKey>[] sets)
+        public override void CopyTo(List<TEntityKey> k)
         {
-            IReadOnlyPool<TEntityKey> s = null;
-            var count = int.MaxValue;
-            foreach (var set in sets)
+            k.Clear();
+            k.Capacity = Math.Max(k.Capacity, EstimatedSize);
+
+            foreach (var e in view)
             {
-                if (set.Count < count)
+                k.Add(e);
+            }
+        }
+
+        SparseSet<TEntityKey> CreateInitialEntrySet(IReadOnlyPool<TEntityKey>[] sets)
+        {
+            var s = FindMinimumEntrySet(sets);
+            var result = new SparseSet<TEntityKey>();
+            
+            var p = EntityKeyListPool.Reserve(s);
+            try
+            {
+                foreach (var e in p)
                 {
-                    s = set;
-                    count = s.Count;
+                    if (IsMember(e))
+                    {
+                        result.Add(e);
+                    }
                 }
             }
-
-            if (s == null)
+            finally
             {
-                throw new ArgumentException();
+                EntityKeyListPool.Release(p);
             }
 
-            return new PredicateEnumerator<TEntityKey>(s, IsMemberPredicate);
+            return result;
         }
+
     }
 }

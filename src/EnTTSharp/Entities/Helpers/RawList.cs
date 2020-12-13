@@ -59,6 +59,8 @@ namespace EnTTSharp.Entities.Helpers
             return GetEnumerator();
         }
 
+        public ref T TryGetRef(int index) => ref data[index];
+
         public int Count
         {
             get;

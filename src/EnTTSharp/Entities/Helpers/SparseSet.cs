@@ -220,5 +220,15 @@ namespace EnTTSharp.Entities.Helpers
             }
         }
 
+        public void CopyTo(SparseSet<TEntityKey> entites)
+        {
+            entites.Capacity = Math.Max(entites.Capacity, Count);
+            entites.RemoveAll();
+            foreach (var e in direct)
+            {
+                entites.Add(e);
+            }
+        }
+
     }
 }

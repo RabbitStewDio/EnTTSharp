@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using EnTTSharp.Entities.Helpers;
 
 namespace EnTTSharp.Entities.Pools
@@ -46,6 +47,13 @@ namespace EnTTSharp.Entities.Pools
             return registry.IsValid(k) && !entityPool.Contains(k);
         }
 
+        [SuppressMessage("ReSharper", "RedundantAssignment")]
+        public ref Not<TComponent> TryGetRef(TEntityKey entity, ref Not<TComponent> defaultValue, out bool success)
+        {
+            success = Contains(entity);
+            return ref defaultValue;
+        }
+
         public void Reserve(int capacity)
         {
         }
@@ -66,6 +74,17 @@ namespace EnTTSharp.Entities.Pools
         {
             entites.Capacity = Math.Max(entites.Capacity, Count);
             entites.Clear();
+            var p = EntityKeyListPool.Reserve(registry);
+            foreach (var e in p)
+            {
+                entites.Add(e);
+            }
+        }
+        
+        public void CopyTo(SparseSet<TEntityKey> entites)
+        {
+            entites.Capacity = Math.Max(entites.Capacity, Count);
+            entites.RemoveAll();
             var p = EntityKeyListPool.Reserve(registry);
             foreach (var e in p)
             {

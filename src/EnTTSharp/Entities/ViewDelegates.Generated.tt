@@ -12,25 +12,29 @@
 //------------------------------------------------------------------------------
  
 namespace EnTTSharp.Entities
-{
+{ 
     public static partial class ViewDelegates 
     {
 <#
-    for (var p = 1; p <= MaxParameterCount; p += 1)
+    foreach (var c in ProduceParameterVariants())
     {
-        var templateParamsLight = BuildLightTemplate(p);
-        // var templateParams = BuildTemplate(p);
+        foreach (var x in c.ProduceParameterConfig())
+        {
+            var templateParamsLight = x.ToDeclaration();
+            var delegateParamsLight = x.ToFunctionParameter();
+            var qualifier = x.ToQualifier();
+
 #>
-        public delegate void Apply<TEntityKey, <#= templateParamsLight #>>(IEntityViewControl<TEntityKey> v, TEntityKey k,
-                        <#= JoinGenericParams(p, "in T{0} c{0}", ", ") #> )
+        public delegate void Apply<#= qualifier #><TEntityKey, <#= templateParamsLight #>>(IEntityViewControl<TEntityKey> v, TEntityKey k,
+                        <#= delegateParamsLight #> )
             where TEntityKey: IEntityKey;
 
-        public delegate void ApplyWithContext<TEntityKey, in TContext, <#= templateParamsLight #>>(IEntityViewControl<TEntityKey> v, TContext context, TEntityKey k, 
-                        <#= JoinGenericParams(p, "in T{0} c{0}", ", ") #> )
+        public delegate void ApplyWithContext<#= qualifier #><TEntityKey, in TContext, <#= templateParamsLight #>>(IEntityViewControl<TEntityKey> v, TContext context, TEntityKey k, 
+                        <#= delegateParamsLight #> )
             where TEntityKey: IEntityKey;
 <#
+        }
     }
 #>
-
     }
 }

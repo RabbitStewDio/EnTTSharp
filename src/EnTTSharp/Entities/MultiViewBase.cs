@@ -284,5 +284,26 @@ namespace EnTTSharp.Entities
                 pool.Created -= onCreated;
             }
         }
+        
+        protected static IReadOnlyPool<TEntityKey> FindMinimumEntrySet(IReadOnlyList<IReadOnlyPool<TEntityKey>> sets)
+        {
+            IReadOnlyPool<TEntityKey> s = null;
+            var count = int.MaxValue;
+            foreach (var set in sets)
+            {
+                if (set.Count < count)
+                {
+                    s = set;
+                    count = s.Count;
+                }
+            }
+
+            if (s == null)
+            {
+                throw new ArgumentException();
+            }
+
+            return s;
+        }
     }
 }

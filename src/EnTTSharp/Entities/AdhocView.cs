@@ -182,9 +182,32 @@ namespace EnTTSharp.Entities
             {
                 foreach (var ek in p)
                 {
-                    if (viewData.TryGet(ek, out var c))
+                    TComponent d = default;
+                    ref var c = ref viewData.TryGetRef(ek, ref d, out var s);
+                    if (s)
                     {
                         bulk(this, ek, in c);
+                    }
+                }
+            }
+            finally
+            {
+                EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        public void Apply(ViewDelegates.ApplyIn0Out1<TEntityKey, TComponent> bulk)
+        {
+            var p = EntityKeyListPool<TEntityKey>.Reserve(this);
+            try
+            {
+                foreach (var ek in p)
+                {
+                    TComponent d = default;
+                    ref var c = ref viewData.TryGetRef(ek, ref d, out var s);
+                    if (s)
+                    {
+                        bulk(this, ek, ref c);
                     }
                 }
             }
@@ -202,9 +225,33 @@ namespace EnTTSharp.Entities
             {
                 foreach (var ek in p)
                 {
-                    if (viewData.TryGet(ek, out var c))
+                    TComponent d = default;
+                    ref var c = ref viewData.TryGetRef(ek, ref d, out var s);
+                    if (s)
                     {
                         bulk(this, context, ek, in c);
+                    }
+                }
+            }
+            finally
+            {
+                EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        public void ApplyWithContext<TContext>(TContext context,
+                                               ViewDelegates.ApplyWithContextIn0Out1<TEntityKey, TContext, TComponent> bulk)
+        {
+            var p = EntityKeyListPool<TEntityKey>.Reserve(this);
+            try
+            {
+                foreach (var ek in p)
+                {
+                    TComponent d = default;
+                    ref var c = ref viewData.TryGetRef(ek, ref d, out var s);
+                    if (s)
+                    {
+                        bulk(this, context, ek, ref c);
                     }
                 }
             }

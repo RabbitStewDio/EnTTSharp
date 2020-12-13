@@ -10,15 +10,7 @@ namespace EnTTSharp.Entities.Systems
             this.reg = reg;
             this.allowParallel = allowParallel;
         }
-
-        public EntitySystemBuilderWithoutContext<TEntityKey> AllowParallelExecution()
-        {
-            return new EntitySystemBuilderWithoutContext<TEntityKey>(reg, true);
-        }
-
-        public EntitySystemBuilder<TEntityKey, TGameContext> WithContext<TGameContext>()
-        {
-            return new EntitySystemBuilder<TEntityKey, TGameContext>(reg, EntitySystem.GlobalAllowParallel && allowParallel);
-        }
     }
+    
+    
 }

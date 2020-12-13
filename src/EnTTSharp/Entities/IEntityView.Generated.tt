@@ -15,16 +15,24 @@ namespace EnTTSharp.Entities
 {
 
 <#
-    for (var p = 1; p <= MaxParameterCount; p += 1)
+    foreach (var p in ProduceParameterVariants())
     {
-        var templateParamsLight = BuildLightTemplate(p);
-        // var templateParams = BuildTemplate(p);
+        var templateParamsLight = p.ToDeclaration();
 #>
+
     public interface IEntityView<TEntityKey, <#= templateParamsLight #>>  : IEntityView<TEntityKey>
         where TEntityKey: IEntityKey
     {
-        void Apply(ViewDelegates.Apply<TEntityKey, <#= templateParamsLight #>> bulk);
-        void ApplyWithContext<TContext>(TContext t, ViewDelegates.ApplyWithContext<TEntityKey, TContext, <#= templateParamsLight #>> bulk);
+<#
+        foreach (var x in p.ProduceParameterConfig())
+        {
+            var qualifier = x.ToQualifier();
+#>
+        void Apply(ViewDelegates.Apply<#=qualifier#><TEntityKey, <#= templateParamsLight #>> bulk);
+        void ApplyWithContext<TContext>(TContext t, ViewDelegates.ApplyWithContext<#=qualifier#><TEntityKey, TContext, <#= templateParamsLight #>> bulk);
+<#
+    }
+#>
 
     }
 

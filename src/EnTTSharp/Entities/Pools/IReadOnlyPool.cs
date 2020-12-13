@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using EnTTSharp.Entities.Helpers;
 
 namespace EnTTSharp.Entities.Pools
 {
@@ -14,5 +15,6 @@ namespace EnTTSharp.Entities.Pools
         void Reserve(int capacity);
 
         void CopyTo(List<TEntityKey> entites);
+        void CopyTo(SparseSet<TEntityKey> entites);
     }
 }

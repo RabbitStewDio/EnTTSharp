@@ -7,6 +7,7 @@ namespace EnTTSharp.Entities.Pools
         where TEntityKey : IEntityKey
     {
         bool TryGet(TEntityKey entity, out TComponent component);
+        ref TComponent TryGetRef(TEntityKey entity, ref TComponent defaultValue, out bool success);
     }
 
     public interface IPool<TEntityKey, TComponent>: IReadOnlyPool<TEntityKey, TComponent>, 
