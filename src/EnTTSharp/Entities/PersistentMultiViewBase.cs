@@ -53,15 +53,9 @@ namespace EnTTSharp.Entities
             view.Respect(Registry.GetPool<TComponent>());
         }
 
-        public override void CopyTo(List<TEntityKey> k)
+        public override void CopyTo(RawList<TEntityKey> k)
         {
-            k.Clear();
-            k.Capacity = Math.Max(k.Capacity, EstimatedSize);
-
-            foreach (var e in view)
-            {
-                k.Add(e);
-            }
+            view.CopyTo(k);
         }
 
         SparseSet<TEntityKey> CreateInitialEntrySet(IReadOnlyPool<TEntityKey>[] sets)

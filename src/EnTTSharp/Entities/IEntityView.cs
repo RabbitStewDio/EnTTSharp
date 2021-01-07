@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EnTTSharp.Entities.Helpers;
+using System;
 using System.Collections.Generic;
 
 namespace EnTTSharp.Entities
@@ -22,6 +23,6 @@ namespace EnTTSharp.Entities
 
         int EstimatedSize { get; }
 
-        void CopyTo(List<TEntityKey> k);
+        void CopyTo(RawList<TEntityKey> k);
     }
 }

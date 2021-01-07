@@ -84,8 +84,7 @@ namespace EnTTSharp.Entities.Helpers
             var idx = IndexOf(entity);
             if (idx >= 0)
             {
-                success = true;
-                return ref instances.TryGetRef(idx);
+                return ref instances.TryGetRef(idx, ref defaultValue, out success);
             }
 
             success = false;

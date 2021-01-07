@@ -70,14 +70,25 @@ namespace EnTTSharp.Entities.Pools
 
         public Enumerator GetEnumerator() => new Enumerator(this);
 
-        public void CopyTo(List<TEntityKey> entites)
+        public void CopyTo(RawList<TEntityKey> entites)
         {
             entites.Capacity = Math.Max(entites.Capacity, Count);
             entites.Clear();
+            
             var p = EntityKeyListPool.Reserve(registry);
-            foreach (var e in p)
+            try
             {
-                entites.Add(e);
+                foreach (var e in p)
+                {
+                    if (Contains(e))
+                    {
+                        entites.Add(e);
+                    }
+                }
+            }
+            finally
+            {
+                EntityKeyListPool.Release(p);
             }
         }
         
@@ -85,17 +96,28 @@ namespace EnTTSharp.Entities.Pools
         {
             entites.Capacity = Math.Max(entites.Capacity, Count);
             entites.RemoveAll();
+            
             var p = EntityKeyListPool.Reserve(registry);
-            foreach (var e in p)
+            try
             {
-                entites.Add(e);
+                foreach (var e in p)
+                {
+                    if (Contains(e))
+                    {
+                        entites.Add(e);
+                    }
+                }
+            }
+            finally
+            {
+                EntityKeyListPool.Release(p);
             }
         }
 
         public struct Enumerator : IEnumerator<TEntityKey>
         {
             readonly NotPool<TEntityKey, TComponent> backend;
-            readonly List<TEntityKey> contents;
+            readonly RawList<TEntityKey> contents;
             int index;
 
             public Enumerator(NotPool<TEntityKey, TComponent> backend)

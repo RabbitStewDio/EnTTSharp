@@ -10,6 +10,7 @@ namespace EnTTSharp.Entities
     {
         TEntityKey Create();
         IReadOnlyPool<TEntityKey, TComponent> GetPool<TComponent>();
+        bool TryGetPool<TComponent>(out IReadOnlyPool<TEntityKey, TComponent> pool);
         bool TryGetWritablePool<TComponent>(out IPool<TEntityKey, TComponent> pool);
         event EventHandler<TEntityKey> BeforeEntityDestroyed;
         void AssureEntityState(TEntityKey entity, bool destroyed);

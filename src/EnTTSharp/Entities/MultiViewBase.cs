@@ -251,7 +251,7 @@ namespace EnTTSharp.Entities
             return Registry.AssignOrReplace<TOtherComponent>(entity);
         }
 
-        public virtual void CopyTo(List<TEntityKey> k)
+        public virtual void CopyTo(RawList<TEntityKey> k)
         {
             k.Clear();
             k.Capacity = Math.Max(k.Capacity, EstimatedSize);

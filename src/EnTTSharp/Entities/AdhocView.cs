@@ -119,9 +119,10 @@ namespace EnTTSharp.Entities
 
         public void Respect<TOtherComponent>()
         {
-            if (registry.TryGetWritablePool<TComponent>(out var wpool))
+            if (registry.TryGetWritablePool<TComponent>(out var wpool) &&
+                registry.TryGetPool<TOtherComponent>(out var other))
             {
-                wpool.Respect(registry.GetPool<TOtherComponent>());
+                wpool.Respect(other);
             }
         }
 
@@ -302,10 +303,8 @@ namespace EnTTSharp.Entities
 
         public int EstimatedSize => viewData.Count;
 
-        public void CopyTo(List<TEntityKey> k)
+        public void CopyTo(RawList<TEntityKey> k)
         {
-            k.Clear();
-            k.Capacity = Math.Max(k.Capacity, viewData.Count);
             viewData.CopyTo(k);
         }
     }

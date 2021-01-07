@@ -1,3 +1,4 @@
+using EnTTSharp.Entities.Helpers;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ namespace EnTTSharp.Entities
                 return;
             }
 
-            var rangeSize = Math.Max(1, p.Count / (Environment.ProcessorCount * 2));
+            var rangeSize = Math.Max(1, p.Count / Environment.ProcessorCount);
             var partitioner = Partitioner.Create(0, p.Count, rangeSize);
             Parallel.ForEach(partitioner, range =>
             {
@@ -23,6 +24,28 @@ namespace EnTTSharp.Entities
                 {
                     action(p[i]);
                 }
+            });
+        }
+
+        public static void PartitionAndRunMany<TEntityKey, TContext>(RawList<TEntityKey> p,
+                                                                     TContext context,
+                                                                     Action<RawList<TEntityKey>, TContext, int, int> action)
+        {
+            if (p.Count == 0)
+            {
+                return;
+            }
+
+            var rangeSize = (int) Math.Max(1, Math.Ceiling(p.Count / (float) Environment.ProcessorCount));
+            var partitioner = Partitioner.Create(0, p.Count, rangeSize);
+            ParallelOptions opts = new ParallelOptions();
+            opts.MaxDegreeOfParallelism = Environment.ProcessorCount;
+            
+            Parallel.ForEach(partitioner, opts, range =>
+            {
+                var (min, max) = range;
+                // Console.WriteLine($"Executing Partition {min} - {max}");
+                action(p, context, min, max);
             });
         }
     }

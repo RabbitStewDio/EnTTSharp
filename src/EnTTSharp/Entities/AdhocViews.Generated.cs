@@ -11,6 +11,7 @@
 
 using EnTTSharp.Entities.Helpers;
 using EnTTSharp.Entities.Pools;
+using System.Collections.Generic;
 
 namespace EnTTSharp.Entities
 { 
@@ -59,11 +60,20 @@ namespace EnTTSharp.Entities
             try
             {
                 var b = bulk;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOne(b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, b, ApplyMany);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyMany(RawList<TEntityKey> p, ViewDelegates.ApplyIn0Out2<TEntityKey, T1, T2> bulk, int fromInclusive, int toExclusive)
+        {
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOne(bulk, data[i]);
             }
         }
 
@@ -110,11 +120,23 @@ namespace EnTTSharp.Entities
             {
                 var b = bulk;
                 var c = context;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOneWithContext(c, b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, (c, b), ApplyManyWithContext<TContext>);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyManyWithContext<TContext>(RawList<TEntityKey> p, 
+                                            (TContext context, ViewDelegates.ApplyWithContextIn0Out2<TEntityKey, TContext, T1, T2> bulk) b, 
+                                            int fromInclusive, int toExclusive)
+        {
+            var (context, bulk) = b;
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOneWithContext(context, bulk, data[i]);
             }
         }
 
@@ -161,11 +183,20 @@ namespace EnTTSharp.Entities
             try
             {
                 var b = bulk;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOne(b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, b, ApplyMany);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyMany(RawList<TEntityKey> p, ViewDelegates.ApplyIn1Out1<TEntityKey, T1, T2> bulk, int fromInclusive, int toExclusive)
+        {
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOne(bulk, data[i]);
             }
         }
 
@@ -212,11 +243,23 @@ namespace EnTTSharp.Entities
             {
                 var b = bulk;
                 var c = context;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOneWithContext(c, b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, (c, b), ApplyManyWithContext<TContext>);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyManyWithContext<TContext>(RawList<TEntityKey> p, 
+                                            (TContext context, ViewDelegates.ApplyWithContextIn1Out1<TEntityKey, TContext, T1, T2> bulk) b, 
+                                            int fromInclusive, int toExclusive)
+        {
+            var (context, bulk) = b;
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOneWithContext(context, bulk, data[i]);
             }
         }
 
@@ -263,11 +306,20 @@ namespace EnTTSharp.Entities
             try
             {
                 var b = bulk;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOne(b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, b, ApplyMany);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyMany(RawList<TEntityKey> p, ViewDelegates.Apply<TEntityKey, T1, T2> bulk, int fromInclusive, int toExclusive)
+        {
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOne(bulk, data[i]);
             }
         }
 
@@ -314,11 +366,23 @@ namespace EnTTSharp.Entities
             {
                 var b = bulk;
                 var c = context;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOneWithContext(c, b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, (c, b), ApplyManyWithContext<TContext>);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyManyWithContext<TContext>(RawList<TEntityKey> p, 
+                                            (TContext context, ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1, T2> bulk) b, 
+                                            int fromInclusive, int toExclusive)
+        {
+            var (context, bulk) = b;
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOneWithContext(context, bulk, data[i]);
             }
         }
 
@@ -387,11 +451,20 @@ namespace EnTTSharp.Entities
             try
             {
                 var b = bulk;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOne(b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, b, ApplyMany);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyMany(RawList<TEntityKey> p, ViewDelegates.ApplyIn0Out3<TEntityKey, T1, T2, T3> bulk, int fromInclusive, int toExclusive)
+        {
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOne(bulk, data[i]);
             }
         }
 
@@ -441,11 +514,23 @@ namespace EnTTSharp.Entities
             {
                 var b = bulk;
                 var c = context;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOneWithContext(c, b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, (c, b), ApplyManyWithContext<TContext>);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyManyWithContext<TContext>(RawList<TEntityKey> p, 
+                                            (TContext context, ViewDelegates.ApplyWithContextIn0Out3<TEntityKey, TContext, T1, T2, T3> bulk) b, 
+                                            int fromInclusive, int toExclusive)
+        {
+            var (context, bulk) = b;
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOneWithContext(context, bulk, data[i]);
             }
         }
 
@@ -495,11 +580,20 @@ namespace EnTTSharp.Entities
             try
             {
                 var b = bulk;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOne(b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, b, ApplyMany);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyMany(RawList<TEntityKey> p, ViewDelegates.ApplyIn1Out2<TEntityKey, T1, T2, T3> bulk, int fromInclusive, int toExclusive)
+        {
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOne(bulk, data[i]);
             }
         }
 
@@ -549,11 +643,23 @@ namespace EnTTSharp.Entities
             {
                 var b = bulk;
                 var c = context;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOneWithContext(c, b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, (c, b), ApplyManyWithContext<TContext>);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyManyWithContext<TContext>(RawList<TEntityKey> p, 
+                                            (TContext context, ViewDelegates.ApplyWithContextIn1Out2<TEntityKey, TContext, T1, T2, T3> bulk) b, 
+                                            int fromInclusive, int toExclusive)
+        {
+            var (context, bulk) = b;
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOneWithContext(context, bulk, data[i]);
             }
         }
 
@@ -603,11 +709,20 @@ namespace EnTTSharp.Entities
             try
             {
                 var b = bulk;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOne(b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, b, ApplyMany);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyMany(RawList<TEntityKey> p, ViewDelegates.ApplyIn2Out1<TEntityKey, T1, T2, T3> bulk, int fromInclusive, int toExclusive)
+        {
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOne(bulk, data[i]);
             }
         }
 
@@ -657,11 +772,23 @@ namespace EnTTSharp.Entities
             {
                 var b = bulk;
                 var c = context;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOneWithContext(c, b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, (c, b), ApplyManyWithContext<TContext>);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyManyWithContext<TContext>(RawList<TEntityKey> p, 
+                                            (TContext context, ViewDelegates.ApplyWithContextIn2Out1<TEntityKey, TContext, T1, T2, T3> bulk) b, 
+                                            int fromInclusive, int toExclusive)
+        {
+            var (context, bulk) = b;
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOneWithContext(context, bulk, data[i]);
             }
         }
 
@@ -711,11 +838,20 @@ namespace EnTTSharp.Entities
             try
             {
                 var b = bulk;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOne(b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, b, ApplyMany);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyMany(RawList<TEntityKey> p, ViewDelegates.Apply<TEntityKey, T1, T2, T3> bulk, int fromInclusive, int toExclusive)
+        {
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOne(bulk, data[i]);
             }
         }
 
@@ -765,11 +901,23 @@ namespace EnTTSharp.Entities
             {
                 var b = bulk;
                 var c = context;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOneWithContext(c, b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, (c, b), ApplyManyWithContext<TContext>);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyManyWithContext<TContext>(RawList<TEntityKey> p, 
+                                            (TContext context, ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1, T2, T3> bulk) b, 
+                                            int fromInclusive, int toExclusive)
+        {
+            var (context, bulk) = b;
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOneWithContext(context, bulk, data[i]);
             }
         }
 
@@ -844,11 +992,20 @@ namespace EnTTSharp.Entities
             try
             {
                 var b = bulk;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOne(b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, b, ApplyMany);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyMany(RawList<TEntityKey> p, ViewDelegates.ApplyIn0Out4<TEntityKey, T1, T2, T3, T4> bulk, int fromInclusive, int toExclusive)
+        {
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOne(bulk, data[i]);
             }
         }
 
@@ -901,11 +1058,23 @@ namespace EnTTSharp.Entities
             {
                 var b = bulk;
                 var c = context;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOneWithContext(c, b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, (c, b), ApplyManyWithContext<TContext>);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyManyWithContext<TContext>(RawList<TEntityKey> p, 
+                                            (TContext context, ViewDelegates.ApplyWithContextIn0Out4<TEntityKey, TContext, T1, T2, T3, T4> bulk) b, 
+                                            int fromInclusive, int toExclusive)
+        {
+            var (context, bulk) = b;
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOneWithContext(context, bulk, data[i]);
             }
         }
 
@@ -958,11 +1127,20 @@ namespace EnTTSharp.Entities
             try
             {
                 var b = bulk;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOne(b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, b, ApplyMany);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyMany(RawList<TEntityKey> p, ViewDelegates.ApplyIn1Out3<TEntityKey, T1, T2, T3, T4> bulk, int fromInclusive, int toExclusive)
+        {
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOne(bulk, data[i]);
             }
         }
 
@@ -1015,11 +1193,23 @@ namespace EnTTSharp.Entities
             {
                 var b = bulk;
                 var c = context;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOneWithContext(c, b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, (c, b), ApplyManyWithContext<TContext>);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyManyWithContext<TContext>(RawList<TEntityKey> p, 
+                                            (TContext context, ViewDelegates.ApplyWithContextIn1Out3<TEntityKey, TContext, T1, T2, T3, T4> bulk) b, 
+                                            int fromInclusive, int toExclusive)
+        {
+            var (context, bulk) = b;
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOneWithContext(context, bulk, data[i]);
             }
         }
 
@@ -1072,11 +1262,20 @@ namespace EnTTSharp.Entities
             try
             {
                 var b = bulk;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOne(b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, b, ApplyMany);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyMany(RawList<TEntityKey> p, ViewDelegates.ApplyIn2Out2<TEntityKey, T1, T2, T3, T4> bulk, int fromInclusive, int toExclusive)
+        {
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOne(bulk, data[i]);
             }
         }
 
@@ -1129,11 +1328,23 @@ namespace EnTTSharp.Entities
             {
                 var b = bulk;
                 var c = context;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOneWithContext(c, b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, (c, b), ApplyManyWithContext<TContext>);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyManyWithContext<TContext>(RawList<TEntityKey> p, 
+                                            (TContext context, ViewDelegates.ApplyWithContextIn2Out2<TEntityKey, TContext, T1, T2, T3, T4> bulk) b, 
+                                            int fromInclusive, int toExclusive)
+        {
+            var (context, bulk) = b;
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOneWithContext(context, bulk, data[i]);
             }
         }
 
@@ -1186,11 +1397,20 @@ namespace EnTTSharp.Entities
             try
             {
                 var b = bulk;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOne(b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, b, ApplyMany);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyMany(RawList<TEntityKey> p, ViewDelegates.ApplyIn3Out1<TEntityKey, T1, T2, T3, T4> bulk, int fromInclusive, int toExclusive)
+        {
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOne(bulk, data[i]);
             }
         }
 
@@ -1243,11 +1463,23 @@ namespace EnTTSharp.Entities
             {
                 var b = bulk;
                 var c = context;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOneWithContext(c, b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, (c, b), ApplyManyWithContext<TContext>);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyManyWithContext<TContext>(RawList<TEntityKey> p, 
+                                            (TContext context, ViewDelegates.ApplyWithContextIn3Out1<TEntityKey, TContext, T1, T2, T3, T4> bulk) b, 
+                                            int fromInclusive, int toExclusive)
+        {
+            var (context, bulk) = b;
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOneWithContext(context, bulk, data[i]);
             }
         }
 
@@ -1300,11 +1532,20 @@ namespace EnTTSharp.Entities
             try
             {
                 var b = bulk;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOne(b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, b, ApplyMany);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyMany(RawList<TEntityKey> p, ViewDelegates.Apply<TEntityKey, T1, T2, T3, T4> bulk, int fromInclusive, int toExclusive)
+        {
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOne(bulk, data[i]);
             }
         }
 
@@ -1357,11 +1598,23 @@ namespace EnTTSharp.Entities
             {
                 var b = bulk;
                 var c = context;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOneWithContext(c, b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, (c, b), ApplyManyWithContext<TContext>);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyManyWithContext<TContext>(RawList<TEntityKey> p, 
+                                            (TContext context, ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1, T2, T3, T4> bulk) b, 
+                                            int fromInclusive, int toExclusive)
+        {
+            var (context, bulk) = b;
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOneWithContext(context, bulk, data[i]);
             }
         }
 
@@ -1442,11 +1695,20 @@ namespace EnTTSharp.Entities
             try
             {
                 var b = bulk;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOne(b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, b, ApplyMany);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyMany(RawList<TEntityKey> p, ViewDelegates.ApplyIn0Out5<TEntityKey, T1, T2, T3, T4, T5> bulk, int fromInclusive, int toExclusive)
+        {
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOne(bulk, data[i]);
             }
         }
 
@@ -1502,11 +1764,23 @@ namespace EnTTSharp.Entities
             {
                 var b = bulk;
                 var c = context;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOneWithContext(c, b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, (c, b), ApplyManyWithContext<TContext>);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyManyWithContext<TContext>(RawList<TEntityKey> p, 
+                                            (TContext context, ViewDelegates.ApplyWithContextIn0Out5<TEntityKey, TContext, T1, T2, T3, T4, T5> bulk) b, 
+                                            int fromInclusive, int toExclusive)
+        {
+            var (context, bulk) = b;
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOneWithContext(context, bulk, data[i]);
             }
         }
 
@@ -1562,11 +1836,20 @@ namespace EnTTSharp.Entities
             try
             {
                 var b = bulk;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOne(b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, b, ApplyMany);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyMany(RawList<TEntityKey> p, ViewDelegates.ApplyIn1Out4<TEntityKey, T1, T2, T3, T4, T5> bulk, int fromInclusive, int toExclusive)
+        {
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOne(bulk, data[i]);
             }
         }
 
@@ -1622,11 +1905,23 @@ namespace EnTTSharp.Entities
             {
                 var b = bulk;
                 var c = context;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOneWithContext(c, b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, (c, b), ApplyManyWithContext<TContext>);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyManyWithContext<TContext>(RawList<TEntityKey> p, 
+                                            (TContext context, ViewDelegates.ApplyWithContextIn1Out4<TEntityKey, TContext, T1, T2, T3, T4, T5> bulk) b, 
+                                            int fromInclusive, int toExclusive)
+        {
+            var (context, bulk) = b;
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOneWithContext(context, bulk, data[i]);
             }
         }
 
@@ -1682,11 +1977,20 @@ namespace EnTTSharp.Entities
             try
             {
                 var b = bulk;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOne(b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, b, ApplyMany);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyMany(RawList<TEntityKey> p, ViewDelegates.ApplyIn2Out3<TEntityKey, T1, T2, T3, T4, T5> bulk, int fromInclusive, int toExclusive)
+        {
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOne(bulk, data[i]);
             }
         }
 
@@ -1742,11 +2046,23 @@ namespace EnTTSharp.Entities
             {
                 var b = bulk;
                 var c = context;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOneWithContext(c, b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, (c, b), ApplyManyWithContext<TContext>);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyManyWithContext<TContext>(RawList<TEntityKey> p, 
+                                            (TContext context, ViewDelegates.ApplyWithContextIn2Out3<TEntityKey, TContext, T1, T2, T3, T4, T5> bulk) b, 
+                                            int fromInclusive, int toExclusive)
+        {
+            var (context, bulk) = b;
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOneWithContext(context, bulk, data[i]);
             }
         }
 
@@ -1802,11 +2118,20 @@ namespace EnTTSharp.Entities
             try
             {
                 var b = bulk;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOne(b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, b, ApplyMany);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyMany(RawList<TEntityKey> p, ViewDelegates.ApplyIn3Out2<TEntityKey, T1, T2, T3, T4, T5> bulk, int fromInclusive, int toExclusive)
+        {
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOne(bulk, data[i]);
             }
         }
 
@@ -1862,11 +2187,23 @@ namespace EnTTSharp.Entities
             {
                 var b = bulk;
                 var c = context;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOneWithContext(c, b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, (c, b), ApplyManyWithContext<TContext>);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyManyWithContext<TContext>(RawList<TEntityKey> p, 
+                                            (TContext context, ViewDelegates.ApplyWithContextIn3Out2<TEntityKey, TContext, T1, T2, T3, T4, T5> bulk) b, 
+                                            int fromInclusive, int toExclusive)
+        {
+            var (context, bulk) = b;
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOneWithContext(context, bulk, data[i]);
             }
         }
 
@@ -1922,11 +2259,20 @@ namespace EnTTSharp.Entities
             try
             {
                 var b = bulk;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOne(b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, b, ApplyMany);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyMany(RawList<TEntityKey> p, ViewDelegates.ApplyIn4Out1<TEntityKey, T1, T2, T3, T4, T5> bulk, int fromInclusive, int toExclusive)
+        {
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOne(bulk, data[i]);
             }
         }
 
@@ -1982,11 +2328,23 @@ namespace EnTTSharp.Entities
             {
                 var b = bulk;
                 var c = context;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOneWithContext(c, b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, (c, b), ApplyManyWithContext<TContext>);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyManyWithContext<TContext>(RawList<TEntityKey> p, 
+                                            (TContext context, ViewDelegates.ApplyWithContextIn4Out1<TEntityKey, TContext, T1, T2, T3, T4, T5> bulk) b, 
+                                            int fromInclusive, int toExclusive)
+        {
+            var (context, bulk) = b;
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOneWithContext(context, bulk, data[i]);
             }
         }
 
@@ -2042,11 +2400,20 @@ namespace EnTTSharp.Entities
             try
             {
                 var b = bulk;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOne(b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, b, ApplyMany);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyMany(RawList<TEntityKey> p, ViewDelegates.Apply<TEntityKey, T1, T2, T3, T4, T5> bulk, int fromInclusive, int toExclusive)
+        {
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOne(bulk, data[i]);
             }
         }
 
@@ -2102,11 +2469,23 @@ namespace EnTTSharp.Entities
             {
                 var b = bulk;
                 var c = context;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOneWithContext(c, b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, (c, b), ApplyManyWithContext<TContext>);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyManyWithContext<TContext>(RawList<TEntityKey> p, 
+                                            (TContext context, ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1, T2, T3, T4, T5> bulk) b, 
+                                            int fromInclusive, int toExclusive)
+        {
+            var (context, bulk) = b;
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOneWithContext(context, bulk, data[i]);
             }
         }
 
@@ -2193,11 +2572,20 @@ namespace EnTTSharp.Entities
             try
             {
                 var b = bulk;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOne(b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, b, ApplyMany);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyMany(RawList<TEntityKey> p, ViewDelegates.ApplyIn0Out6<TEntityKey, T1, T2, T3, T4, T5, T6> bulk, int fromInclusive, int toExclusive)
+        {
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOne(bulk, data[i]);
             }
         }
 
@@ -2256,11 +2644,23 @@ namespace EnTTSharp.Entities
             {
                 var b = bulk;
                 var c = context;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOneWithContext(c, b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, (c, b), ApplyManyWithContext<TContext>);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyManyWithContext<TContext>(RawList<TEntityKey> p, 
+                                            (TContext context, ViewDelegates.ApplyWithContextIn0Out6<TEntityKey, TContext, T1, T2, T3, T4, T5, T6> bulk) b, 
+                                            int fromInclusive, int toExclusive)
+        {
+            var (context, bulk) = b;
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOneWithContext(context, bulk, data[i]);
             }
         }
 
@@ -2319,11 +2719,20 @@ namespace EnTTSharp.Entities
             try
             {
                 var b = bulk;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOne(b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, b, ApplyMany);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyMany(RawList<TEntityKey> p, ViewDelegates.ApplyIn1Out5<TEntityKey, T1, T2, T3, T4, T5, T6> bulk, int fromInclusive, int toExclusive)
+        {
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOne(bulk, data[i]);
             }
         }
 
@@ -2382,11 +2791,23 @@ namespace EnTTSharp.Entities
             {
                 var b = bulk;
                 var c = context;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOneWithContext(c, b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, (c, b), ApplyManyWithContext<TContext>);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyManyWithContext<TContext>(RawList<TEntityKey> p, 
+                                            (TContext context, ViewDelegates.ApplyWithContextIn1Out5<TEntityKey, TContext, T1, T2, T3, T4, T5, T6> bulk) b, 
+                                            int fromInclusive, int toExclusive)
+        {
+            var (context, bulk) = b;
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOneWithContext(context, bulk, data[i]);
             }
         }
 
@@ -2445,11 +2866,20 @@ namespace EnTTSharp.Entities
             try
             {
                 var b = bulk;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOne(b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, b, ApplyMany);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyMany(RawList<TEntityKey> p, ViewDelegates.ApplyIn2Out4<TEntityKey, T1, T2, T3, T4, T5, T6> bulk, int fromInclusive, int toExclusive)
+        {
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOne(bulk, data[i]);
             }
         }
 
@@ -2508,11 +2938,23 @@ namespace EnTTSharp.Entities
             {
                 var b = bulk;
                 var c = context;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOneWithContext(c, b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, (c, b), ApplyManyWithContext<TContext>);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyManyWithContext<TContext>(RawList<TEntityKey> p, 
+                                            (TContext context, ViewDelegates.ApplyWithContextIn2Out4<TEntityKey, TContext, T1, T2, T3, T4, T5, T6> bulk) b, 
+                                            int fromInclusive, int toExclusive)
+        {
+            var (context, bulk) = b;
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOneWithContext(context, bulk, data[i]);
             }
         }
 
@@ -2571,11 +3013,20 @@ namespace EnTTSharp.Entities
             try
             {
                 var b = bulk;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOne(b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, b, ApplyMany);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyMany(RawList<TEntityKey> p, ViewDelegates.ApplyIn3Out3<TEntityKey, T1, T2, T3, T4, T5, T6> bulk, int fromInclusive, int toExclusive)
+        {
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOne(bulk, data[i]);
             }
         }
 
@@ -2634,11 +3085,23 @@ namespace EnTTSharp.Entities
             {
                 var b = bulk;
                 var c = context;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOneWithContext(c, b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, (c, b), ApplyManyWithContext<TContext>);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyManyWithContext<TContext>(RawList<TEntityKey> p, 
+                                            (TContext context, ViewDelegates.ApplyWithContextIn3Out3<TEntityKey, TContext, T1, T2, T3, T4, T5, T6> bulk) b, 
+                                            int fromInclusive, int toExclusive)
+        {
+            var (context, bulk) = b;
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOneWithContext(context, bulk, data[i]);
             }
         }
 
@@ -2697,11 +3160,20 @@ namespace EnTTSharp.Entities
             try
             {
                 var b = bulk;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOne(b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, b, ApplyMany);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyMany(RawList<TEntityKey> p, ViewDelegates.ApplyIn4Out2<TEntityKey, T1, T2, T3, T4, T5, T6> bulk, int fromInclusive, int toExclusive)
+        {
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOne(bulk, data[i]);
             }
         }
 
@@ -2760,11 +3232,23 @@ namespace EnTTSharp.Entities
             {
                 var b = bulk;
                 var c = context;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOneWithContext(c, b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, (c, b), ApplyManyWithContext<TContext>);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyManyWithContext<TContext>(RawList<TEntityKey> p, 
+                                            (TContext context, ViewDelegates.ApplyWithContextIn4Out2<TEntityKey, TContext, T1, T2, T3, T4, T5, T6> bulk) b, 
+                                            int fromInclusive, int toExclusive)
+        {
+            var (context, bulk) = b;
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOneWithContext(context, bulk, data[i]);
             }
         }
 
@@ -2823,11 +3307,20 @@ namespace EnTTSharp.Entities
             try
             {
                 var b = bulk;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOne(b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, b, ApplyMany);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyMany(RawList<TEntityKey> p, ViewDelegates.ApplyIn5Out1<TEntityKey, T1, T2, T3, T4, T5, T6> bulk, int fromInclusive, int toExclusive)
+        {
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOne(bulk, data[i]);
             }
         }
 
@@ -2886,11 +3379,23 @@ namespace EnTTSharp.Entities
             {
                 var b = bulk;
                 var c = context;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOneWithContext(c, b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, (c, b), ApplyManyWithContext<TContext>);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyManyWithContext<TContext>(RawList<TEntityKey> p, 
+                                            (TContext context, ViewDelegates.ApplyWithContextIn5Out1<TEntityKey, TContext, T1, T2, T3, T4, T5, T6> bulk) b, 
+                                            int fromInclusive, int toExclusive)
+        {
+            var (context, bulk) = b;
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOneWithContext(context, bulk, data[i]);
             }
         }
 
@@ -2949,11 +3454,20 @@ namespace EnTTSharp.Entities
             try
             {
                 var b = bulk;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOne(b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, b, ApplyMany);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyMany(RawList<TEntityKey> p, ViewDelegates.Apply<TEntityKey, T1, T2, T3, T4, T5, T6> bulk, int fromInclusive, int toExclusive)
+        {
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOne(bulk, data[i]);
             }
         }
 
@@ -3012,11 +3526,23 @@ namespace EnTTSharp.Entities
             {
                 var b = bulk;
                 var c = context;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOneWithContext(c, b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, (c, b), ApplyManyWithContext<TContext>);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyManyWithContext<TContext>(RawList<TEntityKey> p, 
+                                            (TContext context, ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1, T2, T3, T4, T5, T6> bulk) b, 
+                                            int fromInclusive, int toExclusive)
+        {
+            var (context, bulk) = b;
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOneWithContext(context, bulk, data[i]);
             }
         }
 
@@ -3109,11 +3635,20 @@ namespace EnTTSharp.Entities
             try
             {
                 var b = bulk;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOne(b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, b, ApplyMany);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyMany(RawList<TEntityKey> p, ViewDelegates.ApplyIn0Out7<TEntityKey, T1, T2, T3, T4, T5, T6, T7> bulk, int fromInclusive, int toExclusive)
+        {
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOne(bulk, data[i]);
             }
         }
 
@@ -3175,11 +3710,23 @@ namespace EnTTSharp.Entities
             {
                 var b = bulk;
                 var c = context;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOneWithContext(c, b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, (c, b), ApplyManyWithContext<TContext>);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyManyWithContext<TContext>(RawList<TEntityKey> p, 
+                                            (TContext context, ViewDelegates.ApplyWithContextIn0Out7<TEntityKey, TContext, T1, T2, T3, T4, T5, T6, T7> bulk) b, 
+                                            int fromInclusive, int toExclusive)
+        {
+            var (context, bulk) = b;
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOneWithContext(context, bulk, data[i]);
             }
         }
 
@@ -3241,11 +3788,20 @@ namespace EnTTSharp.Entities
             try
             {
                 var b = bulk;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOne(b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, b, ApplyMany);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyMany(RawList<TEntityKey> p, ViewDelegates.ApplyIn1Out6<TEntityKey, T1, T2, T3, T4, T5, T6, T7> bulk, int fromInclusive, int toExclusive)
+        {
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOne(bulk, data[i]);
             }
         }
 
@@ -3307,11 +3863,23 @@ namespace EnTTSharp.Entities
             {
                 var b = bulk;
                 var c = context;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOneWithContext(c, b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, (c, b), ApplyManyWithContext<TContext>);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyManyWithContext<TContext>(RawList<TEntityKey> p, 
+                                            (TContext context, ViewDelegates.ApplyWithContextIn1Out6<TEntityKey, TContext, T1, T2, T3, T4, T5, T6, T7> bulk) b, 
+                                            int fromInclusive, int toExclusive)
+        {
+            var (context, bulk) = b;
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOneWithContext(context, bulk, data[i]);
             }
         }
 
@@ -3373,11 +3941,20 @@ namespace EnTTSharp.Entities
             try
             {
                 var b = bulk;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOne(b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, b, ApplyMany);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyMany(RawList<TEntityKey> p, ViewDelegates.ApplyIn2Out5<TEntityKey, T1, T2, T3, T4, T5, T6, T7> bulk, int fromInclusive, int toExclusive)
+        {
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOne(bulk, data[i]);
             }
         }
 
@@ -3439,11 +4016,23 @@ namespace EnTTSharp.Entities
             {
                 var b = bulk;
                 var c = context;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOneWithContext(c, b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, (c, b), ApplyManyWithContext<TContext>);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyManyWithContext<TContext>(RawList<TEntityKey> p, 
+                                            (TContext context, ViewDelegates.ApplyWithContextIn2Out5<TEntityKey, TContext, T1, T2, T3, T4, T5, T6, T7> bulk) b, 
+                                            int fromInclusive, int toExclusive)
+        {
+            var (context, bulk) = b;
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOneWithContext(context, bulk, data[i]);
             }
         }
 
@@ -3505,11 +4094,20 @@ namespace EnTTSharp.Entities
             try
             {
                 var b = bulk;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOne(b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, b, ApplyMany);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyMany(RawList<TEntityKey> p, ViewDelegates.ApplyIn3Out4<TEntityKey, T1, T2, T3, T4, T5, T6, T7> bulk, int fromInclusive, int toExclusive)
+        {
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOne(bulk, data[i]);
             }
         }
 
@@ -3571,11 +4169,23 @@ namespace EnTTSharp.Entities
             {
                 var b = bulk;
                 var c = context;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOneWithContext(c, b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, (c, b), ApplyManyWithContext<TContext>);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyManyWithContext<TContext>(RawList<TEntityKey> p, 
+                                            (TContext context, ViewDelegates.ApplyWithContextIn3Out4<TEntityKey, TContext, T1, T2, T3, T4, T5, T6, T7> bulk) b, 
+                                            int fromInclusive, int toExclusive)
+        {
+            var (context, bulk) = b;
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOneWithContext(context, bulk, data[i]);
             }
         }
 
@@ -3637,11 +4247,20 @@ namespace EnTTSharp.Entities
             try
             {
                 var b = bulk;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOne(b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, b, ApplyMany);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyMany(RawList<TEntityKey> p, ViewDelegates.ApplyIn4Out3<TEntityKey, T1, T2, T3, T4, T5, T6, T7> bulk, int fromInclusive, int toExclusive)
+        {
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOne(bulk, data[i]);
             }
         }
 
@@ -3703,11 +4322,23 @@ namespace EnTTSharp.Entities
             {
                 var b = bulk;
                 var c = context;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOneWithContext(c, b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, (c, b), ApplyManyWithContext<TContext>);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyManyWithContext<TContext>(RawList<TEntityKey> p, 
+                                            (TContext context, ViewDelegates.ApplyWithContextIn4Out3<TEntityKey, TContext, T1, T2, T3, T4, T5, T6, T7> bulk) b, 
+                                            int fromInclusive, int toExclusive)
+        {
+            var (context, bulk) = b;
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOneWithContext(context, bulk, data[i]);
             }
         }
 
@@ -3769,11 +4400,20 @@ namespace EnTTSharp.Entities
             try
             {
                 var b = bulk;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOne(b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, b, ApplyMany);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyMany(RawList<TEntityKey> p, ViewDelegates.ApplyIn5Out2<TEntityKey, T1, T2, T3, T4, T5, T6, T7> bulk, int fromInclusive, int toExclusive)
+        {
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOne(bulk, data[i]);
             }
         }
 
@@ -3835,11 +4475,23 @@ namespace EnTTSharp.Entities
             {
                 var b = bulk;
                 var c = context;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOneWithContext(c, b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, (c, b), ApplyManyWithContext<TContext>);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyManyWithContext<TContext>(RawList<TEntityKey> p, 
+                                            (TContext context, ViewDelegates.ApplyWithContextIn5Out2<TEntityKey, TContext, T1, T2, T3, T4, T5, T6, T7> bulk) b, 
+                                            int fromInclusive, int toExclusive)
+        {
+            var (context, bulk) = b;
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOneWithContext(context, bulk, data[i]);
             }
         }
 
@@ -3901,11 +4553,20 @@ namespace EnTTSharp.Entities
             try
             {
                 var b = bulk;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOne(b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, b, ApplyMany);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyMany(RawList<TEntityKey> p, ViewDelegates.ApplyIn6Out1<TEntityKey, T1, T2, T3, T4, T5, T6, T7> bulk, int fromInclusive, int toExclusive)
+        {
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOne(bulk, data[i]);
             }
         }
 
@@ -3967,11 +4628,23 @@ namespace EnTTSharp.Entities
             {
                 var b = bulk;
                 var c = context;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOneWithContext(c, b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, (c, b), ApplyManyWithContext<TContext>);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyManyWithContext<TContext>(RawList<TEntityKey> p, 
+                                            (TContext context, ViewDelegates.ApplyWithContextIn6Out1<TEntityKey, TContext, T1, T2, T3, T4, T5, T6, T7> bulk) b, 
+                                            int fromInclusive, int toExclusive)
+        {
+            var (context, bulk) = b;
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOneWithContext(context, bulk, data[i]);
             }
         }
 
@@ -4033,11 +4706,20 @@ namespace EnTTSharp.Entities
             try
             {
                 var b = bulk;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOne(b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, b, ApplyMany);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyMany(RawList<TEntityKey> p, ViewDelegates.Apply<TEntityKey, T1, T2, T3, T4, T5, T6, T7> bulk, int fromInclusive, int toExclusive)
+        {
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOne(bulk, data[i]);
             }
         }
 
@@ -4099,11 +4781,23 @@ namespace EnTTSharp.Entities
             {
                 var b = bulk;
                 var c = context;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOneWithContext(c, b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, (c, b), ApplyManyWithContext<TContext>);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyManyWithContext<TContext>(RawList<TEntityKey> p, 
+                                            (TContext context, ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1, T2, T3, T4, T5, T6, T7> bulk) b, 
+                                            int fromInclusive, int toExclusive)
+        {
+            var (context, bulk) = b;
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOneWithContext(context, bulk, data[i]);
             }
         }
 

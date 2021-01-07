@@ -12,6 +12,7 @@
 //------------------------------------------------------------------------------
 using EnTTSharp.Entities.Helpers;
 using EnTTSharp.Entities.Pools;
+using System.Collections.Generic;
 
 namespace EnTTSharp.Entities
 {
@@ -67,7 +68,7 @@ namespace EnTTSharp.Entities
             try
             {
                 var b = bulk;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOne(b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, b, ApplyMany);
             }
             finally
             {
@@ -75,6 +76,14 @@ namespace EnTTSharp.Entities
             }
         }
 
+        void ApplyMany(RawList<TEntityKey> p, ViewDelegates.Apply<#=qualifier #><TEntityKey, <#= templateParamsLight #>> bulk, int fromInclusive, int toExclusive)
+        {
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOne(bulk, data[i]);
+            }
+        }
 
         void ApplyOne(ViewDelegates.Apply<#=qualifier #><TEntityKey, <#= templateParamsLight #> > bulk, TEntityKey ek)
         {
@@ -116,11 +125,23 @@ namespace EnTTSharp.Entities
             {
                 var b = bulk;
                 var c = context;
-                PersistentViewParallelism.PartitionAndRun(p, ek => ApplyOneWithContext(c, b, ek));
+                PersistentViewParallelism.PartitionAndRunMany(p, (c, b), ApplyManyWithContext<TContext>);
             }
             finally
             {
                 EntityKeyListPool<TEntityKey>.Release(p);
+            }
+        }
+
+        void ApplyManyWithContext<TContext>(RawList<TEntityKey> p, 
+                                            (TContext context, ViewDelegates.ApplyWithContext<#=qualifier #><TEntityKey, TContext, <#= templateParamsLight #>> bulk) b, 
+                                            int fromInclusive, int toExclusive)
+        {
+            var (context, bulk) = b;
+            var data = p.UnsafeData;
+            for (int i = fromInclusive; i < toExclusive; i += 1)
+            {
+                ApplyOneWithContext(context, bulk, data[i]);
             }
         }
 

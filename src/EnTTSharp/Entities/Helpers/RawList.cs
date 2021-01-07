@@ -34,6 +34,7 @@ namespace EnTTSharp.Entities.Helpers
         public void StoreAt(int index, in T input)
         {
             EnsureCapacity(index + 1);
+            
             this.data[index] = input;
             this.Count = Math.Max(index + 1, Count);
             this.version += 1;
@@ -44,6 +45,10 @@ namespace EnTTSharp.Entities.Helpers
             get { return version; }
         }
 
+        public T[] UnsafeData => data;
+
+        public void UnsafeSetCount(int c) => Count = c;
+        
         public Enumerator GetEnumerator()
         {
             return new Enumerator(this);
@@ -59,7 +64,17 @@ namespace EnTTSharp.Entities.Helpers
             return GetEnumerator();
         }
 
-        public ref T TryGetRef(int index) => ref data[index];
+        public ref T TryGetRef(int index, ref T defaultValue, out bool success)
+        {
+            if (index < 0 || index >= Count)
+            {
+                success = false;
+                return ref defaultValue;
+            }
+
+            success = true;
+            return ref data[index];
+        }
 
         public int Count
         {
@@ -101,7 +116,7 @@ namespace EnTTSharp.Entities.Helpers
             EnsureCapacity(index + 1);
             return ref data[index];
         }
-        
+
         public bool TryGet(int index, out T output)
         {
             if (index >= 0 && index < Count)
@@ -121,13 +136,12 @@ namespace EnTTSharp.Entities.Helpers
             {
                 return;
             }
-            
+
             var capacityDynamic = Math.Min(minIndexNeeded + 10000, Capacity * 150 / 100);
             var capacityStatic = Count + 500;
             Capacity = Math.Max(capacityStatic, capacityDynamic);
-            
         }
-        
+
         public void Add(in T e)
         {
             EnsureCapacity(Count + 1);
@@ -143,7 +157,7 @@ namespace EnTTSharp.Entities.Helpers
             this.Count -= 1;
             this.version += 1;
         }
-        
+
         public struct Enumerator : IEnumerator<T>
         {
             readonly RawList<T> contents;
@@ -202,6 +216,5 @@ namespace EnTTSharp.Entities.Helpers
                 }
             }
         }
-
     }
 }

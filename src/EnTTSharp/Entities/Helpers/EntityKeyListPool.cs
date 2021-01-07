@@ -1,24 +1,23 @@
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using EnTTSharp.Entities.Pools;
 
 namespace EnTTSharp.Entities.Helpers
 {
     public static class EntityKeyListPool<TEntityKey> where TEntityKey : IEntityKey
     {
-        static readonly ConcurrentQueue<List<TEntityKey>> pools;
+        static readonly ConcurrentStack<RawList<TEntityKey>> Pools;
 
         static EntityKeyListPool()
         {
-            pools = new ConcurrentQueue<List<TEntityKey>>();
+            Pools = new ConcurrentStack<RawList<TEntityKey>>();
         }
 
-        public static List<TEntityKey> Reserve(IEntityPoolAccess<TEntityKey> src) 
+        public static RawList<TEntityKey> Reserve(IEntityPoolAccess<TEntityKey> src) 
         {
-            if (!pools.TryDequeue(out var result))
+            if (!Pools.TryPop(out var result))
             {
-                result = new List<TEntityKey>(src.Count);
+                result = new RawList<TEntityKey>(src.Count);
             }
             else
             {
@@ -33,11 +32,11 @@ namespace EnTTSharp.Entities.Helpers
             return result;
         }
 
-        public static List<TEntityKey> Reserve(IEntityView<TEntityKey> src) 
+        public static RawList<TEntityKey> Reserve(IEntityView<TEntityKey> src) 
         {
-            if (!pools.TryDequeue(out var result))
+            if (!Pools.TryPop(out var result))
             {
-                result = new List<TEntityKey>(src.EstimatedSize);
+                result = new RawList<TEntityKey>(src.EstimatedSize);
             }
             else
             {
@@ -49,11 +48,11 @@ namespace EnTTSharp.Entities.Helpers
             return result;
         }
 
-        public static List<TEntityKey> Reserve(IReadOnlyPool<TEntityKey> src) 
+        public static RawList<TEntityKey> Reserve(IReadOnlyPool<TEntityKey> src) 
         {
-            if (!pools.TryDequeue(out var result))
+            if (!Pools.TryPop(out var result))
             {
-                result = new List<TEntityKey>(src.Count);
+                result = new RawList<TEntityKey>(src.Count);
             }
             else
             {
@@ -65,33 +64,33 @@ namespace EnTTSharp.Entities.Helpers
             return result;
         }
 
-        public static void Release(List<TEntityKey> l)
+        public static void Release(RawList<TEntityKey> l)
         {
             if (l == null) throw new ArgumentNullException(nameof(l));
 
             l.Clear();
-            pools.Enqueue(l);
+            Pools.Push(l);
         }
     }
 
     public static class EntityKeyListPool
     {
-        public static List<TEntityKey> Reserve<TEntityKey>(IEntityPoolAccess<TEntityKey> src) where TEntityKey : IEntityKey
+        public static RawList<TEntityKey> Reserve<TEntityKey>(IEntityPoolAccess<TEntityKey> src) where TEntityKey : IEntityKey
         {
             return EntityKeyListPool<TEntityKey>.Reserve(src);
         }
 
-        public static List<TEntityKey> Reserve<TEntityKey>(IEntityView<TEntityKey> src) where TEntityKey : IEntityKey
+        public static RawList<TEntityKey> Reserve<TEntityKey>(IEntityView<TEntityKey> src) where TEntityKey : IEntityKey
         {
             return EntityKeyListPool<TEntityKey>.Reserve(src);
         }
 
-        public static List<TEntityKey> Reserve<TEntityKey>(IReadOnlyPool<TEntityKey> src) where TEntityKey : IEntityKey
+        public static RawList<TEntityKey> Reserve<TEntityKey>(IReadOnlyPool<TEntityKey> src) where TEntityKey : IEntityKey
         {
             return EntityKeyListPool<TEntityKey>.Reserve(src);
         }
 
-        public static void Release<TEntityKey>(List<TEntityKey> l) where TEntityKey : IEntityKey
+        public static void Release<TEntityKey>(RawList<TEntityKey> l) where TEntityKey : IEntityKey
         {
             EntityKeyListPool<TEntityKey>.Release(l);
         }

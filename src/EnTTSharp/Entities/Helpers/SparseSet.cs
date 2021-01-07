@@ -14,25 +14,28 @@ namespace EnTTSharp.Entities.Helpers
     {
         readonly struct ReverseEntry
         {
-            const int InUseFlag = 1 << 31;
+            const uint AgeMask = 0xFF00_0000;
+            const uint KeyMask = 0x007F_FFFF;
+            const uint ValidMask = 0x0080_0000;
 
             readonly uint rawData;
-            public int Key => (int)(rawData & 0x7FFF_FFFF) - 1;
-            public bool InUse => (rawData >> 31) != 0;
+            public int Key => (int)(rawData & KeyMask);
+            public int Age => (int)(rawData & AgeMask) >> 24;
+            public bool InUse => (rawData & ValidMask) != 0;
 
-            public ReverseEntry(int key)
+            public ReverseEntry(int key, byte age)
             {
-                rawData = (uint)(((key + 1) & 0x7FFF_FFFF) | InUseFlag);
+                rawData = (uint)((key & KeyMask) | (age << 24)) | ValidMask;
             }
 
-            ReverseEntry(ReverseEntry r)
+            ReverseEntry(int r)
             {
-                rawData = (uint)((r.Key + 1) & 0x7FFF_FFFF);
+                rawData = (uint)(r & KeyMask);
             }
 
-            public ReverseEntry MarkUnused()
+            public static ReverseEntry Unused(int key)
             {
-                return new ReverseEntry(this);
+                return new ReverseEntry(key);
             }
         }
 
@@ -41,7 +44,7 @@ namespace EnTTSharp.Entities.Helpers
         /// <summary>
         ///  Contains the entites in the set in insertion order.
         /// </summary>
-        readonly RawList<TEntityKey> direct;
+        readonly SegmentedRawList<TEntityKey> direct;
 
         /// <summary>
         ///  stores an pointer into the direct list.
@@ -50,7 +53,7 @@ namespace EnTTSharp.Entities.Helpers
 
         public SparseSet()
         {
-            direct = new RawList<TEntityKey>();
+            direct = new SegmentedRawList<TEntityKey>();
             reverse = new RawList<ReverseEntry>();
         }
 
@@ -64,7 +67,7 @@ namespace EnTTSharp.Entities.Helpers
             }
 
             var pos = e.Key;
-            reverse.StoreAt(pos, new ReverseEntry(direct.Count));
+            reverse.StoreAt(pos, new ReverseEntry(direct.Count, e.Age));
             direct.Add(e);
         }
 
@@ -80,13 +83,13 @@ namespace EnTTSharp.Entities.Helpers
             var lastIndex = lastEntry.Key;
 
             var rentry = reverse[entt];
-            reverse[entt] = rentry.MarkUnused();
+            reverse[entt] = ReverseEntry.Unused(rentry.Key);
 
             // remove the element by filling the gap with the last entry of 
             // the direct-list into the spot that just got empty.
             // Although this reorders the elements in the list, it avoids moving all
             // elements to close the gap. 
-            reverse[lastIndex] = new ReverseEntry(rentry.Key);
+            reverse[lastIndex] = ReverseEntry.Unused(rentry.Key);
             direct[rentry.Key] = lastEntry;
             direct.RemoveLast();
             return true;
@@ -105,8 +108,8 @@ namespace EnTTSharp.Entities.Helpers
 
         public virtual int Capacity
         {
-            get { return direct.Capacity; }
-            set { direct.Capacity = value; }
+            get { return reverse.Capacity; }
+            set { reverse.Capacity = value; }
         }
 
         public int Extent
@@ -120,7 +123,23 @@ namespace EnTTSharp.Entities.Helpers
             if (pos < reverse.Count)
             {
                 var rk = reverse[pos];
-                return rk.InUse && EqualityHandler.Equals(direct[rk.Key], entity);
+                if (!rk.InUse || entity.Age != rk.Age)
+                {
+                    return false;
+                }
+                
+#if RELEASE
+                return true;
+#else
+                var key = direct[rk.Key];
+                if (EqualityHandler.Equals(key, entity))
+                {
+                    return true;
+                }
+
+                throw new ArgumentException("Assertion failed");
+                return false;
+#endif
             }
 
             return false;
@@ -129,16 +148,29 @@ namespace EnTTSharp.Entities.Helpers
         public int IndexOf(TEntityKey entity)
         {
             var pos = entity.Key;
-            if (pos < reverse.Count)
+            if (pos >= reverse.Count)
             {
-                var entityKey = reverse[pos];
-                if (entityKey.InUse && EqualityHandler.Equals(direct[entityKey.Key], entity))
-                {
-                    return entityKey.Key;
-                }
+                return -1;
             }
 
+            var entityKey = reverse[pos];
+            if (!entityKey.InUse || entity.Age != entityKey.Age)
+            {
+                return -1;
+            }
+
+#if RELEASE
+            return entityKey.Key;
+#else
+            var key = direct[entityKey.Key];
+            if (EqualityHandler.Equals(key, entity))
+            {
+                return entityKey.Key;
+            }
+
+            throw new ArgumentException("Assertion failed");
             return -1;
+#endif
         }
 
         public void Reset(TEntityKey entity)
@@ -160,7 +192,7 @@ namespace EnTTSharp.Entities.Helpers
             return GetEnumerator();
         }
 
-        public RawList<TEntityKey>.Enumerator GetEnumerator()
+        public SegmentedRawList<TEntityKey>.Enumerator GetEnumerator()
         {
             return direct.GetEnumerator();
         }
@@ -210,25 +242,40 @@ namespace EnTTSharp.Entities.Helpers
             return set;
         }
 
-        public void CopyTo(List<TEntityKey> entites)
+        public void CopyTo(RawList<TEntityKey> entites)
         {
             entites.Capacity = Math.Max(entites.Capacity, Count);
             entites.Clear();
-            foreach (var e in direct)
+
+            if (direct.Count == 0)
             {
-                entites.Add(e);
+                return;
+            }
+
+            var count = 0;
+            var toBeCopied = direct.Count;
+            var unsafeData = direct.UnsafeData;
+            var data = entites.UnsafeData;
+            
+            for (var segmentIndex = 0; segmentIndex < unsafeData.Length; segmentIndex++)
+            {
+                var segment = unsafeData[segmentIndex];
+                if (segment == null)
+                {
+                    continue;
+                }
+                
+                for (var dataIndex = 0; dataIndex < segment.Length; dataIndex++)
+                {
+                    data[count] = segment[dataIndex];
+                    count += 1;
+                    if (count == toBeCopied)
+                    {
+                        entites.UnsafeSetCount(direct.Count);
+                        return;
+                    }
+                }
             }
         }
-
-        public void CopyTo(SparseSet<TEntityKey> entites)
-        {
-            entites.Capacity = Math.Max(entites.Capacity, Count);
-            entites.RemoveAll();
-            foreach (var e in direct)
-            {
-                entites.Add(e);
-            }
-        }
-
     }
 }

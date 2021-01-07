@@ -76,7 +76,7 @@ namespace EnTTSharp.Test.Helpers
             var s = new SparseSet<EntityKey>();
             s.Reserve(42);
             s.Add(EntityKey.Create(0, 42));
-            s.Remove(EntityKey.Create(0, 42));
+            s.Remove(EntityKey.Create(0, 42)).Should().BeTrue();
             s.Add(EntityKey.Create(0, 42));
 
             s.Count.Should().Be(1);

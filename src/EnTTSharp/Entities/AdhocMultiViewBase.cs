@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using EnTTSharp.Entities.Helpers;
 using EnTTSharp.Entities.Pools;
 
@@ -26,8 +25,9 @@ namespace EnTTSharp.Entities
                 }
 
                 var count = int.MaxValue;
-                foreach (var set in Sets)
+                for (var index = 0; index < Sets.Count; index++)
                 {
+                    var set = Sets[index];
                     if (set.Count < count)
                     {
                         count = set.Count;
@@ -38,35 +38,22 @@ namespace EnTTSharp.Entities
             }
         }
 
-        public override void CopyTo(List<TEntityKey> k)
+        public override void CopyTo(RawList<TEntityKey> k)
         {
             k.Clear();
             k.Capacity = Math.Max(k.Capacity, EstimatedSize);
 
             var s = FindMinimumEntrySet(Sets);
-            var p = EntityKeyListPool.Reserve(s);
-            try
-            {
-                foreach (var e in p)
-                {
-                    if (IsMember(e))
-                    {
-                        k.Add(e);
-                    }
-                }
-            }
-            finally
-            {
-                EntityKeyListPool.Release(p);
-            }
+            s.CopyTo(k);
         }
 
         public override PredicateEnumerator<TEntityKey> GetEnumerator()
         {
             IReadOnlyPool<TEntityKey> s = null;
             var count = int.MaxValue;
-            foreach (var set in Sets)
+            for (var index = 0; index < Sets.Count; index++)
             {
+                var set = Sets[index];
                 if (set.Count < count)
                 {
                     s = set;

@@ -68,7 +68,7 @@ namespace EnTTSharp.Entities.Pools
             return GetEnumerator();
         }
 
-        public RawList<TEntityKey>.Enumerator GetEnumerator()
+        public SegmentedRawList<TEntityKey>.Enumerator GetEnumerator()
         {
             return backend.GetEnumerator();
         }
@@ -134,24 +134,11 @@ namespace EnTTSharp.Entities.Pools
             return ref defaultValue;
         }
 
-        public void CopyTo(SparseSet<TEntityKey> entites)
-        {
-            entites.Capacity = Math.Max(entites.Capacity, Count);
-            entites.RemoveAll();
-            foreach (var e in backend)
-            {
-                entites.Add(e);
-            }
-        }
-
-        public void CopyTo(List<TEntityKey> entites)
+        public void CopyTo(RawList<TEntityKey> entites)
         {
             entites.Capacity = Math.Max(entites.Capacity, Count);
             entites.Clear();
-            foreach (var e in backend)
-            {
-                entites.Add(e);
-            }
+            backend.CopyTo(entites);
         }
     }
 }

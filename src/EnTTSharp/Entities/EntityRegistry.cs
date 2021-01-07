@@ -108,7 +108,7 @@ namespace EnTTSharp.Entities
                 return reg.Index;
             }
 
-            throw new ArgumentException($"Unknown registration for type {typeof(TComponent)}");
+            return -1;
         }
 
         IComponentRegistration<TEntityKey, TComponent> GetRegistration<TComponent>()
@@ -118,24 +118,61 @@ namespace EnTTSharp.Entities
                 return (IComponentRegistration<TEntityKey, TComponent>)reg;
             }
 
-            throw new ArgumentException($"Unknown registration for type {typeof(TComponent)}");
+            ThrowInvalidRegistrationError(typeof(TComponent));
+            return default;
+        }
+
+        void ThrowInvalidRegistrationError(Type t)
+        {
+            throw new ArgumentException($"Unknown registration for type {t}");
         }
 
         internal int CountComponents<TComponent>()
         {
             var idx = ManagedIndex<TComponent>();
+            if (idx == -1)
+            {
+                ThrowInvalidRegistrationError(typeof(TComponent));
+                return -1;
+            }
+
             return pools[idx].ReadonlyPool.Count;
         }
 
         public IReadOnlyPool<TEntityKey, TComponent> GetPool<TComponent>()
         {
             var idx = ManagedIndex<TComponent>();
+            if (idx == -1)
+            {
+                ThrowInvalidRegistrationError(typeof(TComponent));
+                return default;
+            }
+
             return (IPool<TEntityKey, TComponent>)pools[idx].ReadonlyPool;
+        }
+
+        public bool TryGetPool<TComponent>(out IReadOnlyPool<TEntityKey, TComponent> pool)
+        {
+            var idx = ManagedIndex<TComponent>();
+            if (idx == -1)
+            {
+                pool = default;
+                return false;
+            }
+
+            pool = (IPool<TEntityKey, TComponent>)pools[idx].ReadonlyPool;
+            return true;
         }
 
         public bool TryGetWritablePool<TComponent>(out IPool<TEntityKey, TComponent> pool)
         {
             var idx = ManagedIndex<TComponent>();
+            if (idx == -1)
+            {
+                pool = default;
+                return false;
+            }
+
             if (pools[idx].TryGetPool(out var p) &&
                 p is IPool<TEntityKey, TComponent> pp)
             {
@@ -236,8 +273,7 @@ namespace EnTTSharp.Entities
             return pool;
         }
 
-        void IEntityComponentRegistry<TEntityKey>.RegisterNonConstructable<TComponent>
-            (Action<TEntityKey, IEntityViewControl<TEntityKey>, TComponent> destructorFn)
+        void IEntityComponentRegistry<TEntityKey>.RegisterNonConstructable<TComponent>(Action<TEntityKey, IEntityViewControl<TEntityKey>, TComponent> destructorFn)
         {
             RegisterNonConstructable(destructorFn);
         }
@@ -271,8 +307,9 @@ namespace EnTTSharp.Entities
         {
             if (key.Key < 0 || key.Key >= entities.Count)
             {
-               return false;
+                return false;
             }
+
             return equalityComparer.Equals(entities[key.Key], key);
         }
 
@@ -475,23 +512,29 @@ namespace EnTTSharp.Entities
 
         public void AssignComponent<TComponent>(TEntityKey entity, in TComponent c)
         {
-            AssertManaged<TComponent>();
             AssertValid(entity);
 
             if (TryGetWritablePool<TComponent>(out var p))
             {
                 p.Add(entity, in c);
             }
+            else
+            {
+                AssertManaged<TComponent>();
+            }
         }
 
         public void RemoveComponent<TComponent>(TEntityKey entity)
         {
-            AssertManaged<TComponent>();
             AssertValid(entity);
 
             if (TryGetWritablePool<TComponent>(out var p))
             {
                 p.Remove(entity);
+            }
+            else
+            {
+                AssertManaged<TComponent>();
             }
         }
 
@@ -499,14 +542,27 @@ namespace EnTTSharp.Entities
         {
             AssertManaged<TComponent>();
             AssertValid(entity);
-            return GetPool<TComponent>().Contains(entity);
+            if (TryGetPool<TComponent>(out var pool))
+            {
+                return pool.Contains(entity);
+            }
+
+            AssertManaged<TComponent>();
+            return false;
         }
 
         public bool GetComponent<TComponent>(TEntityKey entity, out TComponent c)
         {
             AssertManaged<TComponent>();
             AssertValid(entity);
-            return GetPool<TComponent>().TryGet(entity, out c);
+            if (TryGetPool<TComponent>(out var pool))
+            {
+                return pool.TryGet(entity, out c);
+            }
+
+            AssertManaged<TComponent>();
+            c = default;
+            return false;
         }
 
         public TComponent AssignOrReplace<TComponent>(TEntityKey entity)
@@ -519,7 +575,6 @@ namespace EnTTSharp.Entities
         public void AssignOrReplace<TComponent>(TEntityKey entity, in TComponent c)
         {
             AssertValid(entity);
-            AssertManaged<TComponent>();
 
             if (TryGetWritablePool<TComponent>(out var p))
             {
@@ -527,6 +582,10 @@ namespace EnTTSharp.Entities
                 {
                     p.Add(entity, in c);
                 }
+            }
+            else
+            {
+                AssertManaged<TComponent>();
             }
         }
 
@@ -539,11 +598,14 @@ namespace EnTTSharp.Entities
         public void WriteBack<TComponent>(TEntityKey entity, in TComponent data)
         {
             AssertValid(entity);
-            AssertManaged<TComponent>();
 
             if (TryGetWritablePool<TComponent>(out var p))
             {
                 p.WriteBack(entity, in data);
+            }
+            else
+            {
+                AssertManaged<TComponent>();
             }
         }
 
@@ -555,11 +617,14 @@ namespace EnTTSharp.Entities
         public bool ReplaceComponent<TComponent>(TEntityKey entity, in TComponent c)
         {
             AssertValid(entity);
-            AssertManaged<TComponent>();
 
             if (TryGetWritablePool<TComponent>(out var p))
             {
                 return p.WriteBack(entity, in c);
+            }
+            else
+            {
+                AssertManaged<TComponent>();
             }
 
             return false;
@@ -567,8 +632,8 @@ namespace EnTTSharp.Entities
 
         public void Sort<TComponent>(IComparer<TComponent> comparator)
         {
-            var pool = GetPool<TComponent>();
-            if (pool is ISortableCollection<TComponent> sortablePool)
+            if (TryGetPool<TComponent>(out var pool) && 
+                pool is ISortableCollection<TComponent> sortablePool)
             {
                 sortablePool.HeapSort(comparator);
             }
@@ -576,9 +641,10 @@ namespace EnTTSharp.Entities
 
         public void Respect<TComponentTo, TComponentFrom>()
         {
-            if (TryGetWritablePool<TComponentTo>(out var pool))
+            if (TryGetWritablePool<TComponentTo>(out var pool) &&
+                TryGetPool<TComponentFrom>(out var other))
             {
-                pool.Respect(GetPool<TComponentFrom>());
+                pool.Respect(other);
             }
         }
 
@@ -626,7 +692,7 @@ namespace EnTTSharp.Entities
                     }
                 }
             }
-            
+
             entities.Clear();
             available = 0;
             next = default;
