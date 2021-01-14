@@ -18,14 +18,14 @@ namespace EnTTSharp.Entities
     public sealed class PersistentView<TEntityKey, T1> : PersistentMultiViewBase<TEntityKey>, IPersistentEntityView<TEntityKey, T1>
         where TEntityKey: IEntityKey
     {
-        readonly IReadOnlyPool<TEntityKey, T1> poolT1;
+        readonly IPool<TEntityKey, T1> poolT1;
 
         public PersistentView(IEntityPoolAccess<TEntityKey> registry) :
             base(registry, 
                  registry.GetPool<T1>()
         )
         {
-            poolT1 = registry.GetPool<T1>();
+            poolT1 = registry.GetWritablePool<T1>();
         }
 
 
@@ -78,12 +78,9 @@ namespace EnTTSharp.Entities
         {
             // declare default values for each query
             T1 d1 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
 
-            if (s1)
-            {
-                bulk(this, ek, ref r1);
-            }
+            bulk(this, ek, ref r1);
         }
 
         public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContextIn0Out1<TEntityKey, TContext, T1> bulk)
@@ -138,12 +135,9 @@ namespace EnTTSharp.Entities
         {
             // declare default values for each query
             T1 d1 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
 
-            if (s1)
-            {
-                bulk(this, context, ek, ref r1);
-            }
+            bulk(this, context, ek, ref r1);
         }
 
         public void Apply(ViewDelegates.Apply<TEntityKey, T1 > bulk)
@@ -195,12 +189,9 @@ namespace EnTTSharp.Entities
         {
             // declare default values for each query
             T1 d1 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
 
-            if (s1)
-            {
-                bulk(this, ek, in r1);
-            }
+            bulk(this, ek, in r1);
         }
 
         public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1> bulk)
@@ -255,20 +246,17 @@ namespace EnTTSharp.Entities
         {
             // declare default values for each query
             T1 d1 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
 
-            if (s1)
-            {
-                bulk(this, context, ek, in r1);
-            }
+            bulk(this, context, ek, in r1);
         }
 
     }
     public sealed class PersistentView<TEntityKey, T1, T2> : PersistentMultiViewBase<TEntityKey>, IPersistentEntityView<TEntityKey, T1, T2>
         where TEntityKey: IEntityKey
     {
-        readonly IReadOnlyPool<TEntityKey, T1> poolT1;
-        readonly IReadOnlyPool<TEntityKey, T2> poolT2;
+        readonly IPool<TEntityKey, T1> poolT1;
+        readonly IPool<TEntityKey, T2> poolT2;
 
         public PersistentView(IEntityPoolAccess<TEntityKey> registry) :
             base(registry, 
@@ -276,8 +264,8 @@ namespace EnTTSharp.Entities
                  registry.GetPool<T2>()
         )
         {
-            poolT1 = registry.GetPool<T1>();
-            poolT2 = registry.GetPool<T2>();
+            poolT1 = registry.GetWritablePool<T1>();
+            poolT2 = registry.GetWritablePool<T2>();
         }
 
 
@@ -331,14 +319,10 @@ namespace EnTTSharp.Entities
             // declare default values for each query
             T1 d1 = default;
             T2 d2 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
 
-            if (s1 && 
-                s2)
-            {
-                bulk(this, ek, ref r1, ref r2);
-            }
+            bulk(this, ek, ref r1, ref r2);
         }
 
         public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContextIn0Out2<TEntityKey, TContext, T1, T2> bulk)
@@ -394,14 +378,10 @@ namespace EnTTSharp.Entities
             // declare default values for each query
             T1 d1 = default;
             T2 d2 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
 
-            if (s1 && 
-                s2)
-            {
-                bulk(this, context, ek, ref r1, ref r2);
-            }
+            bulk(this, context, ek, ref r1, ref r2);
         }
 
         public void Apply(ViewDelegates.ApplyIn1Out1<TEntityKey, T1, T2 > bulk)
@@ -454,14 +434,10 @@ namespace EnTTSharp.Entities
             // declare default values for each query
             T1 d1 = default;
             T2 d2 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
 
-            if (s1 && 
-                s2)
-            {
-                bulk(this, ek, in r1, ref r2);
-            }
+            bulk(this, ek, in r1, ref r2);
         }
 
         public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContextIn1Out1<TEntityKey, TContext, T1, T2> bulk)
@@ -517,14 +493,10 @@ namespace EnTTSharp.Entities
             // declare default values for each query
             T1 d1 = default;
             T2 d2 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
 
-            if (s1 && 
-                s2)
-            {
-                bulk(this, context, ek, in r1, ref r2);
-            }
+            bulk(this, context, ek, in r1, ref r2);
         }
 
         public void Apply(ViewDelegates.Apply<TEntityKey, T1, T2 > bulk)
@@ -577,14 +549,10 @@ namespace EnTTSharp.Entities
             // declare default values for each query
             T1 d1 = default;
             T2 d2 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
 
-            if (s1 && 
-                s2)
-            {
-                bulk(this, ek, in r1, in r2);
-            }
+            bulk(this, ek, in r1, in r2);
         }
 
         public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1, T2> bulk)
@@ -640,23 +608,19 @@ namespace EnTTSharp.Entities
             // declare default values for each query
             T1 d1 = default;
             T2 d2 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
 
-            if (s1 && 
-                s2)
-            {
-                bulk(this, context, ek, in r1, in r2);
-            }
+            bulk(this, context, ek, in r1, in r2);
         }
 
     }
     public sealed class PersistentView<TEntityKey, T1, T2, T3> : PersistentMultiViewBase<TEntityKey>, IPersistentEntityView<TEntityKey, T1, T2, T3>
         where TEntityKey: IEntityKey
     {
-        readonly IReadOnlyPool<TEntityKey, T1> poolT1;
-        readonly IReadOnlyPool<TEntityKey, T2> poolT2;
-        readonly IReadOnlyPool<TEntityKey, T3> poolT3;
+        readonly IPool<TEntityKey, T1> poolT1;
+        readonly IPool<TEntityKey, T2> poolT2;
+        readonly IPool<TEntityKey, T3> poolT3;
 
         public PersistentView(IEntityPoolAccess<TEntityKey> registry) :
             base(registry, 
@@ -665,9 +629,9 @@ namespace EnTTSharp.Entities
                  registry.GetPool<T3>()
         )
         {
-            poolT1 = registry.GetPool<T1>();
-            poolT2 = registry.GetPool<T2>();
-            poolT3 = registry.GetPool<T3>();
+            poolT1 = registry.GetWritablePool<T1>();
+            poolT2 = registry.GetWritablePool<T2>();
+            poolT3 = registry.GetWritablePool<T3>();
         }
 
 
@@ -722,16 +686,11 @@ namespace EnTTSharp.Entities
             T1 d1 = default;
             T2 d2 = default;
             T3 d3 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
 
-            if (s1 && 
-                s2 && 
-                s3)
-            {
-                bulk(this, ek, ref r1, ref r2, ref r3);
-            }
+            bulk(this, ek, ref r1, ref r2, ref r3);
         }
 
         public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContextIn0Out3<TEntityKey, TContext, T1, T2, T3> bulk)
@@ -788,16 +747,11 @@ namespace EnTTSharp.Entities
             T1 d1 = default;
             T2 d2 = default;
             T3 d3 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
 
-            if (s1 && 
-                s2 && 
-                s3)
-            {
-                bulk(this, context, ek, ref r1, ref r2, ref r3);
-            }
+            bulk(this, context, ek, ref r1, ref r2, ref r3);
         }
 
         public void Apply(ViewDelegates.ApplyIn1Out2<TEntityKey, T1, T2, T3 > bulk)
@@ -851,16 +805,11 @@ namespace EnTTSharp.Entities
             T1 d1 = default;
             T2 d2 = default;
             T3 d3 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
 
-            if (s1 && 
-                s2 && 
-                s3)
-            {
-                bulk(this, ek, in r1, ref r2, ref r3);
-            }
+            bulk(this, ek, in r1, ref r2, ref r3);
         }
 
         public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContextIn1Out2<TEntityKey, TContext, T1, T2, T3> bulk)
@@ -917,16 +866,11 @@ namespace EnTTSharp.Entities
             T1 d1 = default;
             T2 d2 = default;
             T3 d3 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
 
-            if (s1 && 
-                s2 && 
-                s3)
-            {
-                bulk(this, context, ek, in r1, ref r2, ref r3);
-            }
+            bulk(this, context, ek, in r1, ref r2, ref r3);
         }
 
         public void Apply(ViewDelegates.ApplyIn2Out1<TEntityKey, T1, T2, T3 > bulk)
@@ -980,16 +924,11 @@ namespace EnTTSharp.Entities
             T1 d1 = default;
             T2 d2 = default;
             T3 d3 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
 
-            if (s1 && 
-                s2 && 
-                s3)
-            {
-                bulk(this, ek, in r1, in r2, ref r3);
-            }
+            bulk(this, ek, in r1, in r2, ref r3);
         }
 
         public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContextIn2Out1<TEntityKey, TContext, T1, T2, T3> bulk)
@@ -1046,16 +985,11 @@ namespace EnTTSharp.Entities
             T1 d1 = default;
             T2 d2 = default;
             T3 d3 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
 
-            if (s1 && 
-                s2 && 
-                s3)
-            {
-                bulk(this, context, ek, in r1, in r2, ref r3);
-            }
+            bulk(this, context, ek, in r1, in r2, ref r3);
         }
 
         public void Apply(ViewDelegates.Apply<TEntityKey, T1, T2, T3 > bulk)
@@ -1109,16 +1043,11 @@ namespace EnTTSharp.Entities
             T1 d1 = default;
             T2 d2 = default;
             T3 d3 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
 
-            if (s1 && 
-                s2 && 
-                s3)
-            {
-                bulk(this, ek, in r1, in r2, in r3);
-            }
+            bulk(this, ek, in r1, in r2, in r3);
         }
 
         public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1, T2, T3> bulk)
@@ -1175,26 +1104,21 @@ namespace EnTTSharp.Entities
             T1 d1 = default;
             T2 d2 = default;
             T3 d3 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
 
-            if (s1 && 
-                s2 && 
-                s3)
-            {
-                bulk(this, context, ek, in r1, in r2, in r3);
-            }
+            bulk(this, context, ek, in r1, in r2, in r3);
         }
 
     }
     public sealed class PersistentView<TEntityKey, T1, T2, T3, T4> : PersistentMultiViewBase<TEntityKey>, IPersistentEntityView<TEntityKey, T1, T2, T3, T4>
         where TEntityKey: IEntityKey
     {
-        readonly IReadOnlyPool<TEntityKey, T1> poolT1;
-        readonly IReadOnlyPool<TEntityKey, T2> poolT2;
-        readonly IReadOnlyPool<TEntityKey, T3> poolT3;
-        readonly IReadOnlyPool<TEntityKey, T4> poolT4;
+        readonly IPool<TEntityKey, T1> poolT1;
+        readonly IPool<TEntityKey, T2> poolT2;
+        readonly IPool<TEntityKey, T3> poolT3;
+        readonly IPool<TEntityKey, T4> poolT4;
 
         public PersistentView(IEntityPoolAccess<TEntityKey> registry) :
             base(registry, 
@@ -1204,10 +1128,10 @@ namespace EnTTSharp.Entities
                  registry.GetPool<T4>()
         )
         {
-            poolT1 = registry.GetPool<T1>();
-            poolT2 = registry.GetPool<T2>();
-            poolT3 = registry.GetPool<T3>();
-            poolT4 = registry.GetPool<T4>();
+            poolT1 = registry.GetWritablePool<T1>();
+            poolT2 = registry.GetWritablePool<T2>();
+            poolT3 = registry.GetWritablePool<T3>();
+            poolT4 = registry.GetWritablePool<T4>();
         }
 
 
@@ -1263,18 +1187,12 @@ namespace EnTTSharp.Entities
             T2 d2 = default;
             T3 d3 = default;
             T4 d4 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4)
-            {
-                bulk(this, ek, ref r1, ref r2, ref r3, ref r4);
-            }
+            bulk(this, ek, ref r1, ref r2, ref r3, ref r4);
         }
 
         public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContextIn0Out4<TEntityKey, TContext, T1, T2, T3, T4> bulk)
@@ -1332,18 +1250,12 @@ namespace EnTTSharp.Entities
             T2 d2 = default;
             T3 d3 = default;
             T4 d4 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4)
-            {
-                bulk(this, context, ek, ref r1, ref r2, ref r3, ref r4);
-            }
+            bulk(this, context, ek, ref r1, ref r2, ref r3, ref r4);
         }
 
         public void Apply(ViewDelegates.ApplyIn1Out3<TEntityKey, T1, T2, T3, T4 > bulk)
@@ -1398,18 +1310,12 @@ namespace EnTTSharp.Entities
             T2 d2 = default;
             T3 d3 = default;
             T4 d4 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4)
-            {
-                bulk(this, ek, in r1, ref r2, ref r3, ref r4);
-            }
+            bulk(this, ek, in r1, ref r2, ref r3, ref r4);
         }
 
         public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContextIn1Out3<TEntityKey, TContext, T1, T2, T3, T4> bulk)
@@ -1467,18 +1373,12 @@ namespace EnTTSharp.Entities
             T2 d2 = default;
             T3 d3 = default;
             T4 d4 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4)
-            {
-                bulk(this, context, ek, in r1, ref r2, ref r3, ref r4);
-            }
+            bulk(this, context, ek, in r1, ref r2, ref r3, ref r4);
         }
 
         public void Apply(ViewDelegates.ApplyIn2Out2<TEntityKey, T1, T2, T3, T4 > bulk)
@@ -1533,18 +1433,12 @@ namespace EnTTSharp.Entities
             T2 d2 = default;
             T3 d3 = default;
             T4 d4 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4)
-            {
-                bulk(this, ek, in r1, in r2, ref r3, ref r4);
-            }
+            bulk(this, ek, in r1, in r2, ref r3, ref r4);
         }
 
         public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContextIn2Out2<TEntityKey, TContext, T1, T2, T3, T4> bulk)
@@ -1602,18 +1496,12 @@ namespace EnTTSharp.Entities
             T2 d2 = default;
             T3 d3 = default;
             T4 d4 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4)
-            {
-                bulk(this, context, ek, in r1, in r2, ref r3, ref r4);
-            }
+            bulk(this, context, ek, in r1, in r2, ref r3, ref r4);
         }
 
         public void Apply(ViewDelegates.ApplyIn3Out1<TEntityKey, T1, T2, T3, T4 > bulk)
@@ -1668,18 +1556,12 @@ namespace EnTTSharp.Entities
             T2 d2 = default;
             T3 d3 = default;
             T4 d4 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4)
-            {
-                bulk(this, ek, in r1, in r2, in r3, ref r4);
-            }
+            bulk(this, ek, in r1, in r2, in r3, ref r4);
         }
 
         public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContextIn3Out1<TEntityKey, TContext, T1, T2, T3, T4> bulk)
@@ -1737,18 +1619,12 @@ namespace EnTTSharp.Entities
             T2 d2 = default;
             T3 d3 = default;
             T4 d4 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4)
-            {
-                bulk(this, context, ek, in r1, in r2, in r3, ref r4);
-            }
+            bulk(this, context, ek, in r1, in r2, in r3, ref r4);
         }
 
         public void Apply(ViewDelegates.Apply<TEntityKey, T1, T2, T3, T4 > bulk)
@@ -1803,18 +1679,12 @@ namespace EnTTSharp.Entities
             T2 d2 = default;
             T3 d3 = default;
             T4 d4 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4)
-            {
-                bulk(this, ek, in r1, in r2, in r3, in r4);
-            }
+            bulk(this, ek, in r1, in r2, in r3, in r4);
         }
 
         public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1, T2, T3, T4> bulk)
@@ -1872,29 +1742,23 @@ namespace EnTTSharp.Entities
             T2 d2 = default;
             T3 d3 = default;
             T4 d4 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4)
-            {
-                bulk(this, context, ek, in r1, in r2, in r3, in r4);
-            }
+            bulk(this, context, ek, in r1, in r2, in r3, in r4);
         }
 
     }
     public sealed class PersistentView<TEntityKey, T1, T2, T3, T4, T5> : PersistentMultiViewBase<TEntityKey>, IPersistentEntityView<TEntityKey, T1, T2, T3, T4, T5>
         where TEntityKey: IEntityKey
     {
-        readonly IReadOnlyPool<TEntityKey, T1> poolT1;
-        readonly IReadOnlyPool<TEntityKey, T2> poolT2;
-        readonly IReadOnlyPool<TEntityKey, T3> poolT3;
-        readonly IReadOnlyPool<TEntityKey, T4> poolT4;
-        readonly IReadOnlyPool<TEntityKey, T5> poolT5;
+        readonly IPool<TEntityKey, T1> poolT1;
+        readonly IPool<TEntityKey, T2> poolT2;
+        readonly IPool<TEntityKey, T3> poolT3;
+        readonly IPool<TEntityKey, T4> poolT4;
+        readonly IPool<TEntityKey, T5> poolT5;
 
         public PersistentView(IEntityPoolAccess<TEntityKey> registry) :
             base(registry, 
@@ -1905,11 +1769,11 @@ namespace EnTTSharp.Entities
                  registry.GetPool<T5>()
         )
         {
-            poolT1 = registry.GetPool<T1>();
-            poolT2 = registry.GetPool<T2>();
-            poolT3 = registry.GetPool<T3>();
-            poolT4 = registry.GetPool<T4>();
-            poolT5 = registry.GetPool<T5>();
+            poolT1 = registry.GetWritablePool<T1>();
+            poolT2 = registry.GetWritablePool<T2>();
+            poolT3 = registry.GetWritablePool<T3>();
+            poolT4 = registry.GetWritablePool<T4>();
+            poolT5 = registry.GetWritablePool<T5>();
         }
 
 
@@ -1966,20 +1830,13 @@ namespace EnTTSharp.Entities
             T3 d3 = default;
             T4 d4 = default;
             T5 d5 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
-            ref var r5 = ref poolT5.TryGetRef(ek, ref d5, out var s5);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
+            ref var r5 = ref poolT5.TryGetModifiableRef(ek, ref d5, out var s5); if (!s5) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4 && 
-                s5)
-            {
-                bulk(this, ek, ref r1, ref r2, ref r3, ref r4, ref r5);
-            }
+            bulk(this, ek, ref r1, ref r2, ref r3, ref r4, ref r5);
         }
 
         public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContextIn0Out5<TEntityKey, TContext, T1, T2, T3, T4, T5> bulk)
@@ -2038,20 +1895,13 @@ namespace EnTTSharp.Entities
             T3 d3 = default;
             T4 d4 = default;
             T5 d5 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
-            ref var r5 = ref poolT5.TryGetRef(ek, ref d5, out var s5);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
+            ref var r5 = ref poolT5.TryGetModifiableRef(ek, ref d5, out var s5); if (!s5) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4 && 
-                s5)
-            {
-                bulk(this, context, ek, ref r1, ref r2, ref r3, ref r4, ref r5);
-            }
+            bulk(this, context, ek, ref r1, ref r2, ref r3, ref r4, ref r5);
         }
 
         public void Apply(ViewDelegates.ApplyIn1Out4<TEntityKey, T1, T2, T3, T4, T5 > bulk)
@@ -2107,20 +1957,13 @@ namespace EnTTSharp.Entities
             T3 d3 = default;
             T4 d4 = default;
             T5 d5 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
-            ref var r5 = ref poolT5.TryGetRef(ek, ref d5, out var s5);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
+            ref var r5 = ref poolT5.TryGetModifiableRef(ek, ref d5, out var s5); if (!s5) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4 && 
-                s5)
-            {
-                bulk(this, ek, in r1, ref r2, ref r3, ref r4, ref r5);
-            }
+            bulk(this, ek, in r1, ref r2, ref r3, ref r4, ref r5);
         }
 
         public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContextIn1Out4<TEntityKey, TContext, T1, T2, T3, T4, T5> bulk)
@@ -2179,20 +2022,13 @@ namespace EnTTSharp.Entities
             T3 d3 = default;
             T4 d4 = default;
             T5 d5 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
-            ref var r5 = ref poolT5.TryGetRef(ek, ref d5, out var s5);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
+            ref var r5 = ref poolT5.TryGetModifiableRef(ek, ref d5, out var s5); if (!s5) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4 && 
-                s5)
-            {
-                bulk(this, context, ek, in r1, ref r2, ref r3, ref r4, ref r5);
-            }
+            bulk(this, context, ek, in r1, ref r2, ref r3, ref r4, ref r5);
         }
 
         public void Apply(ViewDelegates.ApplyIn2Out3<TEntityKey, T1, T2, T3, T4, T5 > bulk)
@@ -2248,20 +2084,13 @@ namespace EnTTSharp.Entities
             T3 d3 = default;
             T4 d4 = default;
             T5 d5 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
-            ref var r5 = ref poolT5.TryGetRef(ek, ref d5, out var s5);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
+            ref var r5 = ref poolT5.TryGetModifiableRef(ek, ref d5, out var s5); if (!s5) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4 && 
-                s5)
-            {
-                bulk(this, ek, in r1, in r2, ref r3, ref r4, ref r5);
-            }
+            bulk(this, ek, in r1, in r2, ref r3, ref r4, ref r5);
         }
 
         public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContextIn2Out3<TEntityKey, TContext, T1, T2, T3, T4, T5> bulk)
@@ -2320,20 +2149,13 @@ namespace EnTTSharp.Entities
             T3 d3 = default;
             T4 d4 = default;
             T5 d5 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
-            ref var r5 = ref poolT5.TryGetRef(ek, ref d5, out var s5);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
+            ref var r5 = ref poolT5.TryGetModifiableRef(ek, ref d5, out var s5); if (!s5) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4 && 
-                s5)
-            {
-                bulk(this, context, ek, in r1, in r2, ref r3, ref r4, ref r5);
-            }
+            bulk(this, context, ek, in r1, in r2, ref r3, ref r4, ref r5);
         }
 
         public void Apply(ViewDelegates.ApplyIn3Out2<TEntityKey, T1, T2, T3, T4, T5 > bulk)
@@ -2389,20 +2211,13 @@ namespace EnTTSharp.Entities
             T3 d3 = default;
             T4 d4 = default;
             T5 d5 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
-            ref var r5 = ref poolT5.TryGetRef(ek, ref d5, out var s5);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
+            ref var r5 = ref poolT5.TryGetModifiableRef(ek, ref d5, out var s5); if (!s5) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4 && 
-                s5)
-            {
-                bulk(this, ek, in r1, in r2, in r3, ref r4, ref r5);
-            }
+            bulk(this, ek, in r1, in r2, in r3, ref r4, ref r5);
         }
 
         public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContextIn3Out2<TEntityKey, TContext, T1, T2, T3, T4, T5> bulk)
@@ -2461,20 +2276,13 @@ namespace EnTTSharp.Entities
             T3 d3 = default;
             T4 d4 = default;
             T5 d5 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
-            ref var r5 = ref poolT5.TryGetRef(ek, ref d5, out var s5);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
+            ref var r5 = ref poolT5.TryGetModifiableRef(ek, ref d5, out var s5); if (!s5) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4 && 
-                s5)
-            {
-                bulk(this, context, ek, in r1, in r2, in r3, ref r4, ref r5);
-            }
+            bulk(this, context, ek, in r1, in r2, in r3, ref r4, ref r5);
         }
 
         public void Apply(ViewDelegates.ApplyIn4Out1<TEntityKey, T1, T2, T3, T4, T5 > bulk)
@@ -2530,20 +2338,13 @@ namespace EnTTSharp.Entities
             T3 d3 = default;
             T4 d4 = default;
             T5 d5 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
-            ref var r5 = ref poolT5.TryGetRef(ek, ref d5, out var s5);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
+            ref var r5 = ref poolT5.TryGetModifiableRef(ek, ref d5, out var s5); if (!s5) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4 && 
-                s5)
-            {
-                bulk(this, ek, in r1, in r2, in r3, in r4, ref r5);
-            }
+            bulk(this, ek, in r1, in r2, in r3, in r4, ref r5);
         }
 
         public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContextIn4Out1<TEntityKey, TContext, T1, T2, T3, T4, T5> bulk)
@@ -2602,20 +2403,13 @@ namespace EnTTSharp.Entities
             T3 d3 = default;
             T4 d4 = default;
             T5 d5 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
-            ref var r5 = ref poolT5.TryGetRef(ek, ref d5, out var s5);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
+            ref var r5 = ref poolT5.TryGetModifiableRef(ek, ref d5, out var s5); if (!s5) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4 && 
-                s5)
-            {
-                bulk(this, context, ek, in r1, in r2, in r3, in r4, ref r5);
-            }
+            bulk(this, context, ek, in r1, in r2, in r3, in r4, ref r5);
         }
 
         public void Apply(ViewDelegates.Apply<TEntityKey, T1, T2, T3, T4, T5 > bulk)
@@ -2671,20 +2465,13 @@ namespace EnTTSharp.Entities
             T3 d3 = default;
             T4 d4 = default;
             T5 d5 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
-            ref var r5 = ref poolT5.TryGetRef(ek, ref d5, out var s5);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
+            ref var r5 = ref poolT5.TryGetModifiableRef(ek, ref d5, out var s5); if (!s5) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4 && 
-                s5)
-            {
-                bulk(this, ek, in r1, in r2, in r3, in r4, in r5);
-            }
+            bulk(this, ek, in r1, in r2, in r3, in r4, in r5);
         }
 
         public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1, T2, T3, T4, T5> bulk)
@@ -2743,32 +2530,25 @@ namespace EnTTSharp.Entities
             T3 d3 = default;
             T4 d4 = default;
             T5 d5 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
-            ref var r5 = ref poolT5.TryGetRef(ek, ref d5, out var s5);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
+            ref var r5 = ref poolT5.TryGetModifiableRef(ek, ref d5, out var s5); if (!s5) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4 && 
-                s5)
-            {
-                bulk(this, context, ek, in r1, in r2, in r3, in r4, in r5);
-            }
+            bulk(this, context, ek, in r1, in r2, in r3, in r4, in r5);
         }
 
     }
     public sealed class PersistentView<TEntityKey, T1, T2, T3, T4, T5, T6> : PersistentMultiViewBase<TEntityKey>, IPersistentEntityView<TEntityKey, T1, T2, T3, T4, T5, T6>
         where TEntityKey: IEntityKey
     {
-        readonly IReadOnlyPool<TEntityKey, T1> poolT1;
-        readonly IReadOnlyPool<TEntityKey, T2> poolT2;
-        readonly IReadOnlyPool<TEntityKey, T3> poolT3;
-        readonly IReadOnlyPool<TEntityKey, T4> poolT4;
-        readonly IReadOnlyPool<TEntityKey, T5> poolT5;
-        readonly IReadOnlyPool<TEntityKey, T6> poolT6;
+        readonly IPool<TEntityKey, T1> poolT1;
+        readonly IPool<TEntityKey, T2> poolT2;
+        readonly IPool<TEntityKey, T3> poolT3;
+        readonly IPool<TEntityKey, T4> poolT4;
+        readonly IPool<TEntityKey, T5> poolT5;
+        readonly IPool<TEntityKey, T6> poolT6;
 
         public PersistentView(IEntityPoolAccess<TEntityKey> registry) :
             base(registry, 
@@ -2780,12 +2560,12 @@ namespace EnTTSharp.Entities
                  registry.GetPool<T6>()
         )
         {
-            poolT1 = registry.GetPool<T1>();
-            poolT2 = registry.GetPool<T2>();
-            poolT3 = registry.GetPool<T3>();
-            poolT4 = registry.GetPool<T4>();
-            poolT5 = registry.GetPool<T5>();
-            poolT6 = registry.GetPool<T6>();
+            poolT1 = registry.GetWritablePool<T1>();
+            poolT2 = registry.GetWritablePool<T2>();
+            poolT3 = registry.GetWritablePool<T3>();
+            poolT4 = registry.GetWritablePool<T4>();
+            poolT5 = registry.GetWritablePool<T5>();
+            poolT6 = registry.GetWritablePool<T6>();
         }
 
 
@@ -2843,22 +2623,14 @@ namespace EnTTSharp.Entities
             T4 d4 = default;
             T5 d5 = default;
             T6 d6 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
-            ref var r5 = ref poolT5.TryGetRef(ek, ref d5, out var s5);
-            ref var r6 = ref poolT6.TryGetRef(ek, ref d6, out var s6);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
+            ref var r5 = ref poolT5.TryGetModifiableRef(ek, ref d5, out var s5); if (!s5) return;
+            ref var r6 = ref poolT6.TryGetModifiableRef(ek, ref d6, out var s6); if (!s6) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4 && 
-                s5 && 
-                s6)
-            {
-                bulk(this, ek, ref r1, ref r2, ref r3, ref r4, ref r5, ref r6);
-            }
+            bulk(this, ek, ref r1, ref r2, ref r3, ref r4, ref r5, ref r6);
         }
 
         public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContextIn0Out6<TEntityKey, TContext, T1, T2, T3, T4, T5, T6> bulk)
@@ -2918,22 +2690,14 @@ namespace EnTTSharp.Entities
             T4 d4 = default;
             T5 d5 = default;
             T6 d6 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
-            ref var r5 = ref poolT5.TryGetRef(ek, ref d5, out var s5);
-            ref var r6 = ref poolT6.TryGetRef(ek, ref d6, out var s6);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
+            ref var r5 = ref poolT5.TryGetModifiableRef(ek, ref d5, out var s5); if (!s5) return;
+            ref var r6 = ref poolT6.TryGetModifiableRef(ek, ref d6, out var s6); if (!s6) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4 && 
-                s5 && 
-                s6)
-            {
-                bulk(this, context, ek, ref r1, ref r2, ref r3, ref r4, ref r5, ref r6);
-            }
+            bulk(this, context, ek, ref r1, ref r2, ref r3, ref r4, ref r5, ref r6);
         }
 
         public void Apply(ViewDelegates.ApplyIn1Out5<TEntityKey, T1, T2, T3, T4, T5, T6 > bulk)
@@ -2990,22 +2754,14 @@ namespace EnTTSharp.Entities
             T4 d4 = default;
             T5 d5 = default;
             T6 d6 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
-            ref var r5 = ref poolT5.TryGetRef(ek, ref d5, out var s5);
-            ref var r6 = ref poolT6.TryGetRef(ek, ref d6, out var s6);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
+            ref var r5 = ref poolT5.TryGetModifiableRef(ek, ref d5, out var s5); if (!s5) return;
+            ref var r6 = ref poolT6.TryGetModifiableRef(ek, ref d6, out var s6); if (!s6) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4 && 
-                s5 && 
-                s6)
-            {
-                bulk(this, ek, in r1, ref r2, ref r3, ref r4, ref r5, ref r6);
-            }
+            bulk(this, ek, in r1, ref r2, ref r3, ref r4, ref r5, ref r6);
         }
 
         public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContextIn1Out5<TEntityKey, TContext, T1, T2, T3, T4, T5, T6> bulk)
@@ -3065,22 +2821,14 @@ namespace EnTTSharp.Entities
             T4 d4 = default;
             T5 d5 = default;
             T6 d6 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
-            ref var r5 = ref poolT5.TryGetRef(ek, ref d5, out var s5);
-            ref var r6 = ref poolT6.TryGetRef(ek, ref d6, out var s6);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
+            ref var r5 = ref poolT5.TryGetModifiableRef(ek, ref d5, out var s5); if (!s5) return;
+            ref var r6 = ref poolT6.TryGetModifiableRef(ek, ref d6, out var s6); if (!s6) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4 && 
-                s5 && 
-                s6)
-            {
-                bulk(this, context, ek, in r1, ref r2, ref r3, ref r4, ref r5, ref r6);
-            }
+            bulk(this, context, ek, in r1, ref r2, ref r3, ref r4, ref r5, ref r6);
         }
 
         public void Apply(ViewDelegates.ApplyIn2Out4<TEntityKey, T1, T2, T3, T4, T5, T6 > bulk)
@@ -3137,22 +2885,14 @@ namespace EnTTSharp.Entities
             T4 d4 = default;
             T5 d5 = default;
             T6 d6 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
-            ref var r5 = ref poolT5.TryGetRef(ek, ref d5, out var s5);
-            ref var r6 = ref poolT6.TryGetRef(ek, ref d6, out var s6);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
+            ref var r5 = ref poolT5.TryGetModifiableRef(ek, ref d5, out var s5); if (!s5) return;
+            ref var r6 = ref poolT6.TryGetModifiableRef(ek, ref d6, out var s6); if (!s6) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4 && 
-                s5 && 
-                s6)
-            {
-                bulk(this, ek, in r1, in r2, ref r3, ref r4, ref r5, ref r6);
-            }
+            bulk(this, ek, in r1, in r2, ref r3, ref r4, ref r5, ref r6);
         }
 
         public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContextIn2Out4<TEntityKey, TContext, T1, T2, T3, T4, T5, T6> bulk)
@@ -3212,22 +2952,14 @@ namespace EnTTSharp.Entities
             T4 d4 = default;
             T5 d5 = default;
             T6 d6 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
-            ref var r5 = ref poolT5.TryGetRef(ek, ref d5, out var s5);
-            ref var r6 = ref poolT6.TryGetRef(ek, ref d6, out var s6);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
+            ref var r5 = ref poolT5.TryGetModifiableRef(ek, ref d5, out var s5); if (!s5) return;
+            ref var r6 = ref poolT6.TryGetModifiableRef(ek, ref d6, out var s6); if (!s6) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4 && 
-                s5 && 
-                s6)
-            {
-                bulk(this, context, ek, in r1, in r2, ref r3, ref r4, ref r5, ref r6);
-            }
+            bulk(this, context, ek, in r1, in r2, ref r3, ref r4, ref r5, ref r6);
         }
 
         public void Apply(ViewDelegates.ApplyIn3Out3<TEntityKey, T1, T2, T3, T4, T5, T6 > bulk)
@@ -3284,22 +3016,14 @@ namespace EnTTSharp.Entities
             T4 d4 = default;
             T5 d5 = default;
             T6 d6 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
-            ref var r5 = ref poolT5.TryGetRef(ek, ref d5, out var s5);
-            ref var r6 = ref poolT6.TryGetRef(ek, ref d6, out var s6);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
+            ref var r5 = ref poolT5.TryGetModifiableRef(ek, ref d5, out var s5); if (!s5) return;
+            ref var r6 = ref poolT6.TryGetModifiableRef(ek, ref d6, out var s6); if (!s6) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4 && 
-                s5 && 
-                s6)
-            {
-                bulk(this, ek, in r1, in r2, in r3, ref r4, ref r5, ref r6);
-            }
+            bulk(this, ek, in r1, in r2, in r3, ref r4, ref r5, ref r6);
         }
 
         public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContextIn3Out3<TEntityKey, TContext, T1, T2, T3, T4, T5, T6> bulk)
@@ -3359,22 +3083,14 @@ namespace EnTTSharp.Entities
             T4 d4 = default;
             T5 d5 = default;
             T6 d6 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
-            ref var r5 = ref poolT5.TryGetRef(ek, ref d5, out var s5);
-            ref var r6 = ref poolT6.TryGetRef(ek, ref d6, out var s6);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
+            ref var r5 = ref poolT5.TryGetModifiableRef(ek, ref d5, out var s5); if (!s5) return;
+            ref var r6 = ref poolT6.TryGetModifiableRef(ek, ref d6, out var s6); if (!s6) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4 && 
-                s5 && 
-                s6)
-            {
-                bulk(this, context, ek, in r1, in r2, in r3, ref r4, ref r5, ref r6);
-            }
+            bulk(this, context, ek, in r1, in r2, in r3, ref r4, ref r5, ref r6);
         }
 
         public void Apply(ViewDelegates.ApplyIn4Out2<TEntityKey, T1, T2, T3, T4, T5, T6 > bulk)
@@ -3431,22 +3147,14 @@ namespace EnTTSharp.Entities
             T4 d4 = default;
             T5 d5 = default;
             T6 d6 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
-            ref var r5 = ref poolT5.TryGetRef(ek, ref d5, out var s5);
-            ref var r6 = ref poolT6.TryGetRef(ek, ref d6, out var s6);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
+            ref var r5 = ref poolT5.TryGetModifiableRef(ek, ref d5, out var s5); if (!s5) return;
+            ref var r6 = ref poolT6.TryGetModifiableRef(ek, ref d6, out var s6); if (!s6) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4 && 
-                s5 && 
-                s6)
-            {
-                bulk(this, ek, in r1, in r2, in r3, in r4, ref r5, ref r6);
-            }
+            bulk(this, ek, in r1, in r2, in r3, in r4, ref r5, ref r6);
         }
 
         public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContextIn4Out2<TEntityKey, TContext, T1, T2, T3, T4, T5, T6> bulk)
@@ -3506,22 +3214,14 @@ namespace EnTTSharp.Entities
             T4 d4 = default;
             T5 d5 = default;
             T6 d6 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
-            ref var r5 = ref poolT5.TryGetRef(ek, ref d5, out var s5);
-            ref var r6 = ref poolT6.TryGetRef(ek, ref d6, out var s6);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
+            ref var r5 = ref poolT5.TryGetModifiableRef(ek, ref d5, out var s5); if (!s5) return;
+            ref var r6 = ref poolT6.TryGetModifiableRef(ek, ref d6, out var s6); if (!s6) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4 && 
-                s5 && 
-                s6)
-            {
-                bulk(this, context, ek, in r1, in r2, in r3, in r4, ref r5, ref r6);
-            }
+            bulk(this, context, ek, in r1, in r2, in r3, in r4, ref r5, ref r6);
         }
 
         public void Apply(ViewDelegates.ApplyIn5Out1<TEntityKey, T1, T2, T3, T4, T5, T6 > bulk)
@@ -3578,22 +3278,14 @@ namespace EnTTSharp.Entities
             T4 d4 = default;
             T5 d5 = default;
             T6 d6 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
-            ref var r5 = ref poolT5.TryGetRef(ek, ref d5, out var s5);
-            ref var r6 = ref poolT6.TryGetRef(ek, ref d6, out var s6);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
+            ref var r5 = ref poolT5.TryGetModifiableRef(ek, ref d5, out var s5); if (!s5) return;
+            ref var r6 = ref poolT6.TryGetModifiableRef(ek, ref d6, out var s6); if (!s6) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4 && 
-                s5 && 
-                s6)
-            {
-                bulk(this, ek, in r1, in r2, in r3, in r4, in r5, ref r6);
-            }
+            bulk(this, ek, in r1, in r2, in r3, in r4, in r5, ref r6);
         }
 
         public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContextIn5Out1<TEntityKey, TContext, T1, T2, T3, T4, T5, T6> bulk)
@@ -3653,22 +3345,14 @@ namespace EnTTSharp.Entities
             T4 d4 = default;
             T5 d5 = default;
             T6 d6 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
-            ref var r5 = ref poolT5.TryGetRef(ek, ref d5, out var s5);
-            ref var r6 = ref poolT6.TryGetRef(ek, ref d6, out var s6);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
+            ref var r5 = ref poolT5.TryGetModifiableRef(ek, ref d5, out var s5); if (!s5) return;
+            ref var r6 = ref poolT6.TryGetModifiableRef(ek, ref d6, out var s6); if (!s6) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4 && 
-                s5 && 
-                s6)
-            {
-                bulk(this, context, ek, in r1, in r2, in r3, in r4, in r5, ref r6);
-            }
+            bulk(this, context, ek, in r1, in r2, in r3, in r4, in r5, ref r6);
         }
 
         public void Apply(ViewDelegates.Apply<TEntityKey, T1, T2, T3, T4, T5, T6 > bulk)
@@ -3725,22 +3409,14 @@ namespace EnTTSharp.Entities
             T4 d4 = default;
             T5 d5 = default;
             T6 d6 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
-            ref var r5 = ref poolT5.TryGetRef(ek, ref d5, out var s5);
-            ref var r6 = ref poolT6.TryGetRef(ek, ref d6, out var s6);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
+            ref var r5 = ref poolT5.TryGetModifiableRef(ek, ref d5, out var s5); if (!s5) return;
+            ref var r6 = ref poolT6.TryGetModifiableRef(ek, ref d6, out var s6); if (!s6) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4 && 
-                s5 && 
-                s6)
-            {
-                bulk(this, ek, in r1, in r2, in r3, in r4, in r5, in r6);
-            }
+            bulk(this, ek, in r1, in r2, in r3, in r4, in r5, in r6);
         }
 
         public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1, T2, T3, T4, T5, T6> bulk)
@@ -3800,35 +3476,27 @@ namespace EnTTSharp.Entities
             T4 d4 = default;
             T5 d5 = default;
             T6 d6 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
-            ref var r5 = ref poolT5.TryGetRef(ek, ref d5, out var s5);
-            ref var r6 = ref poolT6.TryGetRef(ek, ref d6, out var s6);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
+            ref var r5 = ref poolT5.TryGetModifiableRef(ek, ref d5, out var s5); if (!s5) return;
+            ref var r6 = ref poolT6.TryGetModifiableRef(ek, ref d6, out var s6); if (!s6) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4 && 
-                s5 && 
-                s6)
-            {
-                bulk(this, context, ek, in r1, in r2, in r3, in r4, in r5, in r6);
-            }
+            bulk(this, context, ek, in r1, in r2, in r3, in r4, in r5, in r6);
         }
 
     }
     public sealed class PersistentView<TEntityKey, T1, T2, T3, T4, T5, T6, T7> : PersistentMultiViewBase<TEntityKey>, IPersistentEntityView<TEntityKey, T1, T2, T3, T4, T5, T6, T7>
         where TEntityKey: IEntityKey
     {
-        readonly IReadOnlyPool<TEntityKey, T1> poolT1;
-        readonly IReadOnlyPool<TEntityKey, T2> poolT2;
-        readonly IReadOnlyPool<TEntityKey, T3> poolT3;
-        readonly IReadOnlyPool<TEntityKey, T4> poolT4;
-        readonly IReadOnlyPool<TEntityKey, T5> poolT5;
-        readonly IReadOnlyPool<TEntityKey, T6> poolT6;
-        readonly IReadOnlyPool<TEntityKey, T7> poolT7;
+        readonly IPool<TEntityKey, T1> poolT1;
+        readonly IPool<TEntityKey, T2> poolT2;
+        readonly IPool<TEntityKey, T3> poolT3;
+        readonly IPool<TEntityKey, T4> poolT4;
+        readonly IPool<TEntityKey, T5> poolT5;
+        readonly IPool<TEntityKey, T6> poolT6;
+        readonly IPool<TEntityKey, T7> poolT7;
 
         public PersistentView(IEntityPoolAccess<TEntityKey> registry) :
             base(registry, 
@@ -3841,13 +3509,13 @@ namespace EnTTSharp.Entities
                  registry.GetPool<T7>()
         )
         {
-            poolT1 = registry.GetPool<T1>();
-            poolT2 = registry.GetPool<T2>();
-            poolT3 = registry.GetPool<T3>();
-            poolT4 = registry.GetPool<T4>();
-            poolT5 = registry.GetPool<T5>();
-            poolT6 = registry.GetPool<T6>();
-            poolT7 = registry.GetPool<T7>();
+            poolT1 = registry.GetWritablePool<T1>();
+            poolT2 = registry.GetWritablePool<T2>();
+            poolT3 = registry.GetWritablePool<T3>();
+            poolT4 = registry.GetWritablePool<T4>();
+            poolT5 = registry.GetWritablePool<T5>();
+            poolT6 = registry.GetWritablePool<T6>();
+            poolT7 = registry.GetWritablePool<T7>();
         }
 
 
@@ -3906,24 +3574,15 @@ namespace EnTTSharp.Entities
             T5 d5 = default;
             T6 d6 = default;
             T7 d7 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
-            ref var r5 = ref poolT5.TryGetRef(ek, ref d5, out var s5);
-            ref var r6 = ref poolT6.TryGetRef(ek, ref d6, out var s6);
-            ref var r7 = ref poolT7.TryGetRef(ek, ref d7, out var s7);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
+            ref var r5 = ref poolT5.TryGetModifiableRef(ek, ref d5, out var s5); if (!s5) return;
+            ref var r6 = ref poolT6.TryGetModifiableRef(ek, ref d6, out var s6); if (!s6) return;
+            ref var r7 = ref poolT7.TryGetModifiableRef(ek, ref d7, out var s7); if (!s7) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4 && 
-                s5 && 
-                s6 && 
-                s7)
-            {
-                bulk(this, ek, ref r1, ref r2, ref r3, ref r4, ref r5, ref r6, ref r7);
-            }
+            bulk(this, ek, ref r1, ref r2, ref r3, ref r4, ref r5, ref r6, ref r7);
         }
 
         public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContextIn0Out7<TEntityKey, TContext, T1, T2, T3, T4, T5, T6, T7> bulk)
@@ -3984,24 +3643,15 @@ namespace EnTTSharp.Entities
             T5 d5 = default;
             T6 d6 = default;
             T7 d7 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
-            ref var r5 = ref poolT5.TryGetRef(ek, ref d5, out var s5);
-            ref var r6 = ref poolT6.TryGetRef(ek, ref d6, out var s6);
-            ref var r7 = ref poolT7.TryGetRef(ek, ref d7, out var s7);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
+            ref var r5 = ref poolT5.TryGetModifiableRef(ek, ref d5, out var s5); if (!s5) return;
+            ref var r6 = ref poolT6.TryGetModifiableRef(ek, ref d6, out var s6); if (!s6) return;
+            ref var r7 = ref poolT7.TryGetModifiableRef(ek, ref d7, out var s7); if (!s7) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4 && 
-                s5 && 
-                s6 && 
-                s7)
-            {
-                bulk(this, context, ek, ref r1, ref r2, ref r3, ref r4, ref r5, ref r6, ref r7);
-            }
+            bulk(this, context, ek, ref r1, ref r2, ref r3, ref r4, ref r5, ref r6, ref r7);
         }
 
         public void Apply(ViewDelegates.ApplyIn1Out6<TEntityKey, T1, T2, T3, T4, T5, T6, T7 > bulk)
@@ -4059,24 +3709,15 @@ namespace EnTTSharp.Entities
             T5 d5 = default;
             T6 d6 = default;
             T7 d7 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
-            ref var r5 = ref poolT5.TryGetRef(ek, ref d5, out var s5);
-            ref var r6 = ref poolT6.TryGetRef(ek, ref d6, out var s6);
-            ref var r7 = ref poolT7.TryGetRef(ek, ref d7, out var s7);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
+            ref var r5 = ref poolT5.TryGetModifiableRef(ek, ref d5, out var s5); if (!s5) return;
+            ref var r6 = ref poolT6.TryGetModifiableRef(ek, ref d6, out var s6); if (!s6) return;
+            ref var r7 = ref poolT7.TryGetModifiableRef(ek, ref d7, out var s7); if (!s7) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4 && 
-                s5 && 
-                s6 && 
-                s7)
-            {
-                bulk(this, ek, in r1, ref r2, ref r3, ref r4, ref r5, ref r6, ref r7);
-            }
+            bulk(this, ek, in r1, ref r2, ref r3, ref r4, ref r5, ref r6, ref r7);
         }
 
         public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContextIn1Out6<TEntityKey, TContext, T1, T2, T3, T4, T5, T6, T7> bulk)
@@ -4137,24 +3778,15 @@ namespace EnTTSharp.Entities
             T5 d5 = default;
             T6 d6 = default;
             T7 d7 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
-            ref var r5 = ref poolT5.TryGetRef(ek, ref d5, out var s5);
-            ref var r6 = ref poolT6.TryGetRef(ek, ref d6, out var s6);
-            ref var r7 = ref poolT7.TryGetRef(ek, ref d7, out var s7);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
+            ref var r5 = ref poolT5.TryGetModifiableRef(ek, ref d5, out var s5); if (!s5) return;
+            ref var r6 = ref poolT6.TryGetModifiableRef(ek, ref d6, out var s6); if (!s6) return;
+            ref var r7 = ref poolT7.TryGetModifiableRef(ek, ref d7, out var s7); if (!s7) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4 && 
-                s5 && 
-                s6 && 
-                s7)
-            {
-                bulk(this, context, ek, in r1, ref r2, ref r3, ref r4, ref r5, ref r6, ref r7);
-            }
+            bulk(this, context, ek, in r1, ref r2, ref r3, ref r4, ref r5, ref r6, ref r7);
         }
 
         public void Apply(ViewDelegates.ApplyIn2Out5<TEntityKey, T1, T2, T3, T4, T5, T6, T7 > bulk)
@@ -4212,24 +3844,15 @@ namespace EnTTSharp.Entities
             T5 d5 = default;
             T6 d6 = default;
             T7 d7 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
-            ref var r5 = ref poolT5.TryGetRef(ek, ref d5, out var s5);
-            ref var r6 = ref poolT6.TryGetRef(ek, ref d6, out var s6);
-            ref var r7 = ref poolT7.TryGetRef(ek, ref d7, out var s7);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
+            ref var r5 = ref poolT5.TryGetModifiableRef(ek, ref d5, out var s5); if (!s5) return;
+            ref var r6 = ref poolT6.TryGetModifiableRef(ek, ref d6, out var s6); if (!s6) return;
+            ref var r7 = ref poolT7.TryGetModifiableRef(ek, ref d7, out var s7); if (!s7) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4 && 
-                s5 && 
-                s6 && 
-                s7)
-            {
-                bulk(this, ek, in r1, in r2, ref r3, ref r4, ref r5, ref r6, ref r7);
-            }
+            bulk(this, ek, in r1, in r2, ref r3, ref r4, ref r5, ref r6, ref r7);
         }
 
         public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContextIn2Out5<TEntityKey, TContext, T1, T2, T3, T4, T5, T6, T7> bulk)
@@ -4290,24 +3913,15 @@ namespace EnTTSharp.Entities
             T5 d5 = default;
             T6 d6 = default;
             T7 d7 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
-            ref var r5 = ref poolT5.TryGetRef(ek, ref d5, out var s5);
-            ref var r6 = ref poolT6.TryGetRef(ek, ref d6, out var s6);
-            ref var r7 = ref poolT7.TryGetRef(ek, ref d7, out var s7);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
+            ref var r5 = ref poolT5.TryGetModifiableRef(ek, ref d5, out var s5); if (!s5) return;
+            ref var r6 = ref poolT6.TryGetModifiableRef(ek, ref d6, out var s6); if (!s6) return;
+            ref var r7 = ref poolT7.TryGetModifiableRef(ek, ref d7, out var s7); if (!s7) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4 && 
-                s5 && 
-                s6 && 
-                s7)
-            {
-                bulk(this, context, ek, in r1, in r2, ref r3, ref r4, ref r5, ref r6, ref r7);
-            }
+            bulk(this, context, ek, in r1, in r2, ref r3, ref r4, ref r5, ref r6, ref r7);
         }
 
         public void Apply(ViewDelegates.ApplyIn3Out4<TEntityKey, T1, T2, T3, T4, T5, T6, T7 > bulk)
@@ -4365,24 +3979,15 @@ namespace EnTTSharp.Entities
             T5 d5 = default;
             T6 d6 = default;
             T7 d7 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
-            ref var r5 = ref poolT5.TryGetRef(ek, ref d5, out var s5);
-            ref var r6 = ref poolT6.TryGetRef(ek, ref d6, out var s6);
-            ref var r7 = ref poolT7.TryGetRef(ek, ref d7, out var s7);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
+            ref var r5 = ref poolT5.TryGetModifiableRef(ek, ref d5, out var s5); if (!s5) return;
+            ref var r6 = ref poolT6.TryGetModifiableRef(ek, ref d6, out var s6); if (!s6) return;
+            ref var r7 = ref poolT7.TryGetModifiableRef(ek, ref d7, out var s7); if (!s7) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4 && 
-                s5 && 
-                s6 && 
-                s7)
-            {
-                bulk(this, ek, in r1, in r2, in r3, ref r4, ref r5, ref r6, ref r7);
-            }
+            bulk(this, ek, in r1, in r2, in r3, ref r4, ref r5, ref r6, ref r7);
         }
 
         public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContextIn3Out4<TEntityKey, TContext, T1, T2, T3, T4, T5, T6, T7> bulk)
@@ -4443,24 +4048,15 @@ namespace EnTTSharp.Entities
             T5 d5 = default;
             T6 d6 = default;
             T7 d7 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
-            ref var r5 = ref poolT5.TryGetRef(ek, ref d5, out var s5);
-            ref var r6 = ref poolT6.TryGetRef(ek, ref d6, out var s6);
-            ref var r7 = ref poolT7.TryGetRef(ek, ref d7, out var s7);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
+            ref var r5 = ref poolT5.TryGetModifiableRef(ek, ref d5, out var s5); if (!s5) return;
+            ref var r6 = ref poolT6.TryGetModifiableRef(ek, ref d6, out var s6); if (!s6) return;
+            ref var r7 = ref poolT7.TryGetModifiableRef(ek, ref d7, out var s7); if (!s7) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4 && 
-                s5 && 
-                s6 && 
-                s7)
-            {
-                bulk(this, context, ek, in r1, in r2, in r3, ref r4, ref r5, ref r6, ref r7);
-            }
+            bulk(this, context, ek, in r1, in r2, in r3, ref r4, ref r5, ref r6, ref r7);
         }
 
         public void Apply(ViewDelegates.ApplyIn4Out3<TEntityKey, T1, T2, T3, T4, T5, T6, T7 > bulk)
@@ -4518,24 +4114,15 @@ namespace EnTTSharp.Entities
             T5 d5 = default;
             T6 d6 = default;
             T7 d7 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
-            ref var r5 = ref poolT5.TryGetRef(ek, ref d5, out var s5);
-            ref var r6 = ref poolT6.TryGetRef(ek, ref d6, out var s6);
-            ref var r7 = ref poolT7.TryGetRef(ek, ref d7, out var s7);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
+            ref var r5 = ref poolT5.TryGetModifiableRef(ek, ref d5, out var s5); if (!s5) return;
+            ref var r6 = ref poolT6.TryGetModifiableRef(ek, ref d6, out var s6); if (!s6) return;
+            ref var r7 = ref poolT7.TryGetModifiableRef(ek, ref d7, out var s7); if (!s7) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4 && 
-                s5 && 
-                s6 && 
-                s7)
-            {
-                bulk(this, ek, in r1, in r2, in r3, in r4, ref r5, ref r6, ref r7);
-            }
+            bulk(this, ek, in r1, in r2, in r3, in r4, ref r5, ref r6, ref r7);
         }
 
         public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContextIn4Out3<TEntityKey, TContext, T1, T2, T3, T4, T5, T6, T7> bulk)
@@ -4596,24 +4183,15 @@ namespace EnTTSharp.Entities
             T5 d5 = default;
             T6 d6 = default;
             T7 d7 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
-            ref var r5 = ref poolT5.TryGetRef(ek, ref d5, out var s5);
-            ref var r6 = ref poolT6.TryGetRef(ek, ref d6, out var s6);
-            ref var r7 = ref poolT7.TryGetRef(ek, ref d7, out var s7);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
+            ref var r5 = ref poolT5.TryGetModifiableRef(ek, ref d5, out var s5); if (!s5) return;
+            ref var r6 = ref poolT6.TryGetModifiableRef(ek, ref d6, out var s6); if (!s6) return;
+            ref var r7 = ref poolT7.TryGetModifiableRef(ek, ref d7, out var s7); if (!s7) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4 && 
-                s5 && 
-                s6 && 
-                s7)
-            {
-                bulk(this, context, ek, in r1, in r2, in r3, in r4, ref r5, ref r6, ref r7);
-            }
+            bulk(this, context, ek, in r1, in r2, in r3, in r4, ref r5, ref r6, ref r7);
         }
 
         public void Apply(ViewDelegates.ApplyIn5Out2<TEntityKey, T1, T2, T3, T4, T5, T6, T7 > bulk)
@@ -4671,24 +4249,15 @@ namespace EnTTSharp.Entities
             T5 d5 = default;
             T6 d6 = default;
             T7 d7 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
-            ref var r5 = ref poolT5.TryGetRef(ek, ref d5, out var s5);
-            ref var r6 = ref poolT6.TryGetRef(ek, ref d6, out var s6);
-            ref var r7 = ref poolT7.TryGetRef(ek, ref d7, out var s7);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
+            ref var r5 = ref poolT5.TryGetModifiableRef(ek, ref d5, out var s5); if (!s5) return;
+            ref var r6 = ref poolT6.TryGetModifiableRef(ek, ref d6, out var s6); if (!s6) return;
+            ref var r7 = ref poolT7.TryGetModifiableRef(ek, ref d7, out var s7); if (!s7) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4 && 
-                s5 && 
-                s6 && 
-                s7)
-            {
-                bulk(this, ek, in r1, in r2, in r3, in r4, in r5, ref r6, ref r7);
-            }
+            bulk(this, ek, in r1, in r2, in r3, in r4, in r5, ref r6, ref r7);
         }
 
         public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContextIn5Out2<TEntityKey, TContext, T1, T2, T3, T4, T5, T6, T7> bulk)
@@ -4749,24 +4318,15 @@ namespace EnTTSharp.Entities
             T5 d5 = default;
             T6 d6 = default;
             T7 d7 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
-            ref var r5 = ref poolT5.TryGetRef(ek, ref d5, out var s5);
-            ref var r6 = ref poolT6.TryGetRef(ek, ref d6, out var s6);
-            ref var r7 = ref poolT7.TryGetRef(ek, ref d7, out var s7);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
+            ref var r5 = ref poolT5.TryGetModifiableRef(ek, ref d5, out var s5); if (!s5) return;
+            ref var r6 = ref poolT6.TryGetModifiableRef(ek, ref d6, out var s6); if (!s6) return;
+            ref var r7 = ref poolT7.TryGetModifiableRef(ek, ref d7, out var s7); if (!s7) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4 && 
-                s5 && 
-                s6 && 
-                s7)
-            {
-                bulk(this, context, ek, in r1, in r2, in r3, in r4, in r5, ref r6, ref r7);
-            }
+            bulk(this, context, ek, in r1, in r2, in r3, in r4, in r5, ref r6, ref r7);
         }
 
         public void Apply(ViewDelegates.ApplyIn6Out1<TEntityKey, T1, T2, T3, T4, T5, T6, T7 > bulk)
@@ -4824,24 +4384,15 @@ namespace EnTTSharp.Entities
             T5 d5 = default;
             T6 d6 = default;
             T7 d7 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
-            ref var r5 = ref poolT5.TryGetRef(ek, ref d5, out var s5);
-            ref var r6 = ref poolT6.TryGetRef(ek, ref d6, out var s6);
-            ref var r7 = ref poolT7.TryGetRef(ek, ref d7, out var s7);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
+            ref var r5 = ref poolT5.TryGetModifiableRef(ek, ref d5, out var s5); if (!s5) return;
+            ref var r6 = ref poolT6.TryGetModifiableRef(ek, ref d6, out var s6); if (!s6) return;
+            ref var r7 = ref poolT7.TryGetModifiableRef(ek, ref d7, out var s7); if (!s7) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4 && 
-                s5 && 
-                s6 && 
-                s7)
-            {
-                bulk(this, ek, in r1, in r2, in r3, in r4, in r5, in r6, ref r7);
-            }
+            bulk(this, ek, in r1, in r2, in r3, in r4, in r5, in r6, ref r7);
         }
 
         public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContextIn6Out1<TEntityKey, TContext, T1, T2, T3, T4, T5, T6, T7> bulk)
@@ -4902,24 +4453,15 @@ namespace EnTTSharp.Entities
             T5 d5 = default;
             T6 d6 = default;
             T7 d7 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
-            ref var r5 = ref poolT5.TryGetRef(ek, ref d5, out var s5);
-            ref var r6 = ref poolT6.TryGetRef(ek, ref d6, out var s6);
-            ref var r7 = ref poolT7.TryGetRef(ek, ref d7, out var s7);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
+            ref var r5 = ref poolT5.TryGetModifiableRef(ek, ref d5, out var s5); if (!s5) return;
+            ref var r6 = ref poolT6.TryGetModifiableRef(ek, ref d6, out var s6); if (!s6) return;
+            ref var r7 = ref poolT7.TryGetModifiableRef(ek, ref d7, out var s7); if (!s7) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4 && 
-                s5 && 
-                s6 && 
-                s7)
-            {
-                bulk(this, context, ek, in r1, in r2, in r3, in r4, in r5, in r6, ref r7);
-            }
+            bulk(this, context, ek, in r1, in r2, in r3, in r4, in r5, in r6, ref r7);
         }
 
         public void Apply(ViewDelegates.Apply<TEntityKey, T1, T2, T3, T4, T5, T6, T7 > bulk)
@@ -4977,24 +4519,15 @@ namespace EnTTSharp.Entities
             T5 d5 = default;
             T6 d6 = default;
             T7 d7 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
-            ref var r5 = ref poolT5.TryGetRef(ek, ref d5, out var s5);
-            ref var r6 = ref poolT6.TryGetRef(ek, ref d6, out var s6);
-            ref var r7 = ref poolT7.TryGetRef(ek, ref d7, out var s7);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
+            ref var r5 = ref poolT5.TryGetModifiableRef(ek, ref d5, out var s5); if (!s5) return;
+            ref var r6 = ref poolT6.TryGetModifiableRef(ek, ref d6, out var s6); if (!s6) return;
+            ref var r7 = ref poolT7.TryGetModifiableRef(ek, ref d7, out var s7); if (!s7) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4 && 
-                s5 && 
-                s6 && 
-                s7)
-            {
-                bulk(this, ek, in r1, in r2, in r3, in r4, in r5, in r6, in r7);
-            }
+            bulk(this, ek, in r1, in r2, in r3, in r4, in r5, in r6, in r7);
         }
 
         public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<TEntityKey, TContext, T1, T2, T3, T4, T5, T6, T7> bulk)
@@ -5055,24 +4588,15 @@ namespace EnTTSharp.Entities
             T5 d5 = default;
             T6 d6 = default;
             T7 d7 = default;
-            ref var r1 = ref poolT1.TryGetRef(ek, ref d1, out var s1);
-            ref var r2 = ref poolT2.TryGetRef(ek, ref d2, out var s2);
-            ref var r3 = ref poolT3.TryGetRef(ek, ref d3, out var s3);
-            ref var r4 = ref poolT4.TryGetRef(ek, ref d4, out var s4);
-            ref var r5 = ref poolT5.TryGetRef(ek, ref d5, out var s5);
-            ref var r6 = ref poolT6.TryGetRef(ek, ref d6, out var s6);
-            ref var r7 = ref poolT7.TryGetRef(ek, ref d7, out var s7);
+            ref var r1 = ref poolT1.TryGetModifiableRef(ek, ref d1, out var s1); if (!s1) return;
+            ref var r2 = ref poolT2.TryGetModifiableRef(ek, ref d2, out var s2); if (!s2) return;
+            ref var r3 = ref poolT3.TryGetModifiableRef(ek, ref d3, out var s3); if (!s3) return;
+            ref var r4 = ref poolT4.TryGetModifiableRef(ek, ref d4, out var s4); if (!s4) return;
+            ref var r5 = ref poolT5.TryGetModifiableRef(ek, ref d5, out var s5); if (!s5) return;
+            ref var r6 = ref poolT6.TryGetModifiableRef(ek, ref d6, out var s6); if (!s6) return;
+            ref var r7 = ref poolT7.TryGetModifiableRef(ek, ref d7, out var s7); if (!s7) return;
 
-            if (s1 && 
-                s2 && 
-                s3 && 
-                s4 && 
-                s5 && 
-                s6 && 
-                s7)
-            {
-                bulk(this, context, ek, in r1, in r2, in r3, in r4, in r5, in r6, in r7);
-            }
+            bulk(this, context, ek, in r1, in r2, in r3, in r4, in r5, in r6, in r7);
         }
 
     }

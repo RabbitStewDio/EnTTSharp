@@ -48,7 +48,7 @@ namespace EnTTSharp.Entities.Pools
         }
 
         [SuppressMessage("ReSharper", "RedundantAssignment")]
-        public ref Not<TComponent> TryGetRef(TEntityKey entity, ref Not<TComponent> defaultValue, out bool success)
+        public ref readonly Not<TComponent> TryGetRef(TEntityKey entity, ref Not<TComponent> defaultValue, out bool success)
         {
             success = Contains(entity);
             return ref defaultValue;

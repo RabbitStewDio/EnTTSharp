@@ -11,7 +11,7 @@ namespace EnTTSharp.Entities
         where TEntityKey : IEntityKey
     {
         readonly IEntityPoolAccess<TEntityKey> registry;
-        readonly IReadOnlyPool<TEntityKey, TComponent> viewData;
+        readonly IPool<TEntityKey, TComponent> viewData;
         readonly EventHandler<TEntityKey> onCreated;
         readonly EventHandler<TEntityKey> onDestroyed;
         bool disposed;
@@ -20,7 +20,11 @@ namespace EnTTSharp.Entities
         public AdhocView(IEntityPoolAccess<TEntityKey> registry)
         {
             this.registry = registry ?? throw new ArgumentNullException(nameof(registry));
-            this.viewData = registry.GetPool<TComponent>();
+            if (!registry.TryGetWritablePool(out viewData))
+            {
+                throw new ArgumentException("No such pool: " + typeof(TComponent));
+            }
+
             onCreated = OnCreated;
             onDestroyed = OnDestroyed;
             this.viewData.Destroyed += onDestroyed;
@@ -184,7 +188,7 @@ namespace EnTTSharp.Entities
                 foreach (var ek in p)
                 {
                     TComponent d = default;
-                    ref var c = ref viewData.TryGetRef(ek, ref d, out var s);
+                    ref readonly var c = ref viewData.TryGetRef(ek, ref d, out var s);
                     if (s)
                     {
                         bulk(this, ek, in c);
@@ -205,7 +209,7 @@ namespace EnTTSharp.Entities
                 foreach (var ek in p)
                 {
                     TComponent d = default;
-                    ref var c = ref viewData.TryGetRef(ek, ref d, out var s);
+                    ref var c = ref viewData.TryGetModifiableRef(ek, ref d, out var s);
                     if (s)
                     {
                         bulk(this, ek, ref c);
@@ -227,7 +231,7 @@ namespace EnTTSharp.Entities
                 foreach (var ek in p)
                 {
                     TComponent d = default;
-                    ref var c = ref viewData.TryGetRef(ek, ref d, out var s);
+                    ref readonly var c = ref viewData.TryGetRef(ek, ref d, out var s);
                     if (s)
                     {
                         bulk(this, context, ek, in c);
@@ -249,7 +253,7 @@ namespace EnTTSharp.Entities
                 foreach (var ek in p)
                 {
                     TComponent d = default;
-                    ref var c = ref viewData.TryGetRef(ek, ref d, out var s);
+                    ref var c = ref viewData.TryGetModifiableRef(ek, ref d, out var s);
                     if (s)
                     {
                         bulk(this, context, ek, ref c);

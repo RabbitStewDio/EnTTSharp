@@ -141,14 +141,13 @@ namespace EnTTSharp.Entities
 
         public IReadOnlyPool<TEntityKey, TComponent> GetPool<TComponent>()
         {
-            var idx = ManagedIndex<TComponent>();
-            if (idx == -1)
+            if (!TryGetPool(out IReadOnlyPool<TEntityKey, TComponent> p))
             {
                 ThrowInvalidRegistrationError(typeof(TComponent));
                 return default;
             }
 
-            return (IPool<TEntityKey, TComponent>)pools[idx].ReadonlyPool;
+            return p;
         }
 
         public bool TryGetPool<TComponent>(out IReadOnlyPool<TEntityKey, TComponent> pool)
@@ -160,10 +159,27 @@ namespace EnTTSharp.Entities
                 return false;
             }
 
-            pool = (IPool<TEntityKey, TComponent>)pools[idx].ReadonlyPool;
-            return true;
+            if (pools[idx].TryGetPool(out var maybePool) && maybePool is IReadOnlyPool<TEntityKey, TComponent> p)
+            {
+                pool = p;
+                return true;
+            }
+            
+            pool = default;
+            return false;
         }
 
+        public IPool<TEntityKey, TComponent> GetWritablePool<TComponent>()
+        {
+            if (!TryGetWritablePool(out IPool<TEntityKey, TComponent> p))
+            {
+                ThrowInvalidRegistrationError(typeof(TComponent));
+                return default;
+            }
+
+            return p;
+        }
+        
         public bool TryGetWritablePool<TComponent>(out IPool<TEntityKey, TComponent> pool)
         {
             var idx = ManagedIndex<TComponent>();
@@ -173,8 +189,7 @@ namespace EnTTSharp.Entities
                 return false;
             }
 
-            if (pools[idx].TryGetPool(out var p) &&
-                p is IPool<TEntityKey, TComponent> pp)
+            if (pools[idx].TryGetPool(out var p) && p is IPool<TEntityKey, TComponent> pp)
             {
                 pool = pp;
                 return true;

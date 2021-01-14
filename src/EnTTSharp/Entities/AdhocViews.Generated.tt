@@ -31,14 +31,14 @@ namespace EnTTSharp.Entities
     public sealed class AdhocView<TEntityKey, <#= templateParamsLight #> > : AdhocMultiViewBase<TEntityKey>, IEntityView<TEntityKey, <#= templateParamsLight #>>
         where TEntityKey : IEntityKey
     {
-        <#= p.ToCode("readonly IReadOnlyPool<TEntityKey, {1}> pool{1};", "\n        ") #>
+        <#= p.ToCode("readonly IPool<TEntityKey, {1}> pool{1};", "\n        ") #>
 
         public AdhocView(IEntityPoolAccess<TEntityKey> registry) :
             base(registry, 
                  <#= p.ToCode("registry.GetPool<{1}>()", ",\n                 ") #>
         )
         {
-            <#= p.ToCode("pool{1} = registry.GetPool<{1}>();", "\n            ") #>
+            <#= p.ToCode("pool{1} = registry.GetWritablePool<{1}>();", "\n            ") #>
         }
 
 
@@ -96,12 +96,9 @@ namespace EnTTSharp.Entities
         {
             // declare default values for each query
             <#= x.ToCode("{1} d{0} = default;", "\n            ") #>
-            <#= x.ToCode("ref var r{0} = ref pool{1}.TryGetRef(ek, ref d{0}, out var s{0});", "\n            ") #>
+            <#= x.ToCode("ref var r{0} = ref pool{1}.TryGetModifiableRef(ek, ref d{0}, out var s{0}); if (!s{0}) return;", "\n            ") #>
 
-            if (<#= x.ToCode("s{0}", " && \n                ") #>)
-            {
-                bulk(this, ek, <#= x.ToCode2("in r{0}", "ref r{0}", ", ") #>);
-            }
+            bulk(this, ek, <#= x.ToCode2("in r{0}", "ref r{0}", ", ") #>);
         }
 
         public void ApplyWithContext<TContext>(TContext context, ViewDelegates.ApplyWithContext<#=qualifier #><TEntityKey, TContext, <#= templateParamsLight #>> bulk)
@@ -156,12 +153,9 @@ namespace EnTTSharp.Entities
         {
             // declare default values for each query
             <#= x.ToCode("{1} d{0} = default;", "\n            ") #>
-            <#= x.ToCode("ref var r{0} = ref pool{1}.TryGetRef(ek, ref d{0}, out var s{0});", "\n            ") #>
+            <#= x.ToCode("ref var r{0} = ref pool{1}.TryGetModifiableRef(ek, ref d{0}, out var s{0}); if (!s{0}) return;", "\n            ") #>
 
-            if (<#= x.ToCode("s{0}", " && \n                ") #>)
-            {
-                bulk(this, context, ek, <#= x.ToCode2("in r{0}", "ref r{0}", ", ") #>);
-            }
+            bulk(this, context, ek, <#= x.ToCode2("in r{0}", "ref r{0}", ", ") #>);
         }
 
 <#

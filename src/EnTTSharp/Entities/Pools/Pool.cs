@@ -7,7 +7,7 @@ namespace EnTTSharp.Entities.Pools
         where TEntityKey : IEntityKey
     {
         bool TryGet(TEntityKey entity, out TComponent component);
-        ref TComponent TryGetRef(TEntityKey entity, ref TComponent defaultValue, out bool success);
+        ref readonly TComponent TryGetRef(TEntityKey entity, ref TComponent defaultValue, out bool success);
     }
 
     public interface IPool<TEntityKey, TComponent>: IReadOnlyPool<TEntityKey, TComponent>, 
@@ -19,6 +19,7 @@ namespace EnTTSharp.Entities.Pools
 
         void Add(TEntityKey e, in TComponent component);
         bool WriteBack(TEntityKey entity, in TComponent component);
+        ref TComponent TryGetModifiableRef(TEntityKey entity, ref TComponent defaultValue, out bool success);
     }
 
     public class Pool<TEntityKey, TComponent> : SparseDictionary<TEntityKey, TComponent>, IPool<TEntityKey, TComponent>

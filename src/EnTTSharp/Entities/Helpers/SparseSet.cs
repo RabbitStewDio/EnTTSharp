@@ -128,18 +128,7 @@ namespace EnTTSharp.Entities.Helpers
                     return false;
                 }
                 
-#if RELEASE
                 return true;
-#else
-                var key = direct[rk.Key];
-                if (EqualityHandler.Equals(key, entity))
-                {
-                    return true;
-                }
-
-                throw new ArgumentException("Assertion failed");
-                return false;
-#endif
             }
 
             return false;
@@ -159,18 +148,7 @@ namespace EnTTSharp.Entities.Helpers
                 return -1;
             }
 
-#if RELEASE
             return entityKey.Key;
-#else
-            var key = direct[entityKey.Key];
-            if (EqualityHandler.Equals(key, entity))
-            {
-                return entityKey.Key;
-            }
-
-            throw new ArgumentException("Assertion failed");
-            return -1;
-#endif
         }
 
         public void Reset(TEntityKey entity)

@@ -120,7 +120,21 @@ namespace EnTTSharp.Entities.Pools
         }
 
         [SuppressMessage("ReSharper", "RedundantAssignment")]
-        public ref TData TryGetRef(TEntityKey entity, ref TData defaultValue, out bool success)
+        public ref readonly TData TryGetRef(TEntityKey entity, ref TData defaultValue, out bool success)
+        {
+            if (Contains(entity))
+            {
+                defaultValue = sharedData;
+                success = true;
+            }
+            else
+            {
+                success = false;
+            }
+            return ref defaultValue;
+        }
+
+        public ref TData TryGetModifiableRef(TEntityKey entity, ref TData defaultValue, out bool success)
         {
             if (Contains(entity))
             {

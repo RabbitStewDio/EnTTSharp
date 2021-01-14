@@ -9,6 +9,7 @@ namespace EnTTSharp.Entities
         where TEntityKey : IEntityKey
     {
         TEntityKey Create();
+        IPool<TEntityKey, TComponent> GetWritablePool<TComponent>();
         IReadOnlyPool<TEntityKey, TComponent> GetPool<TComponent>();
         bool TryGetPool<TComponent>(out IReadOnlyPool<TEntityKey, TComponent> pool);
         bool TryGetWritablePool<TComponent>(out IPool<TEntityKey, TComponent> pool);
