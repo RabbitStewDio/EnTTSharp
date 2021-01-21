@@ -47,7 +47,7 @@ namespace EnTTSharp.Serialization.Xml
 
         public object GetObjectToSerialize(object obj, Type surrogateType)
         {
-            Logger.Verbose("GetObjectToSerialize {obj} of type {surrogateType}", obj, surrogateType);
+            Logger.Verbose("GetObjectToSerialize {Object} of type {SurrogateType}", obj, surrogateType);
             if (obj == null)
             {
                 return null;
@@ -67,12 +67,12 @@ namespace EnTTSharp.Serialization.Xml
             // return targetType;
             if (!surrogateMappings.TryGetValue(targetType, out var reg))
             {
-                Logger.Verbose("GetSurrogateType {targetType} -> Original: {targetType}", targetType, targetType);
+                Logger.Verbose("GetSurrogateType retaining original type {TargetType}", targetType);
                 return targetType;
             }
 
             var surrogateType = reg.GetSurrogateType(targetType);
-            Logger.Verbose("GetSurrogateType {targetType} -> Mapped: {targetType}", targetType, surrogateType);
+            Logger.Verbose("GetSurrogateType mapped type {TargetType} to type {SurrogateType}", targetType, surrogateType);
             return surrogateType;
         }
     }

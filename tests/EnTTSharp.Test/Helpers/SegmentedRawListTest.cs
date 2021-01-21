@@ -16,7 +16,7 @@ namespace EnTTSharp.Test.Helpers
         [Test]
         public void ValidateAdd()
         {
-            SegmentedRawList<int> list = new SegmentedRawList<int>(2, 10);
+            SegmentedRawList<int> list = new SegmentedRawList<int>(2);
             list.Add(0);
         }
     }

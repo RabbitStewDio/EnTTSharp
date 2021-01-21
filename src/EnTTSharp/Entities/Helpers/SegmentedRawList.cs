@@ -47,25 +47,17 @@ namespace EnTTSharp.Entities.Helpers
         {
             EnsureCapacity(index + 1);
             var segmentIdx = index >> segmentBitShift;
-            try
+            var segment = this.data[segmentIdx];
+            if (segment == null)
             {
-                var segment = this.data[segmentIdx];
-                if (segment == null)
-                {
-                    segment = new T[segmentSize];
-                    this.data[segmentIdx] = segment;
-                }
+                segment = new T[segmentSize];
+                this.data[segmentIdx] = segment;
+            }
 
-                var dataIdx = index & segmentMask;
-                segment[dataIdx] = input;
-                this.Count = Math.Max(index + 1, Count);
-                this.version += 1;
-            }
-            catch (IndexOutOfRangeException r)
-            {
-                Console.WriteLine("SEgmentIndex: " + segmentIdx);
-                throw;
-            }
+            var dataIdx = index & segmentMask;
+            segment[dataIdx] = input;
+            this.Count = Math.Max(index + 1, Count);
+            this.version += 1;
         }
 
         public int Version

@@ -18,12 +18,12 @@ namespace EnTTSharp.Entities.Systems
 
         public EntitySystemBuilderWithContext<TEntityKey, TGameContext> WithContext<TGameContext>()
         {
-            return new EntitySystemBuilderWithContext<TEntityKey, TGameContext>(reg, EntitySystem.GlobalAllowParallel && allowParallel);
+            return new EntitySystemBuilderWithContext<TEntityKey, TGameContext>(reg, EntitySystemExtensions.GlobalAllowParallel && allowParallel);
         }
 
         public EntitySystemBuilderWithoutContext<TEntityKey> WithoutContext()
         {
-            return new EntitySystemBuilderWithoutContext<TEntityKey>(reg, EntitySystem.GlobalAllowParallel && allowParallel);
+            return new EntitySystemBuilderWithoutContext<TEntityKey>(reg, EntitySystemExtensions.GlobalAllowParallel && allowParallel);
         }
     }
 }

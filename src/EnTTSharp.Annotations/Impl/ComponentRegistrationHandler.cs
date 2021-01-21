@@ -16,12 +16,12 @@ namespace EnTTSharp.Annotations.Impl
             {
                 if (IsFlag<TComponent>())
                 {
-                    Logger.Debug("Type {ComponentType} has default constructor.", typeof(TComponent));
+                    Logger.Debug("Type {ComponentType} has default constructor", typeof(TComponent));
                     r.WithFlag();
                 }
                 else
                 {
-                    Logger.Debug("Type {ComponentType} has default constructor.", typeof(TComponent));
+                    Logger.Debug("Type {ComponentType} has default constructor", typeof(TComponent));
                     r.WithConstructor(Activator.CreateInstance<TComponent>);
                 }
             }
@@ -65,7 +65,7 @@ namespace EnTTSharp.Annotations.Impl
 
             if (attr.Constructor == EntityConstructor.NonConstructable)
             {
-                Logger.Debug("Type {ComponentType} opted out of using a default constructor.", typeof(TComponent));
+                Logger.Debug("Type {ComponentType} opted out of using a default constructor", typeof(TComponent));
                 return false;
             }
 
@@ -74,11 +74,11 @@ namespace EnTTSharp.Annotations.Impl
                 // Value types that have at least one other constructor are not considered default constructable.
                 if (componentType.GetConstructors().Length == 0)
                 {
-                    Logger.Verbose("Type {ComponentType} is a value type without user constructors.", typeof(TComponent));
+                    Logger.Verbose("Type {ComponentType} is a value type without user constructors", typeof(TComponent));
                     return true;
                 }
                 
-                Logger.Debug("Type {ComponentType} is a value type with user constructors. This type is considered NonConstructable.", typeof(TComponent));
+                Logger.Debug("Type {ComponentType} is a value type with user constructors. This type is considered NonConstructable", typeof(TComponent));
                 return false;
             }
 
@@ -88,7 +88,7 @@ namespace EnTTSharp.Annotations.Impl
                 return true;
             }
 
-            Logger.Debug("Type {ComponentType} has no default constructor.", typeof(TComponent));
+            Logger.Debug("Type {ComponentType} has no default constructor", typeof(TComponent));
             return false;
 
         }

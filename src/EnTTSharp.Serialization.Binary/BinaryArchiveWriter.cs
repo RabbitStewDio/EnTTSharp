@@ -34,7 +34,6 @@ namespace EnTTSharp.Serialization.Binary
 
         public void WriteStartEntity(in int entityCount)
         {
-            Console.WriteLine("Write Start Entity " + entityCount);
             MessagePackSerializer.Serialize(writer, BinaryControlObjects.BinaryStreamState.Entities, options);
             MessagePackSerializer.Serialize(writer, entityCount, options);
         }
@@ -42,8 +41,6 @@ namespace EnTTSharp.Serialization.Binary
         public void WriteEntity(in TEntityKey entityKey)
         {
             var entityData = new EntityKeyData(entityKey.Age, entityKey.Key);
-            Console.WriteLine("Write Entity " + entityData);
-
             MessagePackSerializer.Serialize(writer, entityData, options);
         }
 
@@ -53,8 +50,6 @@ namespace EnTTSharp.Serialization.Binary
 
         public void WriteStartComponent<TComponent>(in int entityCount)
         {
-            Console.WriteLine("Write StartComponent " + entityCount + " => " + typeof(TComponent));
-
             var handler = Registry.QueryHandler<TComponent>();
             MessagePackSerializer.Serialize(writer, BinaryControlObjects.BinaryStreamState.Component, options);
             MessagePackSerializer.Serialize(writer, new BinaryControlObjects.StartComponentRecord(entityCount, handler.TypeId));
@@ -62,8 +57,6 @@ namespace EnTTSharp.Serialization.Binary
 
         public void WriteComponent<TComponent>(in TEntityKey entityKey, in TComponent c)
         {
-            Console.WriteLine("Write Component " + entityKey + " => " + c);
-
             var handler = Registry.QueryHandler<TComponent>();
             var entityData = new EntityKeyData(entityKey.Age, entityKey.Key);
             MessagePackSerializer.Serialize(writer, entityData, options);
