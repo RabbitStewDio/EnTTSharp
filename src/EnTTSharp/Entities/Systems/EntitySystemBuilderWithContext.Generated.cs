@@ -1,5 +1,4 @@
 
-
 using System;
 
 //------------------------------------------------------------------------------
@@ -10,9 +9,11 @@ using System;
 //     the code is regenerated.
 // </auto-generated>
 //------------------------------------------------------------------------------
- 
+ using System.Diagnostics.CodeAnalysis;
+
 namespace EnTTSharp.Entities.Systems
 {
+    [ExcludeFromCodeCoverage]
     public readonly partial struct EntitySystemBuilderWithContext<TEntityKey, TContext>
     {
         public EntitySystemBuilderWithContext<TEntityKey, TContext, T1> WithInputParameter<T1>()
@@ -82,6 +83,7 @@ namespace EnTTSharp.Entities.Systems
     }
 
 
+    [ExcludeFromCodeCoverage]
     public readonly partial struct EntitySystemBuilderWithContextIn0Out1<TEntityKey, TContext, T1>
         where TEntityKey : IEntityKey
     {
@@ -156,6 +158,7 @@ namespace EnTTSharp.Entities.Systems
            return new EntitySystemBuilderWithContextIn0Out7<TEntityKey, TContext, T1, T2, T3, T4, T5, T6, T7>(reg, allowParallel);
         }
     }
+    [ExcludeFromCodeCoverage]
     public readonly partial struct EntitySystemBuilderWithContextIn0Out2<TEntityKey, TContext, T1, T2>
         where TEntityKey : IEntityKey
     {
@@ -222,6 +225,7 @@ namespace EnTTSharp.Entities.Systems
            return new EntitySystemBuilderWithContextIn0Out7<TEntityKey, TContext, T1, T2, T3, T4, T5, T6, T7>(reg, allowParallel);
         }
     }
+    [ExcludeFromCodeCoverage]
     public readonly partial struct EntitySystemBuilderWithContextIn0Out3<TEntityKey, TContext, T1, T2, T3>
         where TEntityKey : IEntityKey
     {
@@ -280,6 +284,7 @@ namespace EnTTSharp.Entities.Systems
            return new EntitySystemBuilderWithContextIn0Out7<TEntityKey, TContext, T1, T2, T3, T4, T5, T6, T7>(reg, allowParallel);
         }
     }
+    [ExcludeFromCodeCoverage]
     public readonly partial struct EntitySystemBuilderWithContextIn0Out4<TEntityKey, TContext, T1, T2, T3, T4>
         where TEntityKey : IEntityKey
     {
@@ -330,6 +335,7 @@ namespace EnTTSharp.Entities.Systems
            return new EntitySystemBuilderWithContextIn0Out7<TEntityKey, TContext, T1, T2, T3, T4, T5, T6, T7>(reg, allowParallel);
         }
     }
+    [ExcludeFromCodeCoverage]
     public readonly partial struct EntitySystemBuilderWithContextIn0Out5<TEntityKey, TContext, T1, T2, T3, T4, T5>
         where TEntityKey : IEntityKey
     {
@@ -372,6 +378,7 @@ namespace EnTTSharp.Entities.Systems
            return new EntitySystemBuilderWithContextIn0Out7<TEntityKey, TContext, T1, T2, T3, T4, T5, T6, T7>(reg, allowParallel);
         }
     }
+    [ExcludeFromCodeCoverage]
     public readonly partial struct EntitySystemBuilderWithContextIn0Out6<TEntityKey, TContext, T1, T2, T3, T4, T5, T6>
         where TEntityKey : IEntityKey
     {
@@ -406,6 +413,7 @@ namespace EnTTSharp.Entities.Systems
            return new EntitySystemBuilderWithContextIn0Out7<TEntityKey, TContext, T1, T2, T3, T4, T5, T6, T7>(reg, allowParallel);
         }
     }
+    [ExcludeFromCodeCoverage]
     public readonly partial struct EntitySystemBuilderWithContextIn0Out7<TEntityKey, TContext, T1, T2, T3, T4, T5, T6, T7>
         where TEntityKey : IEntityKey
     {
@@ -433,6 +441,7 @@ namespace EnTTSharp.Entities.Systems
 
     }
 
+    [ExcludeFromCodeCoverage]
     public readonly partial struct EntitySystemBuilderWithContext<TEntityKey, TContext, T1>
         where TEntityKey : IEntityKey
     {
@@ -513,6 +522,7 @@ namespace EnTTSharp.Entities.Systems
            return new EntitySystemBuilderWithContextIn1Out6<TEntityKey, TContext, T1, T2, T3, T4, T5, T6, T7>(reg, allowParallel);
         }
     }
+    [ExcludeFromCodeCoverage]
     public readonly partial struct EntitySystemBuilderWithContextIn1Out1<TEntityKey, TContext, T1, T2>
         where TEntityKey : IEntityKey
     {
@@ -562,6 +572,7 @@ namespace EnTTSharp.Entities.Systems
 
     }
 
+    [ExcludeFromCodeCoverage]
     public readonly partial struct EntitySystemBuilderWithContextIn1Out2<TEntityKey, TContext, T1, T2, T3>
         where TEntityKey : IEntityKey
     {
@@ -607,6 +618,7 @@ namespace EnTTSharp.Entities.Systems
 
     }
 
+    [ExcludeFromCodeCoverage]
     public readonly partial struct EntitySystemBuilderWithContextIn1Out3<TEntityKey, TContext, T1, T2, T3, T4>
         where TEntityKey : IEntityKey
     {
@@ -648,6 +660,7 @@ namespace EnTTSharp.Entities.Systems
 
     }
 
+    [ExcludeFromCodeCoverage]
     public readonly partial struct EntitySystemBuilderWithContextIn1Out4<TEntityKey, TContext, T1, T2, T3, T4, T5>
         where TEntityKey : IEntityKey
     {
@@ -685,6 +698,7 @@ namespace EnTTSharp.Entities.Systems
 
     }
 
+    [ExcludeFromCodeCoverage]
     public readonly partial struct EntitySystemBuilderWithContextIn1Out5<TEntityKey, TContext, T1, T2, T3, T4, T5, T6>
         where TEntityKey : IEntityKey
     {
@@ -718,6 +732,7 @@ namespace EnTTSharp.Entities.Systems
 
     }
 
+    [ExcludeFromCodeCoverage]
     public readonly partial struct EntitySystemBuilderWithContextIn1Out6<TEntityKey, TContext, T1, T2, T3, T4, T5, T6, T7>
         where TEntityKey : IEntityKey
     {
@@ -747,6 +762,7 @@ namespace EnTTSharp.Entities.Systems
 
     }
 
+    [ExcludeFromCodeCoverage]
     public readonly partial struct EntitySystemBuilderWithContext<TEntityKey, TContext, T1, T2>
         where TEntityKey : IEntityKey
     {
@@ -818,6 +834,7 @@ namespace EnTTSharp.Entities.Systems
            return new EntitySystemBuilderWithContextIn2Out5<TEntityKey, TContext, T1, T2, T3, T4, T5, T6, T7>(reg, allowParallel);
         }
     }
+    [ExcludeFromCodeCoverage]
     public readonly partial struct EntitySystemBuilderWithContextIn2Out1<TEntityKey, TContext, T1, T2, T3>
         where TEntityKey : IEntityKey
     {
@@ -863,6 +880,7 @@ namespace EnTTSharp.Entities.Systems
 
     }
 
+    [ExcludeFromCodeCoverage]
     public readonly partial struct EntitySystemBuilderWithContextIn2Out2<TEntityKey, TContext, T1, T2, T3, T4>
         where TEntityKey : IEntityKey
     {
@@ -904,6 +922,7 @@ namespace EnTTSharp.Entities.Systems
 
     }
 
+    [ExcludeFromCodeCoverage]
     public readonly partial struct EntitySystemBuilderWithContextIn2Out3<TEntityKey, TContext, T1, T2, T3, T4, T5>
         where TEntityKey : IEntityKey
     {
@@ -941,6 +960,7 @@ namespace EnTTSharp.Entities.Systems
 
     }
 
+    [ExcludeFromCodeCoverage]
     public readonly partial struct EntitySystemBuilderWithContextIn2Out4<TEntityKey, TContext, T1, T2, T3, T4, T5, T6>
         where TEntityKey : IEntityKey
     {
@@ -974,6 +994,7 @@ namespace EnTTSharp.Entities.Systems
 
     }
 
+    [ExcludeFromCodeCoverage]
     public readonly partial struct EntitySystemBuilderWithContextIn2Out5<TEntityKey, TContext, T1, T2, T3, T4, T5, T6, T7>
         where TEntityKey : IEntityKey
     {
@@ -1003,6 +1024,7 @@ namespace EnTTSharp.Entities.Systems
 
     }
 
+    [ExcludeFromCodeCoverage]
     public readonly partial struct EntitySystemBuilderWithContext<TEntityKey, TContext, T1, T2, T3>
         where TEntityKey : IEntityKey
     {
@@ -1065,6 +1087,7 @@ namespace EnTTSharp.Entities.Systems
            return new EntitySystemBuilderWithContextIn3Out4<TEntityKey, TContext, T1, T2, T3, T4, T5, T6, T7>(reg, allowParallel);
         }
     }
+    [ExcludeFromCodeCoverage]
     public readonly partial struct EntitySystemBuilderWithContextIn3Out1<TEntityKey, TContext, T1, T2, T3, T4>
         where TEntityKey : IEntityKey
     {
@@ -1106,6 +1129,7 @@ namespace EnTTSharp.Entities.Systems
 
     }
 
+    [ExcludeFromCodeCoverage]
     public readonly partial struct EntitySystemBuilderWithContextIn3Out2<TEntityKey, TContext, T1, T2, T3, T4, T5>
         where TEntityKey : IEntityKey
     {
@@ -1143,6 +1167,7 @@ namespace EnTTSharp.Entities.Systems
 
     }
 
+    [ExcludeFromCodeCoverage]
     public readonly partial struct EntitySystemBuilderWithContextIn3Out3<TEntityKey, TContext, T1, T2, T3, T4, T5, T6>
         where TEntityKey : IEntityKey
     {
@@ -1176,6 +1201,7 @@ namespace EnTTSharp.Entities.Systems
 
     }
 
+    [ExcludeFromCodeCoverage]
     public readonly partial struct EntitySystemBuilderWithContextIn3Out4<TEntityKey, TContext, T1, T2, T3, T4, T5, T6, T7>
         where TEntityKey : IEntityKey
     {
@@ -1205,6 +1231,7 @@ namespace EnTTSharp.Entities.Systems
 
     }
 
+    [ExcludeFromCodeCoverage]
     public readonly partial struct EntitySystemBuilderWithContext<TEntityKey, TContext, T1, T2, T3, T4>
         where TEntityKey : IEntityKey
     {
@@ -1258,6 +1285,7 @@ namespace EnTTSharp.Entities.Systems
            return new EntitySystemBuilderWithContextIn4Out3<TEntityKey, TContext, T1, T2, T3, T4, T5, T6, T7>(reg, allowParallel);
         }
     }
+    [ExcludeFromCodeCoverage]
     public readonly partial struct EntitySystemBuilderWithContextIn4Out1<TEntityKey, TContext, T1, T2, T3, T4, T5>
         where TEntityKey : IEntityKey
     {
@@ -1295,6 +1323,7 @@ namespace EnTTSharp.Entities.Systems
 
     }
 
+    [ExcludeFromCodeCoverage]
     public readonly partial struct EntitySystemBuilderWithContextIn4Out2<TEntityKey, TContext, T1, T2, T3, T4, T5, T6>
         where TEntityKey : IEntityKey
     {
@@ -1328,6 +1357,7 @@ namespace EnTTSharp.Entities.Systems
 
     }
 
+    [ExcludeFromCodeCoverage]
     public readonly partial struct EntitySystemBuilderWithContextIn4Out3<TEntityKey, TContext, T1, T2, T3, T4, T5, T6, T7>
         where TEntityKey : IEntityKey
     {
@@ -1357,6 +1387,7 @@ namespace EnTTSharp.Entities.Systems
 
     }
 
+    [ExcludeFromCodeCoverage]
     public readonly partial struct EntitySystemBuilderWithContext<TEntityKey, TContext, T1, T2, T3, T4, T5>
         where TEntityKey : IEntityKey
     {
@@ -1401,6 +1432,7 @@ namespace EnTTSharp.Entities.Systems
            return new EntitySystemBuilderWithContextIn5Out2<TEntityKey, TContext, T1, T2, T3, T4, T5, T6, T7>(reg, allowParallel);
         }
     }
+    [ExcludeFromCodeCoverage]
     public readonly partial struct EntitySystemBuilderWithContextIn5Out1<TEntityKey, TContext, T1, T2, T3, T4, T5, T6>
         where TEntityKey : IEntityKey
     {
@@ -1434,6 +1466,7 @@ namespace EnTTSharp.Entities.Systems
 
     }
 
+    [ExcludeFromCodeCoverage]
     public readonly partial struct EntitySystemBuilderWithContextIn5Out2<TEntityKey, TContext, T1, T2, T3, T4, T5, T6, T7>
         where TEntityKey : IEntityKey
     {
@@ -1463,6 +1496,7 @@ namespace EnTTSharp.Entities.Systems
 
     }
 
+    [ExcludeFromCodeCoverage]
     public readonly partial struct EntitySystemBuilderWithContext<TEntityKey, TContext, T1, T2, T3, T4, T5, T6>
         where TEntityKey : IEntityKey
     {
@@ -1498,6 +1532,7 @@ namespace EnTTSharp.Entities.Systems
            return new EntitySystemBuilderWithContextIn6Out1<TEntityKey, TContext, T1, T2, T3, T4, T5, T6, T7>(reg, allowParallel);
         }
     }
+    [ExcludeFromCodeCoverage]
     public readonly partial struct EntitySystemBuilderWithContextIn6Out1<TEntityKey, TContext, T1, T2, T3, T4, T5, T6, T7>
         where TEntityKey : IEntityKey
     {
@@ -1527,6 +1562,7 @@ namespace EnTTSharp.Entities.Systems
 
     }
 
+    [ExcludeFromCodeCoverage]
     public readonly partial struct EntitySystemBuilderWithContext<TEntityKey, TContext, T1, T2, T3, T4, T5, T6, T7>
         where TEntityKey : IEntityKey
     {

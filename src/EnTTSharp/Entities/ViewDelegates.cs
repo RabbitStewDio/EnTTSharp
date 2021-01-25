@@ -1,5 +1,8 @@
-﻿namespace EnTTSharp.Entities
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace EnTTSharp.Entities
 {
+    [ExcludeFromCodeCoverage]
     public static partial class ViewDelegates
     {
         public delegate void Apply<TEntityKey>(IEntityViewControl<TEntityKey> v, TEntityKey k) 

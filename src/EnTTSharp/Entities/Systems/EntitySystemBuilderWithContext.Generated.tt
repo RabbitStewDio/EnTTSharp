@@ -11,9 +11,11 @@ using System;
 //     the code is regenerated.
 // </auto-generated>
 //------------------------------------------------------------------------------
- 
+ using System.Diagnostics.CodeAnalysis;
+
 namespace EnTTSharp.Entities.Systems
 {
+    [ExcludeFromCodeCoverage]
     public readonly partial struct EntitySystemBuilderWithContext<TEntityKey, TContext>
     {
 <#
@@ -47,6 +49,7 @@ namespace EnTTSharp.Entities.Systems
         var x = p.ToOutputSet();
         var inQualifier = p.ToOutputSet().ToQualifier();
 #>
+    [ExcludeFromCodeCoverage]
     public readonly partial struct EntitySystemBuilderWithContext<#=inQualifier #><TEntityKey, TContext, <#=templateParamsLight #>>
         where TEntityKey : IEntityKey
     {
@@ -112,6 +115,7 @@ namespace EnTTSharp.Entities.Systems
         var x = p.ToInputSet();
         var inQualifier = p.ToInputSet().ToQualifier();
 #>
+    [ExcludeFromCodeCoverage]
     public readonly partial struct EntitySystemBuilderWithContext<#=inQualifier #><TEntityKey, TContext, <#=templateParamsLight #>>
         where TEntityKey : IEntityKey
     {
@@ -174,6 +178,7 @@ namespace EnTTSharp.Entities.Systems
             var qualifier = o.ToQualifier();
             var templateParam = o.ToDeclaration();
 #>
+    [ExcludeFromCodeCoverage]
     public readonly partial struct EntitySystemBuilderWithContext<#=qualifier #><TEntityKey, TContext, <#=templateParam #>>
         where TEntityKey : IEntityKey
     {

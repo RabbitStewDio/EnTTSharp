@@ -8,16 +8,19 @@
 //     the code is regenerated.
 // </auto-generated>
 //------------------------------------------------------------------------------
+using System.Diagnostics.CodeAnalysis;
 
 namespace EnTTSharp.Entities
 {
     public partial class EntityRegistry<TEntityKey>
     {
+        [ExcludeFromCodeCoverage]
         public IEntityView<TEntityKey, T1> View<T1>()
         {
             return new AdhocView<TEntityKey, T1>(this);
         }
 
+        [ExcludeFromCodeCoverage]
         public IPersistentEntityView<TEntityKey, T1> PersistentView<T1>()
         {
             var type = typeof(PersistentView<TEntityKey, T1>);
@@ -31,11 +34,13 @@ namespace EnTTSharp.Entities
             return v;
         }
 
+        [ExcludeFromCodeCoverage]
         public IEntityView<TEntityKey, T1, T2> View<T1, T2>()
         {
             return new AdhocView<TEntityKey, T1, T2>(this);
         }
 
+        [ExcludeFromCodeCoverage]
         public IPersistentEntityView<TEntityKey, T1, T2> PersistentView<T1, T2>()
         {
             var type = typeof(PersistentView<TEntityKey, T1, T2>);
@@ -49,11 +54,13 @@ namespace EnTTSharp.Entities
             return v;
         }
 
+        [ExcludeFromCodeCoverage]
         public IEntityView<TEntityKey, T1, T2, T3> View<T1, T2, T3>()
         {
             return new AdhocView<TEntityKey, T1, T2, T3>(this);
         }
 
+        [ExcludeFromCodeCoverage]
         public IPersistentEntityView<TEntityKey, T1, T2, T3> PersistentView<T1, T2, T3>()
         {
             var type = typeof(PersistentView<TEntityKey, T1, T2, T3>);
@@ -67,11 +74,13 @@ namespace EnTTSharp.Entities
             return v;
         }
 
+        [ExcludeFromCodeCoverage]
         public IEntityView<TEntityKey, T1, T2, T3, T4> View<T1, T2, T3, T4>()
         {
             return new AdhocView<TEntityKey, T1, T2, T3, T4>(this);
         }
 
+        [ExcludeFromCodeCoverage]
         public IPersistentEntityView<TEntityKey, T1, T2, T3, T4> PersistentView<T1, T2, T3, T4>()
         {
             var type = typeof(PersistentView<TEntityKey, T1, T2, T3, T4>);
@@ -85,11 +94,13 @@ namespace EnTTSharp.Entities
             return v;
         }
 
+        [ExcludeFromCodeCoverage]
         public IEntityView<TEntityKey, T1, T2, T3, T4, T5> View<T1, T2, T3, T4, T5>()
         {
             return new AdhocView<TEntityKey, T1, T2, T3, T4, T5>(this);
         }
 
+        [ExcludeFromCodeCoverage]
         public IPersistentEntityView<TEntityKey, T1, T2, T3, T4, T5> PersistentView<T1, T2, T3, T4, T5>()
         {
             var type = typeof(PersistentView<TEntityKey, T1, T2, T3, T4, T5>);
@@ -103,11 +114,13 @@ namespace EnTTSharp.Entities
             return v;
         }
 
+        [ExcludeFromCodeCoverage]
         public IEntityView<TEntityKey, T1, T2, T3, T4, T5, T6> View<T1, T2, T3, T4, T5, T6>()
         {
             return new AdhocView<TEntityKey, T1, T2, T3, T4, T5, T6>(this);
         }
 
+        [ExcludeFromCodeCoverage]
         public IPersistentEntityView<TEntityKey, T1, T2, T3, T4, T5, T6> PersistentView<T1, T2, T3, T4, T5, T6>()
         {
             var type = typeof(PersistentView<TEntityKey, T1, T2, T3, T4, T5, T6>);
@@ -121,11 +134,13 @@ namespace EnTTSharp.Entities
             return v;
         }
 
+        [ExcludeFromCodeCoverage]
         public IEntityView<TEntityKey, T1, T2, T3, T4, T5, T6, T7> View<T1, T2, T3, T4, T5, T6, T7>()
         {
             return new AdhocView<TEntityKey, T1, T2, T3, T4, T5, T6, T7>(this);
         }
 
+        [ExcludeFromCodeCoverage]
         public IPersistentEntityView<TEntityKey, T1, T2, T3, T4, T5, T6, T7> PersistentView<T1, T2, T3, T4, T5, T6, T7>()
         {
             var type = typeof(PersistentView<TEntityKey, T1, T2, T3, T4, T5, T6, T7>);

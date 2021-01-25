@@ -13,6 +13,7 @@
 using EnTTSharp.Entities.Helpers;
 using EnTTSharp.Entities.Pools;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EnTTSharp.Entities
 { 
@@ -26,6 +27,7 @@ namespace EnTTSharp.Entities
         
         var templateParamsLight = p.ToDeclaration();
 #>
+    [ExcludeFromCodeCoverage] 
     public sealed class AdhocView<TEntityKey, <#= templateParamsLight #> > : AdhocMultiViewBase<TEntityKey>, IEntityView<TEntityKey, <#= templateParamsLight #>>
         where TEntityKey : IEntityKey
     {

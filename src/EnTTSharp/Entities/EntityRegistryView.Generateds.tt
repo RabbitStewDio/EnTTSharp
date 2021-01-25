@@ -11,6 +11,7 @@
 //     the code is regenerated.
 // </auto-generated>
 //------------------------------------------------------------------------------
+using System.Diagnostics.CodeAnalysis;
 
 namespace EnTTSharp.Entities
 {
@@ -22,11 +23,13 @@ namespace EnTTSharp.Entities
         var templateParamsLight = BuildLightTemplate(p);
 
 #>
+        [ExcludeFromCodeCoverage]
         public IEntityView<TEntityKey, <#= templateParamsLight #>> View<<#= templateParamsLight #>>()
         {
             return new AdhocView<TEntityKey, <#= templateParamsLight #>>(this);
         }
 
+        [ExcludeFromCodeCoverage]
         public IPersistentEntityView<TEntityKey, <#= templateParamsLight #>> PersistentView<<#= templateParamsLight #>>()
         {
             var type = typeof(PersistentView<TEntityKey, <#= templateParamsLight #>>);

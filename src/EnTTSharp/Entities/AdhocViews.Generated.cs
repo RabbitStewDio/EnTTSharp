@@ -11,9 +11,11 @@
 using EnTTSharp.Entities.Helpers;
 using EnTTSharp.Entities.Pools;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EnTTSharp.Entities
 { 
+    [ExcludeFromCodeCoverage] 
     public sealed class AdhocView<TEntityKey, T1, T2 > : AdhocMultiViewBase<TEntityKey>, IEntityView<TEntityKey, T1, T2>
         where TEntityKey : IEntityKey
     {
@@ -378,6 +380,7 @@ namespace EnTTSharp.Entities
 
     }
 
+    [ExcludeFromCodeCoverage] 
     public sealed class AdhocView<TEntityKey, T1, T2, T3 > : AdhocMultiViewBase<TEntityKey>, IEntityView<TEntityKey, T1, T2, T3>
         where TEntityKey : IEntityKey
     {
@@ -876,6 +879,7 @@ namespace EnTTSharp.Entities
 
     }
 
+    [ExcludeFromCodeCoverage] 
     public sealed class AdhocView<TEntityKey, T1, T2, T3, T4 > : AdhocMultiViewBase<TEntityKey>, IEntityView<TEntityKey, T1, T2, T3, T4>
         where TEntityKey : IEntityKey
     {
@@ -1516,6 +1520,7 @@ namespace EnTTSharp.Entities
 
     }
 
+    [ExcludeFromCodeCoverage] 
     public sealed class AdhocView<TEntityKey, T1, T2, T3, T4, T5 > : AdhocMultiViewBase<TEntityKey>, IEntityView<TEntityKey, T1, T2, T3, T4, T5>
         where TEntityKey : IEntityKey
     {
@@ -2306,6 +2311,7 @@ namespace EnTTSharp.Entities
 
     }
 
+    [ExcludeFromCodeCoverage] 
     public sealed class AdhocView<TEntityKey, T1, T2, T3, T4, T5, T6 > : AdhocMultiViewBase<TEntityKey>, IEntityView<TEntityKey, T1, T2, T3, T4, T5, T6>
         where TEntityKey : IEntityKey
     {
@@ -3254,6 +3260,7 @@ namespace EnTTSharp.Entities
 
     }
 
+    [ExcludeFromCodeCoverage] 
     public sealed class AdhocView<TEntityKey, T1, T2, T3, T4, T5, T6, T7 > : AdhocMultiViewBase<TEntityKey>, IEntityView<TEntityKey, T1, T2, T3, T4, T5, T6, T7>
         where TEntityKey : IEntityKey
     {
