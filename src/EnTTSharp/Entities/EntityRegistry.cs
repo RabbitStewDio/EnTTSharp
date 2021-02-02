@@ -124,7 +124,7 @@ namespace EnTTSharp.Entities
 
         void ThrowInvalidRegistrationError(Type t)
         {
-            throw new ArgumentException($"Unknown registration for type {t}");
+            throw new ArgumentException($"Unknown registration at EntityRegistry<{typeof(TEntityKey)}> for component type {t}");
         }
 
         internal int CountComponents<TComponent>()
