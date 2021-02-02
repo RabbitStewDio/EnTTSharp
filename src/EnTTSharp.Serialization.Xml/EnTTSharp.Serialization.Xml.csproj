@@ -11,7 +11,7 @@
           on NetStandard for work, and who cares about those guys when they can switch to
           use the 4.7 Framework instead.
         -->
-        <TargetFrameworks>netstandard2.0</TargetFrameworks>
+        <TargetFramework>netstandard2.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
