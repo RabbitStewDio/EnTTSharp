@@ -216,7 +216,6 @@ namespace EnTTSharp.Entities.Helpers
             readonly SegmentedRawList<T> contents;
             readonly int versionAtStart;
             int index;
-            int segment;
             T current;
 
             internal Enumerator(SegmentedRawList<T> widget) : this()
@@ -224,7 +223,6 @@ namespace EnTTSharp.Entities.Helpers
                 this.contents = widget;
                 this.versionAtStart = widget.version;
                 index = -1;
-                segment = -1;
                 current = default;
             }
 

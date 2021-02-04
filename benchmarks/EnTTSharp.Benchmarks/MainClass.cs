@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace EnTTSharp.Benchmarks
 {
+#pragma warning disable 162
     public class MainClass
     {
         const bool RunManually = false;
@@ -55,3 +56,4 @@ namespace EnTTSharp.Benchmarks
         }
     }
 }
+#pragma warning restore 162

@@ -25,7 +25,9 @@ namespace EnTTSharp.Entities.Helpers
 
             public ReverseEntry(int key, byte age)
             {
-                rawData = (uint)((key & KeyMask) | (age << 24)) | ValidMask;
+                rawData = (uint)(key & KeyMask);
+                rawData |= (uint)(age << 24); 
+                rawData |= ValidMask;
             }
 
             ReverseEntry(int r)
