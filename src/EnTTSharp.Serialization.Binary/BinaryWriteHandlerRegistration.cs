@@ -4,8 +4,8 @@ using MessagePack.Formatters;
 
 namespace EnTTSharp.Serialization.Binary
 {
-    public delegate IFormatterResolver FormatterResolverFactory<TEntityKey>(EntityKeyMapper<TEntityKey> entityMapper);
-    public delegate IMessagePackFormatter MessagePackFormatterFactory<TEntityKey>(EntityKeyMapper<TEntityKey> entityMapper);
+    public delegate IFormatterResolver FormatterResolverFactory(IEntityKeyMapper entityMapper);
+    public delegate IMessagePackFormatter MessagePackFormatterFactory(IEntityKeyMapper entityMapper);
 
     public readonly struct BinaryWriteHandlerRegistration
     {
@@ -43,9 +43,9 @@ namespace EnTTSharp.Serialization.Binary
             return false;
         }
 
-        public bool TryGetResolverFactory<TEntityKey>(out FormatterResolverFactory<TEntityKey> fn)
+        public bool TryGetResolverFactory(out FormatterResolverFactory fn)
         {
-            if (formatterResolverFactory is FormatterResolverFactory<TEntityKey> fnx)
+            if (formatterResolverFactory is FormatterResolverFactory fnx)
             {
                 fn = fnx;
                 return true;
@@ -55,9 +55,9 @@ namespace EnTTSharp.Serialization.Binary
             return false;
         }
 
-        public bool TryGetMessagePackFormatterFactory<TEntityKey>(out MessagePackFormatterFactory<TEntityKey> fn)
+        public bool TryGetMessagePackFormatterFactory(out MessagePackFormatterFactory fn)
         {
-            if (formatterResolverFactory is MessagePackFormatterFactory<TEntityKey> fnx)
+            if (formatterResolverFactory is MessagePackFormatterFactory fnx)
             {
                 fn = fnx;
                 return true;
@@ -67,12 +67,12 @@ namespace EnTTSharp.Serialization.Binary
             return false;
         }
 
-        public BinaryWriteHandlerRegistration WithFormatterResolver<TEntityKey>(FormatterResolverFactory<TEntityKey> r)
+        public BinaryWriteHandlerRegistration WithFormatterResolver(FormatterResolverFactory r)
         {
             return new BinaryWriteHandlerRegistration(TypeId, TargetType, Tag, preProcessor, r, messagePackFormatterFactory);
         }
 
-        public BinaryWriteHandlerRegistration WithMessagePackFormatter<TEntityKey>(MessagePackFormatterFactory<TEntityKey> r)
+        public BinaryWriteHandlerRegistration WithMessagePackFormatter(MessagePackFormatterFactory r)
         {
             return new BinaryWriteHandlerRegistration(TypeId, TargetType, Tag, preProcessor, formatterResolverFactory, r);
         }

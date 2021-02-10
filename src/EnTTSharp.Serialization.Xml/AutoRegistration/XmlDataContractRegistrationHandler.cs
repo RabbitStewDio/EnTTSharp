@@ -3,16 +3,15 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using EnTTSharp.Annotations;
 using EnTTSharp.Annotations.Impl;
-using EnTTSharp.Entities;
 using EnTTSharp.Serialization.Xml.Impl;
 using Serilog;
 
 namespace EnTTSharp.Serialization.Xml.AutoRegistration
 {
-    public class XmlDataContractRegistrationHandler<TEntityKey> : EntityRegistrationHandlerBase where TEntityKey : IEntityKey
+    public class XmlDataContractRegistrationHandler : EntityRegistrationHandlerBase
     {
         readonly ObjectSurrogateResolver objectResolver;
-        static readonly ILogger Logger = Log.ForContext<XmlDataContractRegistrationHandler<TEntityKey>>();
+        static readonly ILogger Logger = Log.ForContext<XmlDataContractRegistrationHandler>();
 
         public XmlDataContractRegistrationHandler(ObjectSurrogateResolver objectResolver = null)
         {
@@ -35,12 +34,12 @@ namespace EnTTSharp.Serialization.Xml.AutoRegistration
             }
 
             var handlerMethods = componentType.GetMethods(BindingFlags.Static | BindingFlags.Public);
-            FormatterResolverFactory<TEntityKey> formatterResolver = null;
+            FormatterResolverFactory formatterResolver = null;
             foreach (var m in handlerMethods)
             {
                 if (IsSurrogateProvider(m))
                 {
-                    formatterResolver = (FormatterResolverFactory<TEntityKey>)Delegate.CreateDelegate(typeof(FormatterResolverFactory<TEntityKey>), null, m, false);
+                    formatterResolver = (FormatterResolverFactory)Delegate.CreateDelegate(typeof(FormatterResolverFactory), null, m, false);
                 }
             }
 
@@ -56,7 +55,7 @@ namespace EnTTSharp.Serialization.Xml.AutoRegistration
 
         bool IsSurrogateProvider(MethodInfo methodInfo)
         {
-            var paramType = typeof(EntityKeyMapper<TEntityKey>);
+            var paramType = typeof(IEntityKeyMapper);
             var returnType = typeof(ISerializationSurrogateProvider);
             return methodInfo.GetCustomAttribute<EntityXmlSurrogateProviderAttribute>() != null
                    && methodInfo.IsSameFunction(returnType, paramType);

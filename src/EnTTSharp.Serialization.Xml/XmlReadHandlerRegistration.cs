@@ -4,7 +4,7 @@ using System.Xml;
 
 namespace EnTTSharp.Serialization.Xml
 {
-    public delegate ISerializationSurrogateProvider FormatterResolverFactory<TEntityKey>(EntityKeyMapper<TEntityKey> entityMapper);
+    public delegate ISerializationSurrogateProvider FormatterResolverFactory(IEntityKeyMapper entityMapper);
     public delegate TComponent ReadHandlerDelegate<TComponent>(XmlReader reader);
 
     public readonly struct XmlReadHandlerRegistration
@@ -36,9 +36,9 @@ namespace EnTTSharp.Serialization.Xml
             return false;
         }
 
-        public bool TryGetResolverFactory<TEntityKey>(out FormatterResolverFactory<TEntityKey> fn)
+        public bool TryGetResolverFactory(out FormatterResolverFactory fn)
         {
-            if (surrogateResolver is FormatterResolverFactory<TEntityKey> fnx)
+            if (surrogateResolver is FormatterResolverFactory fnx)
             {
                 fn = fnx;
                 return true;
@@ -48,7 +48,7 @@ namespace EnTTSharp.Serialization.Xml
             return false;
         }
 
-        public XmlReadHandlerRegistration WithFormatterResolver<TEntityKey>(FormatterResolverFactory<TEntityKey> r)
+        public XmlReadHandlerRegistration WithFormatterResolver(FormatterResolverFactory r)
         {
             return new XmlReadHandlerRegistration(TypeId, TargetType, parserFunction, Tag, r);
         }

@@ -60,7 +60,7 @@ namespace EnTTSharp.Test.Serialisation.NestedKeys
 
         byte[] Serialize(EntityRegistry<EntityKey> registry)
         {
-            var scanner = new EntityRegistrationScanner().With(new BinaryEntityRegistrationHandler<EntityKey>());
+            var scanner = new EntityRegistrationScanner().With(new BinaryEntityRegistrationHandler());
             if (!scanner.TryRegisterComponent<NestedKeyComponent>(out var registration))
             {
                 Assert.Fail();
@@ -94,7 +94,7 @@ namespace EnTTSharp.Test.Serialisation.NestedKeys
 
         void Deserialize(EntityRegistry<EntityKey> registry, byte[] data)
         {
-            var scanner = new EntityRegistrationScanner().With(new BinaryEntityRegistrationHandler<EntityKey>());
+            var scanner = new EntityRegistrationScanner().With(new BinaryEntityRegistrationHandler());
             if (!scanner.TryRegisterComponent<NestedKeyComponent>(out var registration))
             {
                 Assert.Fail();
@@ -109,7 +109,7 @@ namespace EnTTSharp.Test.Serialisation.NestedKeys
             {
                 var resolver = CompositeResolver.Create(
                     new EntityKeyDataResolver(),
-                    new EntityKeyResolver(loader.Map),
+                    new EntityKeyResolver(new DefaultEntityKeyMapper().Register(loader.Map)),
                     StandardResolver.Instance
                 );
 

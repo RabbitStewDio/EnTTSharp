@@ -19,7 +19,7 @@ namespace EnTTSharp.Serialization.Xml
             this.readerConfiguration = readerConfiguration;
         }
 
-        public void ReadAllFragment(XmlReader reader, ISnapshotLoader<TEntityKey> loader)
+        public void ReadAllFragment(XmlReader reader, ISnapshotLoader<TEntityKey> loader, IEntityKeyMapper mapper)
         {
             if (reader.IsEmptyElement)
             {
@@ -33,7 +33,7 @@ namespace EnTTSharp.Serialization.Xml
                 {
                     if (reader.NodeType == XmlNodeType.Element)
                     {
-                        if (!HandleRootElement(reader, loader))
+                        if (!HandleRootElement(reader, loader, mapper))
                         {
                             reader.Skip();
                         }
@@ -50,7 +50,7 @@ namespace EnTTSharp.Serialization.Xml
             }
         }
 
-        public void ReadAll(XmlReader reader, ISnapshotLoader<TEntityKey> loader)
+        public void ReadAll(XmlReader reader, ISnapshotLoader<TEntityKey> loader, IEntityKeyMapper mapper)
         {
             if (reader.IsEmptyElement)
             {
@@ -63,7 +63,7 @@ namespace EnTTSharp.Serialization.Xml
                 {
                     if (reader.Name == "snapshot")
                     {
-                        ReadAllFragment(reader, loader);
+                        ReadAllFragment(reader, loader, mapper);
                     }
                     else
                     {
@@ -77,18 +77,18 @@ namespace EnTTSharp.Serialization.Xml
             }
         }
 
-        bool HandleRootElement(XmlReader reader, ISnapshotLoader<TEntityKey> loader)
+        bool HandleRootElement(XmlReader reader, ISnapshotLoader<TEntityKey> loader, IEntityKeyMapper mapper)
         {
             switch (reader.Name)
             {
                 case XmlTagNames.Entities:
                 {
-                    ReadEntities(reader, loader);
+                    ReadEntities(reader, loader, mapper);
                     return true;
                 }
                 case XmlTagNames.DestroyedEntities:
                 {
-                    ReadDestroyed(reader, loader);
+                    ReadDestroyed(reader, loader, mapper);
                     return true;
                 }
                 case XmlTagNames.Components:
@@ -99,7 +99,7 @@ namespace EnTTSharp.Serialization.Xml
                         throw reader.FromMissingAttribute(XmlTagNames.Component, "type");
                     }
 
-                    ReadComponent(reader, loader, attr);
+                    ReadComponent(reader, loader, mapper, attr);
                     return true;
                 }
                 case XmlTagNames.Tag:
@@ -113,7 +113,7 @@ namespace EnTTSharp.Serialization.Xml
         }
 
 
-        void ReadEntities(XmlReader reader, ISnapshotLoader<TEntityKey> loader)
+        void ReadEntities(XmlReader reader, ISnapshotLoader<TEntityKey> loader, IEntityKeyMapper mapper)
         {
             if (reader.IsEmptyElement)
             {
@@ -129,7 +129,7 @@ namespace EnTTSharp.Serialization.Xml
                     {
                         if (reader.Name == XmlTagNames.Entity)
                         {
-                            var entity = readerConfiguration.ReadEntity(reader, loader.Map);
+                            var entity = readerConfiguration.ReadEntity(reader, mapper);
                             loader.OnEntity(entity);
                         }
                         else
@@ -149,7 +149,7 @@ namespace EnTTSharp.Serialization.Xml
             }
         }
 
-        void ReadDestroyed(XmlReader reader, ISnapshotLoader<TEntityKey> loader)
+        void ReadDestroyed(XmlReader reader, ISnapshotLoader<TEntityKey> loader, IEntityKeyMapper mapper)
         {
             if (reader.IsEmptyElement)
             {
@@ -165,7 +165,7 @@ namespace EnTTSharp.Serialization.Xml
                     {
                         if (reader.Name == XmlTagNames.DestroyedEntity)
                         {
-                            var entity = readerConfiguration.ReadDestroyedEntity(reader, loader.Map);
+                            var entity = readerConfiguration.ReadDestroyedEntity(reader, mapper);
                             loader.OnDestroyedEntity(entity);
                         }
                         else
@@ -185,7 +185,7 @@ namespace EnTTSharp.Serialization.Xml
             }
         }
 
-        void ReadComponent(XmlReader reader, ISnapshotLoader<TEntityKey> loader, string type)
+        void ReadComponent(XmlReader reader, ISnapshotLoader<TEntityKey> loader, IEntityKeyMapper mapper, string type)
         {
             if (reader.IsEmptyElement)
             {

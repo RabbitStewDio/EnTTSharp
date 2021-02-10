@@ -3,8 +3,6 @@ using System.Runtime.Serialization;
 
 namespace EnTTSharp.Serialization
 {
-    public delegate TEntityKey EntityKeyMapper<TEntityKey>(EntityKeyData data);
-
     [Serializable]
     [DataContract]
     public readonly struct EntityKeyData : IEquatable<EntityKeyData>

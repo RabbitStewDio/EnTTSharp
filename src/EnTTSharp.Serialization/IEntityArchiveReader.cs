@@ -6,16 +6,16 @@ namespace EnTTSharp.Serialization
         where TEntityKey: IEntityKey
     {
         int ReadEntityCount();
-        TEntityKey ReadEntity(EntityKeyMapper<TEntityKey> entityMapper);
+        TEntityKey ReadEntity(IEntityKeyMapper entityMapper);
 
         int ReadComponentCount<TComponent>();
-        bool TryReadComponent<TComponent>(EntityKeyMapper<TEntityKey> entityMapper, out TEntityKey key, out TComponent component);
+        bool TryReadComponent<TComponent>(IEntityKeyMapper entityMapper, out TEntityKey key, out TComponent component);
 
         bool ReadTagFlag<TComponent>();
-        bool TryReadTag<TComponent>(EntityKeyMapper<TEntityKey> entityMapper, out TEntityKey entityKey, out TComponent component);
+        bool TryReadTag<TComponent>(IEntityKeyMapper entityMapper, out TEntityKey entityKey, out TComponent component);
 
         int ReadDestroyedCount();
-        TEntityKey ReadDestroyed(EntityKeyMapper<TEntityKey> entityMapper);
+        TEntityKey ReadDestroyed(IEntityKeyMapper entityMapper);
 
     }
 }

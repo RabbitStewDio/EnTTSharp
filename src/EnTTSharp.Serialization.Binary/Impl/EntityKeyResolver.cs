@@ -4,9 +4,9 @@ using MessagePack.Formatters;
 
 namespace EnTTSharp.Serialization.Binary.Impl
 {
-    public class EntityKeyResolver:IFormatterResolver
+    public class EntityKeyResolver : IFormatterResolver
     {
-        readonly EntityKeyMapper<EntityKey> entityMapper;
+        readonly IEntityKeyMapper entityMapper;
         EntityKeyFormatter keyFormatterInstance;
 
         public IMessagePackFormatter<T> GetFormatter<T>()
@@ -24,14 +24,16 @@ namespace EnTTSharp.Serialization.Binary.Impl
             return null;
         }
 
-        public EntityKeyResolver(EntityKeyMapper<EntityKey> mapper = null)
+        public EntityKeyResolver(IEntityKeyMapper mapper = null)
         {
-            this.entityMapper = mapper ?? Map;
+            this.entityMapper = mapper ?? new DefaultEntityKeyMapper().Register(Map);
         }
-
+        
         EntityKey Map(EntityKeyData data)
         {
             return new EntityKey(data.Age, data.Key);
         }
+        
+        
     }
 }

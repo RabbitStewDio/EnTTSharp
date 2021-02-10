@@ -41,9 +41,9 @@ namespace EnTTSharp.Serialization.Binary
             return false;
         }
 
-        public bool TryGetResolverFactory<TEntityKey>(out FormatterResolverFactory<TEntityKey> fn)
+        public bool TryGetResolverFactory(out FormatterResolverFactory fn)
         {
-            if (formatterResolverFactory is FormatterResolverFactory<TEntityKey> fnx)
+            if (formatterResolverFactory is FormatterResolverFactory fnx)
             {
                 fn = fnx;
                 return true;
@@ -53,9 +53,9 @@ namespace EnTTSharp.Serialization.Binary
             return false;
         }
 
-        public bool TryGetMessagePackFormatterFactory<TEntityKey>(out MessagePackFormatterFactory<TEntityKey> fn)
+        public bool TryGetMessagePackFormatterFactory(out MessagePackFormatterFactory fn)
         {
-            if (formatterResolverFactory is MessagePackFormatterFactory<TEntityKey> fnx)
+            if (formatterResolverFactory is MessagePackFormatterFactory fnx)
             {
                 fn = fnx;
                 return true;
@@ -65,12 +65,12 @@ namespace EnTTSharp.Serialization.Binary
             return false;
         }
 
-        public BinaryReadHandlerRegistration WithFormatterResolver<TEntityKey>(FormatterResolverFactory<TEntityKey> r)
+        public BinaryReadHandlerRegistration WithFormatterResolver(FormatterResolverFactory r)
         {
             return new BinaryReadHandlerRegistration(TypeId, TargetType, Tag, postProcessor, r, messagePackFormatterFactory);
         }
 
-        public BinaryReadHandlerRegistration WithMessagePackFormatter<TEntityKey>(MessagePackFormatterFactory<TEntityKey> r)
+        public BinaryReadHandlerRegistration WithMessagePackFormatter(MessagePackFormatterFactory r)
         {
             return new BinaryReadHandlerRegistration(TypeId, TargetType, Tag, postProcessor, formatterResolverFactory, r);
         }

@@ -55,7 +55,8 @@ namespace EnTTSharp.Test.Serialisation
 
             var xmlReader = XmlReader.Create(new StringReader(sb));
             var readerConfig = new XmlBulkArchiveReader<EntityKey>(rreg);
-            readerConfig.ReadAll(xmlReader, nreg.CreateLoader());
+            var snapshotLoader = nreg.CreateLoader();
+            readerConfig.ReadAll(xmlReader, snapshotLoader, new DefaultEntityKeyMapper().Register(snapshotLoader.Map));
 
             var result = WriteRegistry(nreg, wreg, true);
             Console.WriteLine(result);
@@ -76,7 +77,8 @@ namespace EnTTSharp.Test.Serialisation
             var xmlReader = XmlReader.Create(new StringReader(sb));
             xmlReader.AdvanceToElement("snapshot");
 
-            var streamReader = new SnapshotStreamReader<EntityKey>(nreg.CreateLoader());
+            var snapshotLoader = nreg.CreateLoader();
+            var streamReader = new SnapshotStreamReader<EntityKey>(snapshotLoader, new DefaultEntityKeyMapper().Register(snapshotLoader.Map));
             var archiveReader = new XmlEntityArchiveReader<EntityKey>(rreg, xmlReader);
             streamReader.ReadDestroyed(archiveReader)
                         .ReadEntities(archiveReader)
@@ -103,7 +105,8 @@ namespace EnTTSharp.Test.Serialisation
             var xmlReader = XmlReader.Create(new StringReader(sb));
             xmlReader.AdvanceToElement("snapshot");
 
-            var streamReader = new SnapshotStreamReader<EntityKey>(nreg.CreateLoader());
+            var snapshotLoader = nreg.CreateLoader();
+            var streamReader = new SnapshotStreamReader<EntityKey>(snapshotLoader, new DefaultEntityKeyMapper().Register(snapshotLoader.Map));
             var archiveReader = new XmlEntityArchiveReader<EntityKey>(rreg, xmlReader);
             streamReader.ReadAll(archiveReader);
 

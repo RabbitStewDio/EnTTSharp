@@ -9,9 +9,9 @@ using Serilog;
 
 namespace EnTTSharp.Serialization.Xml.AutoRegistration
 {
-    public class XmlEntityRegistrationHandler<TEntityKey>: EntityRegistrationHandlerBase
+    public class XmlEntityRegistrationHandler: EntityRegistrationHandlerBase
     {
-        static readonly ILogger Logger = Log.ForContext<XmlEntityRegistrationHandler<TEntityKey>>();
+        static readonly ILogger Logger = Log.ForContext<XmlEntityRegistrationHandler>();
         readonly ObjectSurrogateResolver objectResolver;
 
         public XmlEntityRegistrationHandler(ObjectSurrogateResolver objectResolver = null)
@@ -30,7 +30,7 @@ namespace EnTTSharp.Serialization.Xml.AutoRegistration
 
             ReadHandlerDelegate<TComponent> readHandler = null;
             WriteHandlerDelegate<TComponent> writeHandler = null;
-            FormatterResolverFactory<TEntityKey> formatterResolver = null;
+            FormatterResolverFactory formatterResolver = null;
 
             var handlerMethods = componentType.GetMethods(BindingFlags.Static | BindingFlags.Public);
             foreach (var m in handlerMethods)
@@ -47,7 +47,7 @@ namespace EnTTSharp.Serialization.Xml.AutoRegistration
 
                 if (IsSurrogateProvider(m))
                 {
-                    formatterResolver = (FormatterResolverFactory<TEntityKey>)Delegate.CreateDelegate(typeof(FormatterResolverFactory<TEntityKey>), null, m, false);
+                    formatterResolver = (FormatterResolverFactory)Delegate.CreateDelegate(typeof(FormatterResolverFactory), null, m, false);
                 }
             }
 
@@ -104,7 +104,7 @@ namespace EnTTSharp.Serialization.Xml.AutoRegistration
 
         bool IsSurrogateProvider(MethodInfo methodInfo)
         {
-            var paramType = typeof(EntityKeyMapper<TEntityKey>);
+            var paramType = typeof(IEntityKeyMapper);
             var returnType = typeof(ISerializationSurrogateProvider);
             return methodInfo.GetCustomAttribute<EntityXmlSurrogateProviderAttribute>() != null
                    && methodInfo.IsSameFunction(returnType, paramType);

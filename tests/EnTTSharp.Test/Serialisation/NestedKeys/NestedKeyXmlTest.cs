@@ -68,11 +68,11 @@ namespace EnTTSharp.Test.Serialisation.NestedKeys
             using (var loader = registry.CreateLoader())
             {
                 var surrogateResolver = new ObjectSurrogateResolver();
-                surrogateResolver.Register(new EntityKeySurrogateProvider(loader.Map));
+                surrogateResolver.Register(new EntityKeySurrogateProvider(new DefaultEntityKeyMapper().Register(loader.Map)));
                 surrogateResolver.Register(new DummyEnumObjectSurrogateProvider());
 
-                var xmlScanner = new EntityRegistrationScanner(new XmlDataContractRegistrationHandler<EntityKey>(surrogateResolver),
-                                                               new XmlEntityRegistrationHandler<EntityKey>(surrogateResolver));
+                var xmlScanner = new EntityRegistrationScanner(new XmlDataContractRegistrationHandler(surrogateResolver),
+                                                               new XmlEntityRegistrationHandler(surrogateResolver));
                 if (!xmlScanner.TryRegisterComponent<NestedKeyComponent>(out var xmlRegistration))
                 {
                     Assert.Fail();
@@ -83,7 +83,7 @@ namespace EnTTSharp.Test.Serialisation.NestedKeys
 
                 var reader = new XmlBulkArchiveReader<EntityKey>(readerRegistry);
                 var xmlReader = XmlReader.Create(new StringReader(xmlString));
-                reader.ReadAll(xmlReader, loader);
+                reader.ReadAll(xmlReader, loader, new DefaultEntityKeyMapper().Register(loader.Map));
             }
         }
 
@@ -93,8 +93,8 @@ namespace EnTTSharp.Test.Serialisation.NestedKeys
             surrogateResolver.Register(new EntityKeySurrogateProvider());
             surrogateResolver.Register(new DummyEnumObjectSurrogateProvider());
 
-            var xmlScanner = new EntityRegistrationScanner(new XmlDataContractRegistrationHandler<EntityKey>(surrogateResolver),
-                                                           new XmlEntityRegistrationHandler<EntityKey>(surrogateResolver));
+            var xmlScanner = new EntityRegistrationScanner(new XmlDataContractRegistrationHandler(surrogateResolver),
+                                                           new XmlEntityRegistrationHandler(surrogateResolver));
             if (!xmlScanner.TryRegisterComponent<NestedKeyComponent>(out var xmlRegistration))
             {
                 Assert.Fail();
@@ -159,7 +159,7 @@ namespace EnTTSharp.Test.Serialisation.NestedKeys
             var model = new NestedKeyComponent(new EntityKey(100, 200));
             var surrogate = new ObjectSurrogateResolver();
             surrogate.Register(new DummyEnumObjectSurrogateProvider());
-            surrogate.Register(new EntityKeySurrogateProvider(Map));
+            surrogate.Register(new EntityKeySurrogateProvider(new DefaultEntityKeyMapper().Register(Map)));
 
             var sb = new StringBuilder();
             var xmlWriter = XmlWriter.Create(sb,

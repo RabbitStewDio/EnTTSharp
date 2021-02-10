@@ -9,9 +9,9 @@ using Serilog;
 
 namespace EnTTSharp.Serialization.Binary.AutoRegistration
 {
-    public class BinaryEntityRegistrationHandler<TEntityKey> : EntityRegistrationHandlerBase
+    public class BinaryEntityRegistrationHandler : EntityRegistrationHandlerBase
     {
-        static readonly ILogger Logger = Log.ForContext<BinaryEntityRegistrationHandler<TEntityKey>>();
+        static readonly ILogger Logger = Log.ForContext<BinaryEntityRegistrationHandler>();
 
         protected override void ProcessTyped<TComponent>(EntityComponentRegistration r)
         {
@@ -31,19 +31,19 @@ namespace EnTTSharp.Serialization.Binary.AutoRegistration
             var handlerMethods = componentType.GetMethods(BindingFlags.Static | BindingFlags.Public);
             BinaryPreProcessor<TComponent> preProcessor = null;
             BinaryPostProcessor<TComponent> postProcessor = null;
-            FormatterResolverFactory<TEntityKey> resolverFactory = null;
-            MessagePackFormatterFactory<TEntityKey> messageFormatterFactory = null;
+            FormatterResolverFactory resolverFactory = null;
+            MessagePackFormatterFactory messageFormatterFactory = null;
 
             foreach (var m in handlerMethods)
             {
                 if (IsResolverFactory(m))
                 {
-                    resolverFactory = (FormatterResolverFactory<TEntityKey>)Delegate.CreateDelegate(typeof(FormatterResolverFactory<TEntityKey>), null, m, false);
+                    resolverFactory = (FormatterResolverFactory)Delegate.CreateDelegate(typeof(FormatterResolverFactory), null, m, false);
                 }
 
                 if (IsMessageFormatterFactory(m))
                 {
-                    messageFormatterFactory = (MessagePackFormatterFactory<TEntityKey>)Delegate.CreateDelegate(typeof(MessagePackFormatterFactory<TEntityKey>), null, m, false);
+                    messageFormatterFactory = (MessagePackFormatterFactory)Delegate.CreateDelegate(typeof(MessagePackFormatterFactory), null, m, false);
                 }
 
                 if (IsPostProcessor<TComponent>(m))
@@ -78,7 +78,7 @@ namespace EnTTSharp.Serialization.Binary.AutoRegistration
 
         bool IsMessageFormatterFactory(MethodInfo methodInfo)
         {
-            var paramType = typeof(EntityKeyMapper<TEntityKey>);
+            var paramType = typeof(IEntityKeyMapper);
             var returnType = typeof(IMessagePackFormatter);
             return methodInfo.GetCustomAttribute<EntityBinaryFormatterAttribute>() != null
                    && methodInfo.IsSameFunction(returnType, paramType);
@@ -86,7 +86,7 @@ namespace EnTTSharp.Serialization.Binary.AutoRegistration
 
         bool IsResolverFactory(MethodInfo methodInfo)
         {
-            var paramType = typeof(EntityKeyMapper<TEntityKey>);
+            var paramType = typeof(IEntityKeyMapper);
             var returnType = typeof(IFormatterResolver);
             return methodInfo.GetCustomAttribute<EntityBinaryFormatterResolverAttribute>() != null
                    && methodInfo.IsSameFunction(returnType, paramType);

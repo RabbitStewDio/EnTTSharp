@@ -32,10 +32,10 @@ namespace EnTTSharp.Serialization.Binary
             return MessagePackSerializer.Deserialize<int>(reader, options);
         }
 
-        public TEntityKey ReadEntity(EntityKeyMapper<TEntityKey> entityMapper)
+        public TEntityKey ReadEntity(IEntityKeyMapper entityMapper)
         {
             var key = MessagePackSerializer.Deserialize<EntityKeyData>(reader, options);
-            return entityMapper(key);
+            return entityMapper.EntityKeyMapper<TEntityKey>(key);
         }
 
         public int ReadComponentCount<TComponent>()
@@ -55,7 +55,7 @@ namespace EnTTSharp.Serialization.Binary
             return c.ComponentCount;
         }
 
-        public bool TryReadComponent<TComponent>(EntityKeyMapper<TEntityKey> entityMapper, 
+        public bool TryReadComponent<TComponent>(IEntityKeyMapper entityMapper, 
                                                  out TEntityKey key, out TComponent component)
         {
 
@@ -66,7 +66,7 @@ namespace EnTTSharp.Serialization.Binary
                 component = pp(in component);
             }
 
-            key = entityMapper(entityKey);
+            key = entityMapper.EntityKeyMapper<TEntityKey>(entityKey);
             return true;
         }
 
@@ -87,7 +87,7 @@ namespace EnTTSharp.Serialization.Binary
             return c.ComponentExists;
         }
 
-        public bool TryReadTag<TComponent>(EntityKeyMapper<TEntityKey> entityMapper, out TEntityKey key, out TComponent component)
+        public bool TryReadTag<TComponent>(IEntityKeyMapper entityMapper, out TEntityKey key, out TComponent component)
         {
             var entityKey = MessagePackSerializer.Deserialize<EntityKeyData>(reader, options);
             component = MessagePackSerializer.Deserialize<TComponent>(reader, options);
@@ -96,7 +96,7 @@ namespace EnTTSharp.Serialization.Binary
                 component = pp(in component);
             }
 
-            key = entityMapper(entityKey);
+            key = entityMapper.EntityKeyMapper<TEntityKey>(entityKey);
             return true;
         }
 
@@ -111,10 +111,10 @@ namespace EnTTSharp.Serialization.Binary
             return MessagePackSerializer.Deserialize<int>(reader, options);
         }
 
-        public TEntityKey ReadDestroyed(EntityKeyMapper<TEntityKey> entityMapper)
+        public TEntityKey ReadDestroyed(IEntityKeyMapper entityMapper)
         {
             var key = MessagePackSerializer.Deserialize<EntityKeyData>(reader, options);
-            return entityMapper(key);
+            return entityMapper.EntityKeyMapper<TEntityKey>(key);
         }
     }
 }

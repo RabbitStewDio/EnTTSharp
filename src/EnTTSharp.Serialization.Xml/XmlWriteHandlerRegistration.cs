@@ -33,9 +33,9 @@ namespace EnTTSharp.Serialization.Xml
             return (WriteHandlerDelegate<TData>)handler;
         }
 
-        public bool TryGetResolverFactory<TEntityKey>(out FormatterResolverFactory<TEntityKey> fn)
+        public bool TryGetResolverFactory(out FormatterResolverFactory fn)
         {
-            if (surrogateResolver is FormatterResolverFactory<TEntityKey> fnx)
+            if (surrogateResolver is FormatterResolverFactory fnx)
             {
                 fn = fnx;
                 return true;
@@ -45,7 +45,7 @@ namespace EnTTSharp.Serialization.Xml
             return false;
         }
 
-        public XmlWriteHandlerRegistration WithFormatterResolver<TEntityKey>(FormatterResolverFactory<TEntityKey> r)
+        public XmlWriteHandlerRegistration WithFormatterResolver(FormatterResolverFactory r)
         {
             return new XmlWriteHandlerRegistration(TargetType, TypeId, handler, Tag, r);
         }

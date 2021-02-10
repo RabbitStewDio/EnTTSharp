@@ -4,11 +4,11 @@ namespace EnTTSharp.Serialization.Xml
 {
     public class EntityKeySurrogateProvider: SerializationSurrogateProviderBase<EntityKey, EntityKeyData>
     {
-        readonly EntityKeyMapper<EntityKey> entityMapper;
+        readonly IEntityKeyMapper entityMapper;
 
-        public EntityKeySurrogateProvider(EntityKeyMapper<EntityKey> entityMapper = null)
+        public EntityKeySurrogateProvider(IEntityKeyMapper entityMapper = null)
         {
-            this.entityMapper = entityMapper ?? Map;
+            this.entityMapper = entityMapper ?? new DefaultEntityKeyMapper().Register(Map);
         }
 
         EntityKey Map(EntityKeyData surrogate)
@@ -18,7 +18,7 @@ namespace EnTTSharp.Serialization.Xml
 
         public override EntityKey GetDeserializedObject(EntityKeyData surrogate)
         {
-            return entityMapper(surrogate);
+            return entityMapper.EntityKeyMapper<EntityKey>(surrogate);
         }
 
         public override EntityKeyData GetObjectToSerialize(EntityKey obj)

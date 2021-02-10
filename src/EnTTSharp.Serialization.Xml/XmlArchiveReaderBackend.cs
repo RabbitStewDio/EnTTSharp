@@ -55,15 +55,15 @@ namespace EnTTSharp.Serialization.Xml
         public readonly XmlReadHandlerRegistry Registry;
 
         public TEntityKey ReadEntity(XmlReader r,
-                                     EntityKeyMapper<TEntityKey> entityMapper)
+                                     IEntityKeyMapper entityMapper)
         {
-            return entityMapper(ReadEntityData(r, XmlTagNames.Entity));
+            return entityMapper.EntityKeyMapper<TEntityKey>(ReadEntityData(r, XmlTagNames.Entity));
         }
 
         public TEntityKey ReadDestroyedEntity(XmlReader r,
-                                              EntityKeyMapper<TEntityKey> entityMapper)
+                                              IEntityKeyMapper entityMapper)
         {
-            return entityMapper(ReadEntityData(r, XmlTagNames.DestroyedEntity));
+            return entityMapper.EntityKeyMapper<TEntityKey>(ReadEntityData(r, XmlTagNames.DestroyedEntity));
         }
 
         EntityKeyData ReadEntityData(XmlReader r, string tag)
@@ -76,7 +76,7 @@ namespace EnTTSharp.Serialization.Xml
 
 
         public void ReadTagTyped<TComponent>(XmlReader reader,
-                                             EntityKeyMapper<TEntityKey> entityMapper,
+                                             IEntityKeyMapper entityMapper,
                                              out TEntityKey entity,
                                              out TComponent component)
         {
@@ -90,7 +90,7 @@ namespace EnTTSharp.Serialization.Xml
                 throw new InvalidOperationException("Unable to resolve handler for registered type " + typeof(TComponent));
             }
 
-            entity = entityMapper(ReadEntityData(reader, XmlTagNames.Tag));
+            entity = entityMapper.EntityKeyMapper<TEntityKey>(ReadEntityData(reader, XmlTagNames.Tag));
             var _ = reader.Read();
             Logger.Verbose("Reading Component for {Entity}", entity);
             component = parser(reader);
@@ -131,7 +131,7 @@ namespace EnTTSharp.Serialization.Xml
         }
 
         public void ReadComponentTyped<TComponent>(XmlReader reader,
-                                                   EntityKeyMapper<TEntityKey> entityMapper,
+                                                   IEntityKeyMapper entityMapper,
                                                    out TEntityKey entity,
                                                    out TComponent component)
         {
@@ -145,7 +145,7 @@ namespace EnTTSharp.Serialization.Xml
                 throw new SnapshotIOException("Unable to resolve handler for registered type " + typeof(TComponent));
             }
 
-            entity = entityMapper(ReadEntityData(reader, XmlTagNames.Component));
+            entity = entityMapper.EntityKeyMapper<TEntityKey>(ReadEntityData(reader, XmlTagNames.Component));
             var _ = reader.Read();
             component = parser(reader);
         }

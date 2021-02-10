@@ -6,9 +6,9 @@ namespace EnTTSharp.Serialization.Binary.Impl
 {
     public class EntityKeyFormatter : IMessagePackFormatter<EntityKey>
     {
-        readonly EntityKeyMapper<EntityKey> entityMapper;
+        readonly IEntityKeyMapper entityMapper;
 
-        public EntityKeyFormatter(EntityKeyMapper<EntityKey> entityMapper)
+        public EntityKeyFormatter(IEntityKeyMapper entityMapper)
         {
             this.entityMapper = entityMapper;
         }
@@ -23,7 +23,7 @@ namespace EnTTSharp.Serialization.Binary.Impl
         {
             var age = reader.ReadByte();
             var key = reader.ReadInt32();
-            var r = entityMapper(new EntityKeyData(age, key));
+            var r = entityMapper.EntityKeyMapper<EntityKey>(new EntityKeyData(age, key));
             return r;
         }
     }
