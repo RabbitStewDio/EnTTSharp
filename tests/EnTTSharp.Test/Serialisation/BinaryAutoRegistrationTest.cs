@@ -1,5 +1,4 @@
 ﻿using EnTTSharp.Annotations;
-using EnTTSharp.Entities;
 using EnTTSharp.Serialization.Binary;
 using EnTTSharp.Serialization.Binary.AutoRegistration;
 using FluentAssertions;

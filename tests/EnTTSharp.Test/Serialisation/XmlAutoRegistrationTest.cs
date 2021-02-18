@@ -1,5 +1,4 @@
 ﻿using EnTTSharp.Annotations;
-using EnTTSharp.Entities;
 using EnTTSharp.Serialization.Xml;
 using EnTTSharp.Serialization.Xml.AutoRegistration;
 using FluentAssertions;

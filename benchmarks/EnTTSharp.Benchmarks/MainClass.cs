@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace EnTTSharp.Benchmarks
 {
 #pragma warning disable 162
+    [SuppressMessage("ReSharper", "HeuristicUnreachableCode")]
     public class MainClass
     {
         const bool RunManually = false;
@@ -28,7 +29,7 @@ namespace EnTTSharp.Benchmarks
                 config.Add(HardwareCounter.BranchMispredictions, HardwareCounter.BranchInstructions);
             }
             
-            var summary = BenchmarkRunner.Run(typeof(MainClass).Assembly, config);
+            BenchmarkRunner.Run(typeof(MainClass).Assembly, config);
         }
 
         static bool IsAdmin()
