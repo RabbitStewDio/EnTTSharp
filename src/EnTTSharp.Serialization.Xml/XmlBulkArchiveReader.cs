@@ -99,7 +99,7 @@ namespace EnTTSharp.Serialization.Xml
                         throw reader.FromMissingAttribute(XmlTagNames.Component, "type");
                     }
 
-                    ReadComponent(reader, loader, mapper, attr);
+                    ReadComponent(reader, loader, attr);
                     return true;
                 }
                 case XmlTagNames.Tag:
@@ -185,7 +185,7 @@ namespace EnTTSharp.Serialization.Xml
             }
         }
 
-        void ReadComponent(XmlReader reader, ISnapshotLoader<TEntityKey> loader, IEntityKeyMapper mapper, string type)
+        void ReadComponent(XmlReader reader, ISnapshotLoader<TEntityKey> loader, string type)
         {
             if (reader.IsEmptyElement)
             {
