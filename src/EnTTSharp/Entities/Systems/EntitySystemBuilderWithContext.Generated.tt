@@ -62,7 +62,7 @@ namespace EnTTSharp.Entities.Systems
             this.reg = registry;
         }
 
-        public Action<TContext> CreateSystem(ViewDelegates.ApplyWithContext<#=inQualifier #><TEntityKey, TContext, <#= templateParamsLight #>> action)
+        public EntitySystemReference<TContext> CreateSystem(ViewDelegates.ApplyWithContext<#=inQualifier #><TEntityKey, TContext, <#= templateParamsLight #>> action)
         {
             var view = reg.PersistentView<<#= templateParamsLight #>>();
             view.AllowParallelExecution = allowParallel;
@@ -72,7 +72,7 @@ namespace EnTTSharp.Entities.Systems
                 view.ApplyWithContext(context, action);
             }
 
-            return Act;
+            return EntitySystemReference.Create<TContext>(Act, action);
         }
 
 <#
@@ -128,7 +128,7 @@ namespace EnTTSharp.Entities.Systems
             this.reg = registry;
         }
 
-        public Action<TContext> CreateSystem(ViewDelegates.ApplyWithContext<#=inQualifier #><TEntityKey, TContext, <#= templateParamsLight #>> action)
+        public EntitySystemReference<TContext> CreateSystem(ViewDelegates.ApplyWithContext<#=inQualifier #><TEntityKey, TContext, <#= templateParamsLight #>> action)
         {
             var view = reg.PersistentView<<#= templateParamsLight #>>();
             view.AllowParallelExecution = allowParallel;
@@ -138,7 +138,7 @@ namespace EnTTSharp.Entities.Systems
                 view.ApplyWithContext(context, action);
             }
 
-            return Act;
+            return EntitySystemReference.Create<TContext>(Act, action);
         }
 
 <#
@@ -192,7 +192,7 @@ namespace EnTTSharp.Entities.Systems
         }
 
 
-        public Action<TContext> CreateSystem(ViewDelegates.ApplyWithContext<#=qualifier #><TEntityKey, TContext, <#= templateParam #>> action)
+        public EntitySystemReference<TContext> CreateSystem(ViewDelegates.ApplyWithContext<#=qualifier #><TEntityKey, TContext, <#= templateParam #>> action)
         {
             var view = reg.PersistentView<<#= templateParam #>>();
             view.AllowParallelExecution = allowParallel;
@@ -202,7 +202,7 @@ namespace EnTTSharp.Entities.Systems
                 view.ApplyWithContext(context, action);
             }
 
-            return Act;
+            return EntitySystemReference.Create<TContext>(Act, action);
         }
 
 <#
