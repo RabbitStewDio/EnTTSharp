@@ -60,6 +60,30 @@ namespace EnTTSharp.Entities.Helpers
             this.version += 1;
         }
 
+        /// <summary>
+        ///   Access the contents of the list without expanding the list if the given index
+        ///   is not valid.
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="input"></param>
+        /// <exception cref="IndexOutOfRangeException"></exception>
+        void StoreRaw(int index, in T input)
+        {
+            if (index >= Count || index < 0) throw new IndexOutOfRangeException($"Index {index} is not within the valid range [0, {Count}]");
+            
+            var segmentIdx = index >> segmentBitShift;
+            var segment = this.data[segmentIdx];
+            if (segment == null)
+            {
+                segment = new T[segmentSize];
+                this.data[segmentIdx] = segment;
+            }
+
+            var dataIdx = index & segmentMask;
+            segment[dataIdx] = input;
+            this.version += 1;
+        }
+
         public int Version
         {
             get { return version; }
@@ -128,7 +152,7 @@ namespace EnTTSharp.Entities.Helpers
             }
             set
             {
-                StoreAt(index, in value);
+                StoreRaw(index, in value);
             }
         }
 

@@ -19,7 +19,7 @@ namespace EnTTSharp.Entities.Helpers
             const uint ValidMask = 0x0080_0000;
 
             readonly uint rawData;
-            public int Key => (int)(rawData & KeyMask);
+            public int DenseArrayIndex => (int)(rawData & KeyMask);
             public int Age => (int)(rawData & AgeMask) >> 24;
             public bool InUse => (rawData & ValidMask) != 0;
 
@@ -30,14 +30,14 @@ namespace EnTTSharp.Entities.Helpers
                 rawData |= ValidMask;
             }
 
-            ReverseEntry(int r)
+            public ReverseEntry WithDenseArrayIndex(int position)
             {
-                rawData = (uint)(r & KeyMask);
+                return new ReverseEntry(position, (byte) Age);
             }
-
-            public static ReverseEntry Unused(int key)
+            
+            public static ReverseEntry Unused()
             {
-                return new ReverseEntry(key);
+                return default; //new ReverseEntry(key);
             }
         }
 
@@ -75,26 +75,43 @@ namespace EnTTSharp.Entities.Helpers
 
         public virtual bool Remove(TEntityKey e)
         {
-            if (!Contains(e))
+            return RemoveEntry(e) != -1;
+        }
+
+        protected int RemoveEntry(in TEntityKey e)
+        {
+            var reverseArrayPosition = e.Key;
+            if (reverseArrayPosition >= reverse.Count)
             {
-                return false;
+                return -1;
             }
 
-            var entt = e.Key;
-            var lastEntry = direct[direct.Count - 1];
-            var lastIndex = lastEntry.Key;
+            var reverseEntry = reverse[reverseArrayPosition];
+            if (!reverseEntry.InUse || e.Age != reverseEntry.Age)
+            {
+                return -1;
+            }
+            
+            if (direct.Count == 0)
+            {
+                throw new ArgumentException("Inconsistent sparse-set detected");
+            }
 
-            var rentry = reverse[entt];
-            reverse[entt] = ReverseEntry.Unused(rentry.Key);
+            var lastFilledEntry = direct[direct.Count - 1];
+            var lastFilledIndex = lastFilledEntry.Key;
+
+            var denseArrayIndex = reverseEntry.DenseArrayIndex;
+            reverse[lastFilledIndex] = new ReverseEntry(denseArrayIndex, lastFilledEntry.Age);
+            reverse[reverseArrayPosition] = ReverseEntry.Unused();;
 
             // remove the element by filling the gap with the last entry of 
             // the direct-list into the spot that just got empty.
             // Although this reorders the elements in the list, it avoids moving all
-            // elements to close the gap. 
-            reverse[lastIndex] = ReverseEntry.Unused(rentry.Key);
-            direct[rentry.Key] = lastEntry;
+            // elements to close the gap.
+            direct[denseArrayIndex] = lastFilledEntry;
             direct.RemoveLast();
-            return true;
+            return denseArrayIndex;
+            
         }
 
         public TEntityKey Last => direct[direct.Count - 1];
@@ -144,13 +161,13 @@ namespace EnTTSharp.Entities.Helpers
                 return -1;
             }
 
-            var entityKey = reverse[pos];
-            if (!entityKey.InUse || entity.Age != entityKey.Age)
+            var reverseEntry = reverse[pos];
+            if (!reverseEntry.InUse || entity.Age != reverseEntry.Age)
             {
                 return -1;
             }
 
-            return entityKey.Key;
+            return reverseEntry.DenseArrayIndex;
         }
 
         public void Reset(TEntityKey entity)

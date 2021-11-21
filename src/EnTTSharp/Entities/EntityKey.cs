@@ -62,7 +62,7 @@ namespace EnTTSharp.Entities
 
         public override string ToString()
         {
-            return $"{nameof(Key)}: {Key}, {nameof(Age)}: {Age}";
+            return $"EntityKey({nameof(Key)}: {Key}, {nameof(Age)}: {Age})";
         }
 
         public static EntityKey Create(byte age, int id)

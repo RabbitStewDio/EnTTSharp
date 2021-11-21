@@ -32,7 +32,7 @@ namespace EnTTSharp.Entities.Helpers
 
         public override bool Remove(TEntityKey e)
         {
-            var idx = IndexOf(e);
+            var idx = RemoveEntry(e);
             if (idx == -1)
             {
                 return false;
@@ -40,7 +40,6 @@ namespace EnTTSharp.Entities.Helpers
 
             instances[idx] = instances[instances.Count - 1];
             instances.RemoveLast();
-            base.Remove(e);
             return true;
         }
 

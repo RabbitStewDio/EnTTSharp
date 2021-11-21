@@ -360,21 +360,24 @@ namespace EnTTSharp.Entities
             AssertValid(entity);
 
             BeforeEntityDestroyed?.Invoke(this, entity);
+            Console.WriteLine("\nDestroying " + entity);
 
             var entt = entity.Key;
             var node = entityKeyFactory(RollingAgeIncrement(entity.Age), available > 0 ? next : entt + 1);
-
-            entities[entt] = node;
-            next = entt;
-            available += 1;
 
             foreach (var pool in pools)
             {
                 if (pool.TryGetPool(out var p))
                 {
+                    Console.WriteLine($"Removing from pool [{pool}] entry {entity}");
                     p.Remove(entity);
                 }
             }
+            
+            entities[entt] = node;
+            next = entt;
+            available += 1;
+
         }
 
         public bool HasTag<TTag>()
@@ -689,6 +692,10 @@ namespace EnTTSharp.Entities
                 if (IsValid(last))
                 {
                     Destroy(last);
+                }
+                else
+                {
+                    Console.WriteLine("Invalid entry " + last);
                 }
             }
 
