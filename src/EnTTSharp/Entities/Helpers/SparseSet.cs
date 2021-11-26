@@ -30,11 +30,6 @@ namespace EnTTSharp.Entities.Helpers
                 rawData |= ValidMask;
             }
 
-            public ReverseEntry WithDenseArrayIndex(int position)
-            {
-                return new ReverseEntry(position, (byte) Age);
-            }
-            
             public static ReverseEntry Unused()
             {
                 return default; //new ReverseEntry(key);
@@ -102,7 +97,7 @@ namespace EnTTSharp.Entities.Helpers
 
             var denseArrayIndex = reverseEntry.DenseArrayIndex;
             reverse[lastFilledIndex] = new ReverseEntry(denseArrayIndex, lastFilledEntry.Age);
-            reverse[reverseArrayPosition] = ReverseEntry.Unused();;
+            reverse[reverseArrayPosition] = ReverseEntry.Unused();
 
             // remove the element by filling the gap with the last entry of 
             // the direct-list into the spot that just got empty.

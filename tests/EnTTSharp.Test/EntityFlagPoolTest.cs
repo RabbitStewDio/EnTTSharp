@@ -1,4 +1,5 @@
 using EnTTSharp.Entities;
+using FluentAssertions;
 using NUnit.Framework;
 
 namespace EnTTSharp.Test
@@ -7,9 +8,7 @@ namespace EnTTSharp.Test
     {
         EntityRegistry<EntityKey> registry;
         EntityKey[] keys;
-        IPersistentEntityView<EntityKey, int> componentPool;
-        IPersistentEntityView<EntityKey, SomeMarker> flagPool;
-        IPersistentEntityView<EntityKey, int, SomeMarker> combinedPool;
+        IPersistentEntityView<EntityKey, SomeMarker> view;
 
         [SetUp]
         public void SetUp()
@@ -26,17 +25,70 @@ namespace EnTTSharp.Test
             var k5 = registry.CreateAsActor().Entity;
 
             keys = new[] { k1, k2, k3, k4, k5 };
-            componentPool = registry.PersistentView<int>();
-            flagPool = registry.PersistentView<SomeMarker>();
-            combinedPool = registry.PersistentView<int, SomeMarker>();
+            view = registry.PersistentView<SomeMarker>();
         }
 
         [Test]
         public void TestClear()
         {
+            view.Count.Should().Be(3);
+            registry.Count.Should().Be(5);
+
             registry.Clear();
+
+            view.Count.Should().Be(0);
+            registry.Count.Should().Be(0);
+
+            var pool = registry.GetPool<SomeMarker>();
+            pool.Contains(keys[0]).Should().BeFalse();
+            pool.Contains(keys[1]).Should().BeFalse();
+            pool.Contains(keys[2]).Should().BeFalse();
+            pool.Contains(keys[3]).Should().BeFalse();
         }
 
+
+        [Test]
+        public void TestRemoveComponentFirst()
+        {
+            registry.RemoveComponent<SomeMarker>(keys[1]);
+
+            view.Should().BeEquivalentTo(keys[2], keys[3]);
+            registry.Should().BeEquivalentTo(keys);
+        }
+
+        [Test]
+        public void TestRemoveEntityFirst()
+        {
+            registry.Destroy(keys[1]);
+
+            view.Should().BeEquivalentTo(keys[2], keys[3]);
+            registry.Should().BeEquivalentTo(keys[0], keys[2], keys[3], keys[4]);
+            
+            var pool = registry.GetPool<SomeMarker>();
+            pool.Contains(keys[1]).Should().BeFalse();
+        }
+
+        [Test]
+        public void TestRemoveComponentLast()
+        {
+            registry.RemoveComponent<SomeMarker>(keys[3]);
+
+            view.Should().BeEquivalentTo(keys[1], keys[2]);
+            registry.Should().BeEquivalentTo(keys);
+        }
+
+        [Test]
+        public void TestRemoveEntityLast()
+        {
+            registry.Destroy(keys[3]);
+
+            view.Should().BeEquivalentTo(keys[1], keys[2]);
+            registry.Should().BeEquivalentTo(keys[0], keys[1], keys[2], keys[4]);
+
+            var pool = registry.GetPool<SomeMarker>();
+            pool.Contains(keys[3]).Should().BeFalse();
+        }
+        
         readonly struct SomeMarker
         {
         }

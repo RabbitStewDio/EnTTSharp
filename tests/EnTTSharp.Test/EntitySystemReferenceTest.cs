@@ -17,10 +17,11 @@ namespace EnTTSharp.Test
         [Test]
         public void TestClosure()
         {
-            int x = 10;
+            // ReSharper disable once NotAccessedVariable
+            int _ = 10;
             void AClosure()
             {
-                x += 1;
+                _ += 1;
             }
             
             Action action = AClosure;
@@ -32,12 +33,13 @@ namespace EnTTSharp.Test
         {
             // this is a bit convoluted but hey, better safe than sorry.
             
-            int x = 10;
+            // ReSharper disable once NotAccessedVariable
+            int _ = 10;
             Action AClosure()
             {
                 void BClosure()
                 {
-                    x += 1;
+                    _ += 1;
                 }
 
                 return BClosure;

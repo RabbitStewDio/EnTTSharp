@@ -30,7 +30,7 @@ namespace EnTTSharp.Entities.Systems
             var targetType = source.Target?.GetType() ?? source.Method.DeclaringType;
             if (IsClosure(targetType, out var baseType))
             {
-                var systemId = $"{NameWithoutGenerics(baseType)}#{ClosureMethodNameWithContext(baseType, source)}";
+                var systemId = $"{NameWithoutGenerics(baseType)}#{ClosureMethodNameWithContext(source)}";
                 return systemId;
             }
             else
@@ -40,7 +40,7 @@ namespace EnTTSharp.Entities.Systems
             }
         }
 
-        static string ClosureMethodNameWithContext(Type t, Delegate action)
+        static string ClosureMethodNameWithContext(Delegate action)
         {
             var rawName = action.Method.Name;
             var re = new Regex(@"<(?<Source>.*)>.__(?<Method>.*)\|.*");
