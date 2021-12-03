@@ -1,4 +1,5 @@
 using EnTTSharp.Entities.Helpers;
+using Serilog;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -8,6 +9,8 @@ namespace EnTTSharp.Entities
 {
     public static class PersistentViewParallelism
     {
+        static readonly ILogger logger = LogHelper.ForContext(typeof(PersistentViewParallelism));
+        
         public static void PartitionAndRun<TEntityKey>(List<TEntityKey> p, Action<TEntityKey> action)
         {
             if (p.Count == 0)
@@ -44,7 +47,7 @@ namespace EnTTSharp.Entities
             Parallel.ForEach(partitioner, opts, range =>
             {
                 var (min, max) = range;
-                // Console.WriteLine($"Executing Partition {min} - {max}");
+                logger.Verbose("Executing Partition {Min} - {Max}", min, max);
                 action(p, context, min, max);
             });
         }

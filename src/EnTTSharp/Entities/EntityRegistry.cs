@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using EnTTSharp.Entities.Helpers;
 using EnTTSharp.Entities.Pools;
+using Serilog;
 
 namespace EnTTSharp.Entities
 {
@@ -42,6 +43,7 @@ namespace EnTTSharp.Entities
             }
         }
 
+        readonly ILogger logger = LogHelper.ForContext<EntityRegistry<TEntityKey>>();
         readonly EqualityComparer<TEntityKey> equalityComparer;
         readonly List<TEntityKey> entities;
         readonly List<PoolEntry> pools;
@@ -360,7 +362,7 @@ namespace EnTTSharp.Entities
             AssertValid(entity);
 
             BeforeEntityDestroyed?.Invoke(this, entity);
-            Console.WriteLine("\nDestroying " + entity);
+            logger.Verbose("Destroying {Entity}", entity);
 
             var entt = entity.Key;
             var node = entityKeyFactory(RollingAgeIncrement(entity.Age), available > 0 ? next : entt + 1);
@@ -369,7 +371,7 @@ namespace EnTTSharp.Entities
             {
                 if (pool.TryGetPool(out var p))
                 {
-                    Console.WriteLine($"Removing from pool [{pool}] entry {entity}");
+                    logger.Verbose("- Removing component from pool [{Pool}] entry {Entity}", p, entity);
                     p.Remove(entity);
                 }
             }
@@ -695,7 +697,7 @@ namespace EnTTSharp.Entities
                 }
                 else
                 {
-                    Console.WriteLine("Invalid entry " + last);
+                    logger.Verbose("Invalid entry {Entity}", last);
                 }
             }
 
