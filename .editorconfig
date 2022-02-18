@@ -142,46 +142,6 @@ csharp_preserve_single_line_statements=false
 
 #### Naming styles ####
 
-# Naming rules
-
-dotnet_naming_rule.interface_should_be_begins_with_i.severity=suggestion
-dotnet_naming_rule.interface_should_be_begins_with_i.symbols=interface
-dotnet_naming_rule.interface_should_be_begins_with_i.style=begins_with_i
-
-dotnet_naming_rule.types_should_be_pascal_case.severity=suggestion
-dotnet_naming_rule.types_should_be_pascal_case.symbols=types
-dotnet_naming_rule.types_should_be_pascal_case.style=pascal_case
-
-dotnet_naming_rule.non_field_members_should_be_pascal_case.severity=suggestion
-dotnet_naming_rule.non_field_members_should_be_pascal_case.symbols=non_field_members
-dotnet_naming_rule.non_field_members_should_be_pascal_case.style=pascal_case
-
-# Symbol specifications
-
-dotnet_naming_symbols.interface.applicable_kinds=interface
-dotnet_naming_symbols.interface.applicable_accessibilities=public, internal, private, protected, protected_internal, private_protected
-dotnet_naming_symbols.interface.required_modifiers=
-
-dotnet_naming_symbols.types.applicable_kinds=class, struct, interface, enum
-dotnet_naming_symbols.types.applicable_accessibilities=public, internal, private, protected, protected_internal, private_protected
-dotnet_naming_symbols.types.required_modifiers=
-
-dotnet_naming_symbols.non_field_members.applicable_kinds=property, event, method
-dotnet_naming_symbols.non_field_members.applicable_accessibilities=public, internal, private, protected, protected_internal, private_protected
-dotnet_naming_symbols.non_field_members.required_modifiers=
-
-# Naming styles
-
-dotnet_naming_style.pascal_case.required_prefix=
-dotnet_naming_style.pascal_case.required_suffix=
-dotnet_naming_style.pascal_case.word_separator=
-dotnet_naming_style.pascal_case.capitalization=pascal_case
-
-dotnet_naming_style.begins_with_i.required_prefix=I
-dotnet_naming_style.begins_with_i.required_suffix=
-dotnet_naming_style.begins_with_i.word_separator=
-dotnet_naming_style.begins_with_i.capitalization=pascal_case
-
 # ReSharper properties
 resharper_align_linq_query=true
 resharper_align_multiline_argument=true
@@ -205,7 +165,7 @@ resharper_csharp_naming_rule.method=AaBb:do_not_check
 resharper_csharp_naming_rule.private_constants=AaBb
 resharper_csharp_naming_rule.private_instance_fields=aaBb
 resharper_csharp_naming_rule.private_static_fields=aaBb
-resharper_csharp_naming_rule.private_static_readonly=AaBb
+resharper_csharp_naming_rule.private_static_readonly=aaBb
 resharper_csharp_naming_rule.property=AaBb:do_not_check
 resharper_csharp_naming_rule.types_and_namespaces=AaBb:do_not_check
 resharper_csharp_wrap_after_invocation_lpar=false
@@ -223,53 +183,93 @@ resharper_wrap_before_invocation_rpar=false
 # Microsoft .NET properties
 csharp_style_expression_bodied_accessors=false:none
 csharp_style_expression_bodied_properties=false:none
+
 dotnet_naming_rule.event_rule.severity=none
 dotnet_naming_rule.event_rule.style=pascal_case
 dotnet_naming_rule.event_rule.symbols=event_symbols
+
 dotnet_naming_rule.interfaces_rule.severity=none
 dotnet_naming_rule.interfaces_rule.style=begins_with_i
 dotnet_naming_rule.interfaces_rule.symbols=interfaces_symbols
+
 dotnet_naming_rule.method_rule.severity=none
 dotnet_naming_rule.method_rule.style=pascal_case
 dotnet_naming_rule.method_rule.symbols=method_symbols
+
 dotnet_naming_rule.private_constants_rule.severity=suggestion
-dotnet_naming_rule.private_constants_rule.style=pascal_case
+dotnet_naming_rule.private_constants_rule.style=lower_camel_case_style
 dotnet_naming_rule.private_constants_rule.symbols=private_constants_symbols
+
 dotnet_naming_rule.private_instance_fields_rule.severity=suggestion
 dotnet_naming_rule.private_instance_fields_rule.style=lower_camel_case_style
 dotnet_naming_rule.private_instance_fields_rule.symbols=private_instance_fields_symbols
+
 dotnet_naming_rule.private_static_fields_rule.severity=suggestion
 dotnet_naming_rule.private_static_fields_rule.style=lower_camel_case_style
 dotnet_naming_rule.private_static_fields_rule.symbols=private_static_fields_symbols
+
 dotnet_naming_rule.private_static_readonly_rule.severity=suggestion
-dotnet_naming_rule.private_static_readonly_rule.style=pascal_case
+dotnet_naming_rule.private_static_readonly_rule.style=lower_camel_case_style
 dotnet_naming_rule.private_static_readonly_rule.symbols=private_static_readonly_symbols
+
 dotnet_naming_rule.property_rule.severity=none
 dotnet_naming_rule.property_rule.style=pascal_case
 dotnet_naming_rule.property_rule.symbols=property_symbols
+
 dotnet_naming_rule.types_and_namespaces_rule.severity=none
 dotnet_naming_rule.types_and_namespaces_rule.style=pascal_case
 dotnet_naming_rule.types_and_namespaces_rule.symbols=types_and_namespaces_symbols
+
+# ===================================
+# Naming styles
+
 dotnet_naming_style.lower_camel_case_style.capitalization=camel_case
+
+dotnet_naming_style.pascal_case.required_prefix=
+dotnet_naming_style.pascal_case.required_suffix=
+dotnet_naming_style.pascal_case.word_separator=
+dotnet_naming_style.pascal_case.capitalization=pascal_case
+
+dotnet_naming_style.begins_with_i.required_prefix=I
+dotnet_naming_style.begins_with_i.required_suffix=
+dotnet_naming_style.begins_with_i.word_separator=
+dotnet_naming_style.begins_with_i.capitalization=pascal_case
+
+dotnet_naming_style.camel_case.capitalization = camel_case
+dotnet_naming_style.camel_case.required_prefix=
+dotnet_naming_style.camel_case.required_suffix=
+dotnet_naming_style.camel_case.word_separator=
+
+# ===================================
+
 dotnet_naming_symbols.event_symbols.applicable_accessibilities=*
 dotnet_naming_symbols.event_symbols.applicable_kinds=event
+
 dotnet_naming_symbols.interfaces_symbols.applicable_accessibilities=*
 dotnet_naming_symbols.interfaces_symbols.applicable_kinds=interface
+
 dotnet_naming_symbols.method_symbols.applicable_accessibilities=*
 dotnet_naming_symbols.method_symbols.applicable_kinds=method
+
+# HERE
 dotnet_naming_symbols.private_constants_symbols.applicable_accessibilities=private
 dotnet_naming_symbols.private_constants_symbols.applicable_kinds=field
 dotnet_naming_symbols.private_constants_symbols.required_modifiers=const
+
 dotnet_naming_symbols.private_instance_fields_symbols.applicable_accessibilities=private
 dotnet_naming_symbols.private_instance_fields_symbols.applicable_kinds=field
+
 dotnet_naming_symbols.private_static_fields_symbols.applicable_accessibilities=private
 dotnet_naming_symbols.private_static_fields_symbols.applicable_kinds=field
 dotnet_naming_symbols.private_static_fields_symbols.required_modifiers=static
+
 dotnet_naming_symbols.private_static_readonly_symbols.applicable_accessibilities=private
 dotnet_naming_symbols.private_static_readonly_symbols.applicable_kinds=field
 dotnet_naming_symbols.private_static_readonly_symbols.required_modifiers=static,readonly
+
 dotnet_naming_symbols.property_symbols.applicable_accessibilities=*
 dotnet_naming_symbols.property_symbols.applicable_kinds=property
+
 dotnet_naming_symbols.types_and_namespaces_symbols.applicable_accessibilities=*
 dotnet_naming_symbols.types_and_namespaces_symbols.applicable_kinds=namespace,class,struct,enum,delegate
 
