@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using EnTTSharp.Entities.Helpers;
 using EnTTSharp.Entities.Pools;
 using Serilog;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EnTTSharp.Entities
 {
@@ -15,7 +16,7 @@ namespace EnTTSharp.Entities
     {
         readonly struct PoolEntry
         {
-            readonly IPool<TEntityKey> pool;
+            readonly IPool<TEntityKey>? pool;
 
             public PoolEntry(IReadOnlyPool<TEntityKey> readonlyPool)
             {
@@ -31,7 +32,7 @@ namespace EnTTSharp.Entities
 
             public IReadOnlyPool<TEntityKey> ReadonlyPool { get; }
 
-            public bool TryGetPool(out IPool<TEntityKey> poolResult)
+            public bool TryGetPool([MaybeNullWhen(false)] out IPool<TEntityKey> poolResult)
             {
                 poolResult = this.pool;
                 return poolResult != null;
@@ -76,7 +77,7 @@ namespace EnTTSharp.Entities
             views = new Dictionary<Type, IEntityView<TEntityKey>>();
         }
 
-        public event EventHandler<TEntityKey> BeforeEntityDestroyed;
+        public event EventHandler<TEntityKey>? BeforeEntityDestroyed;
 
         public int Count
         {
@@ -124,6 +125,7 @@ namespace EnTTSharp.Entities
             return default;
         }
 
+        [DoesNotReturn]
         void ThrowInvalidRegistrationError(Type t)
         {
             throw new ArgumentException($"Unknown registration at EntityRegistry<{typeof(TEntityKey)}> for component type {t}");
@@ -143,7 +145,7 @@ namespace EnTTSharp.Entities
 
         public IReadOnlyPool<TEntityKey, TComponent> GetPool<TComponent>()
         {
-            if (!TryGetPool(out IReadOnlyPool<TEntityKey, TComponent> p))
+            if (!TryGetPool<TComponent>(out var p))
             {
                 ThrowInvalidRegistrationError(typeof(TComponent));
                 return default;
@@ -152,7 +154,7 @@ namespace EnTTSharp.Entities
             return p;
         }
 
-        public bool TryGetPool<TComponent>(out IReadOnlyPool<TEntityKey, TComponent> pool)
+        public bool TryGetPool<TComponent>([MaybeNullWhen(false)] out IReadOnlyPool<TEntityKey, TComponent> pool)
         {
             var idx = ManagedIndex<TComponent>();
             if (idx == -1)
@@ -173,7 +175,7 @@ namespace EnTTSharp.Entities
 
         public IPool<TEntityKey, TComponent> GetWritablePool<TComponent>()
         {
-            if (!TryGetWritablePool(out IPool<TEntityKey, TComponent> p))
+            if (!TryGetWritablePool<TComponent>(out var p))
             {
                 ThrowInvalidRegistrationError(typeof(TComponent));
                 return default;
@@ -182,7 +184,7 @@ namespace EnTTSharp.Entities
             return p;
         }
         
-        public bool TryGetWritablePool<TComponent>(out IPool<TEntityKey, TComponent> pool)
+        public bool TryGetWritablePool<TComponent>([MaybeNullWhen(false)] out IPool<TEntityKey, TComponent> pool)
         {
             var idx = ManagedIndex<TComponent>();
             if (idx == -1)
@@ -276,7 +278,7 @@ namespace EnTTSharp.Entities
 
         public IPool<TEntityKey, TComponent>
             Register<TComponent>(Func<TComponent> con,
-                                 Action<TEntityKey, EntityRegistry<TEntityKey>, TComponent> destructor = null)
+                                 Action<TEntityKey, EntityRegistry<TEntityKey>, TComponent>? destructor = null)
         {
             if (IsManaged<TComponent>())
             {
@@ -296,7 +298,7 @@ namespace EnTTSharp.Entities
         }
 
         public IPool<TEntityKey, TComponent> RegisterNonConstructable<TComponent>(
-            Action<TEntityKey, EntityRegistry<TEntityKey>, TComponent> destructor = null)
+            Action<TEntityKey, EntityRegistry<TEntityKey>, TComponent>? destructor = null)
         {
             if (IsManaged<TComponent>())
             {
@@ -398,7 +400,7 @@ namespace EnTTSharp.Entities
             AttachTag(entity, tag);
         }
 
-        public void AttachTag<TTag>(TEntityKey entity, in TTag tag)
+        public void AttachTag<TTag>(TEntityKey entity, in TTag? tag)
         {
             AssertValid(entity);
 
@@ -481,13 +483,20 @@ namespace EnTTSharp.Entities
             throw new ArgumentException();
         }
 
-        public bool TryGetTag<TTag>(out TEntityKey entity, out TTag tag)
+        public bool TryGetTag<TTag>([MaybeNullWhen(false)] out TEntityKey entity, out Optional<TTag> tag)
         {
             if (tagIndex.TryGetValue(typeof(TTag), out var idx))
             {
                 var att = tags[idx];
                 entity = att.Entity;
-                tag = (TTag)att.Tag;
+                if (att.Tag is TTag typedTag)
+                {
+                    tag = typedTag;
+                }
+                else
+                {
+                    tag = default;
+                }
                 return true;
             }
 
@@ -571,7 +580,7 @@ namespace EnTTSharp.Entities
             return false;
         }
 
-        public bool GetComponent<TComponent>(TEntityKey entity, out TComponent c)
+        public bool GetComponent<TComponent>(TEntityKey entity, [MaybeNullWhen(false)] out TComponent c)
         {
             AssertManaged<TComponent>();
             AssertValid(entity);
@@ -769,9 +778,9 @@ namespace EnTTSharp.Entities
         readonly struct Attachment
         {
             public readonly TEntityKey Entity;
-            public readonly object Tag;
+            public readonly object? Tag;
 
-            public Attachment(TEntityKey entity, object tag)
+            public Attachment(TEntityKey entity, object? tag)
             {
                 Entity = entity;
                 Tag = tag ?? throw new ArgumentNullException(nameof(tag));
@@ -789,7 +798,7 @@ namespace EnTTSharp.Entities
             {
                 contents = widget;
                 index = -1;
-                current = default;
+                current = default!;
             }
 
             public void Dispose()
@@ -809,14 +818,14 @@ namespace EnTTSharp.Entities
                     }
                 }
 
-                current = default;
+                current = default!;
                 return false;
             }
 
             public void Reset()
             {
                 index = -1;
-                current = default;
+                current = default!;
             }
 
             object IEnumerator.Current

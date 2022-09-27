@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EnTTSharp.Entities.Helpers
 {
@@ -65,7 +66,7 @@ namespace EnTTSharp.Entities.Helpers
             instances.Clear();
         }
 
-        public bool TryGet(TEntityKey entity, out TComponent component)
+        public bool TryGet(TEntityKey entity, [MaybeNullWhen(false)] out TComponent component)
         {
             var idx = IndexOf(entity);
             if (idx >= 0)
@@ -78,7 +79,7 @@ namespace EnTTSharp.Entities.Helpers
             return false;
         }
 
-        public ref readonly TComponent TryGetRef(TEntityKey entity, ref TComponent defaultValue, out bool success)
+        public ref readonly TComponent? TryGetRef(TEntityKey entity, ref TComponent? defaultValue, out bool success)
         {
             var idx = IndexOf(entity);
             if (idx >= 0)
@@ -90,7 +91,7 @@ namespace EnTTSharp.Entities.Helpers
             return ref defaultValue;
         }
 
-        public ref TComponent TryGetModifiableRef(TEntityKey entity, ref TComponent defaultValue, out bool success)
+        public ref TComponent? TryGetModifiableRef(TEntityKey entity, ref TComponent? defaultValue, out bool success)
         {
             var idx = IndexOf(entity);
             if (idx >= 0)

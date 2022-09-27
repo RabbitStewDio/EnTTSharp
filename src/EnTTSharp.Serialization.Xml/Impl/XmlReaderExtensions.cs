@@ -5,7 +5,7 @@ namespace EnTTSharp.Serialization.Xml.Impl
 {
     public static class XmlReaderExtensions
     {
-        public static void AdvanceToElement(this XmlReader reader, string localName = null)
+        public static void AdvanceToElement(this XmlReader reader, string? localName = null)
         {
             while (reader.Read())
             {
@@ -72,7 +72,7 @@ namespace EnTTSharp.Serialization.Xml.Impl
 
         public static bool TryGetAttributeInt(this XmlReader reader, string name, out int value)
         {
-            string rawValue = reader.GetAttribute(name);
+            string? rawValue = reader.GetAttribute(name);
             if (string.IsNullOrEmpty(rawValue))
             {
                 value = default;

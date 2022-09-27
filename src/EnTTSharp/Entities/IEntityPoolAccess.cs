@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using EnTTSharp.Entities.Pools;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EnTTSharp.Entities
 {
@@ -11,9 +12,9 @@ namespace EnTTSharp.Entities
         TEntityKey Create();
         IPool<TEntityKey, TComponent> GetWritablePool<TComponent>();
         IReadOnlyPool<TEntityKey, TComponent> GetPool<TComponent>();
-        bool TryGetPool<TComponent>(out IReadOnlyPool<TEntityKey, TComponent> pool);
-        bool TryGetWritablePool<TComponent>(out IPool<TEntityKey, TComponent> pool);
-        event EventHandler<TEntityKey> BeforeEntityDestroyed;
+        bool TryGetPool<TComponent>([MaybeNullWhen(false)] out IReadOnlyPool<TEntityKey, TComponent> pool);
+        bool TryGetWritablePool<TComponent>([MaybeNullWhen(false)] out IPool<TEntityKey, TComponent> pool);
+        event EventHandler<TEntityKey>? BeforeEntityDestroyed;
         void AssureEntityState(TEntityKey entity, bool destroyed);
         void Destroy(TEntityKey k);
 

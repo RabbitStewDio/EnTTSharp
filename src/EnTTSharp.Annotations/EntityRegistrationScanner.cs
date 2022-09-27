@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using EnTTSharp.Entities.Attributes;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EnTTSharp.Annotations
 {
@@ -49,7 +50,7 @@ namespace EnTTSharp.Annotations
         }
 
         public List<EntityComponentRegistration> RegisterComponentsFromAssembly(Assembly a,
-                                                                                List<EntityComponentRegistration> retval = null)
+                                                                                List<EntityComponentRegistration>? retval = null)
         {
             retval = retval ?? new List<EntityComponentRegistration>();
             foreach (var typeInfo in a.DefinedTypes)
@@ -63,21 +64,21 @@ namespace EnTTSharp.Annotations
             return retval;
         }
 
-        public bool TryRegisterComponent<TData>(out EntityComponentRegistration result)
+        public bool TryRegisterComponent<TData>([MaybeNullWhen(false)] out EntityComponentRegistration result)
         {
             var type = typeof(TData);
             var typeInfo = type.GetTypeInfo();
             return TryRegisterComponent(typeInfo, out result);
         }
 
-        public bool TryRegisterKey<TData>(out EntityComponentRegistration result)
+        public bool TryRegisterKey<TData>([MaybeNullWhen(false)] out EntityComponentRegistration result)
         {
             var type = typeof(TData);
             var typeInfo = type.GetTypeInfo();
             return TryRegisterKey(typeInfo, out result);
         }
 
-        public bool TryRegisterComponent(TypeInfo typeInfo, out EntityComponentRegistration result)
+        public bool TryRegisterComponent(TypeInfo typeInfo, [MaybeNullWhen(false)] out EntityComponentRegistration result)
         {
             if (typeInfo.IsAbstract)
             {
@@ -100,7 +101,7 @@ namespace EnTTSharp.Annotations
             return !result.IsEmpty;
         }
 
-        public bool TryRegisterKey(TypeInfo typeInfo, out EntityComponentRegistration result)
+        public bool TryRegisterKey(TypeInfo typeInfo, [MaybeNullWhen(false)] out EntityComponentRegistration result)
         {
             if (typeInfo.IsAbstract)
             {

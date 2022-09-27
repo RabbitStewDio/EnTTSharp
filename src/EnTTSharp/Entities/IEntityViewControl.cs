@@ -1,4 +1,6 @@
-﻿namespace EnTTSharp.Entities
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace EnTTSharp.Entities
 {
     /// <summary>
     ///   A controller interface that allows actions to query and update
@@ -8,13 +10,13 @@
         where TEntityKey: IEntityKey
     {
         bool HasTag<TTag>();
-        bool TryGetTag<TTag>(out TEntityKey k, out TTag tag);
+        bool TryGetTag<TTag>([MaybeNullWhen(false)] out TEntityKey k, out Optional<TTag> tag);
         void RemoveTag<TTag>();
         void AttachTag<TTag>(TEntityKey entity);
         void AttachTag<TTag>(TEntityKey entity, in TTag tag);
 
         bool Contains(TEntityKey e);
-        bool GetComponent<TComponent>(TEntityKey entity, out TComponent data);
+        bool GetComponent<TComponent>(TEntityKey entity, [MaybeNullWhen(false)] out TComponent data);
         bool HasComponent<TComponent>(TEntityKey entity);
 
         // Writeback is only necessary for structs. Classes are by-ref and all references point to the

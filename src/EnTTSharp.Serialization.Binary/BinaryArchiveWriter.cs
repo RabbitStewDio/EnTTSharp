@@ -9,13 +9,13 @@ namespace EnTTSharp.Serialization.Binary
     public class BinaryArchiveWriter<TEntityKey>: IEntityArchiveWriter<TEntityKey> where TEntityKey : IEntityKey
     {
         readonly Stream writer;
-        readonly MessagePackSerializerOptions options;
+        readonly MessagePackSerializerOptions? options;
 
         public BinaryWriteHandlerRegistry Registry { get; }
 
         public BinaryArchiveWriter(BinaryWriteHandlerRegistry registry, 
                                    Stream writer, 
-                                   MessagePackSerializerOptions options = null)
+                                   MessagePackSerializerOptions? options = null)
         {
             if (writer == null)
             {
@@ -29,7 +29,7 @@ namespace EnTTSharp.Serialization.Binary
 
             this.Registry = registry ?? throw new ArgumentNullException(nameof(registry));
             this.writer = writer;
-            this.options = options ?? MessagePackSerializerOptions.Standard;
+            this.options = options;
         }
 
         public void WriteStartEntity(in int entityCount)

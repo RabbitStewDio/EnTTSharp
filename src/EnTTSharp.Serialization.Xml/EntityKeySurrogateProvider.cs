@@ -6,7 +6,7 @@ namespace EnTTSharp.Serialization.Xml
     {
         readonly IEntityKeyMapper entityMapper;
 
-        public EntityKeySurrogateProvider(IEntityKeyMapper entityMapper = null)
+        public EntityKeySurrogateProvider(IEntityKeyMapper? entityMapper = null)
         {
             this.entityMapper = entityMapper ?? new DefaultEntityKeyMapper().Register(Map);
         }

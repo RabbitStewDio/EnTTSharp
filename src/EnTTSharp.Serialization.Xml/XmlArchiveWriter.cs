@@ -86,7 +86,7 @@ namespace EnTTSharp.Serialization.Xml
             writer.WriteStartElement(XmlTagNames.Component);
             writer.WriteAttributeString("entity-key", entity.Key.ToString("X"));
             writer.WriteAttributeString("entity-age", entity.Age.ToString("X"));
-            handler.GetHandler<TComponent>().Invoke(writer, c);
+            handler.GetHandler<TComponent>()?.Invoke(writer, c);
             writer.WriteEndElement();
         }
 
@@ -112,7 +112,7 @@ namespace EnTTSharp.Serialization.Xml
             writer.WriteAttributeString("missing", "false");
             writer.WriteAttributeString("entity-key", entity.Key.ToString("X"));
             writer.WriteAttributeString("entity-age", entity.Age.ToString("X"));
-            handler.GetHandler<TComponent>().Invoke(writer, c);
+            handler.GetHandler<TComponent>()?.Invoke(writer, c);
             writer.WriteEndElement();
         }
 

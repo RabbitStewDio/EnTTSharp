@@ -23,7 +23,7 @@ namespace EnTTSharp.Entities
             {
                 pool.Updated += OnPositionUpdated;
                 pool.Created += OnPositionCreated;
-                pool.DestroyedNotify += OnPositionDestroyed;
+                pool.DestroyedNotify += OnComplexDestroyed;
             }
             else
             {
@@ -44,7 +44,7 @@ namespace EnTTSharp.Entities
             {
                 pool.Updated -= OnPositionUpdated;
                 pool.Created -= OnPositionCreated;
-                pool.DestroyedNotify -= OnPositionDestroyed;
+                pool.DestroyedNotify -= OnComplexDestroyed;
             }
             else
             {
@@ -59,7 +59,9 @@ namespace EnTTSharp.Entities
             OnPositionDestroyed(sender, (e, default));
         }
 
-        protected virtual void OnPositionDestroyed(object sender, (TEntityKey key, TComponent old) e) { }
+        void OnComplexDestroyed(object sender, (TEntityKey k, TComponent old) x) => OnPositionDestroyed(sender, (x.k, x.old));
+        
+        protected virtual void OnPositionDestroyed(object sender, (TEntityKey key, Optional<TComponent> old) e) { }
         protected abstract void OnPositionUpdated(object sender, (TEntityKey key, TComponent old) e);
         protected abstract void OnPositionCreated(object sender, TEntityKey e);
     }

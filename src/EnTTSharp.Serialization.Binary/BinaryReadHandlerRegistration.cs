@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EnTTSharp.Serialization.Binary
 {
@@ -10,16 +11,16 @@ namespace EnTTSharp.Serialization.Binary
         public readonly string TypeId;
         public readonly Type TargetType;
         public readonly bool Tag;
-        readonly object postProcessor;
-        readonly object formatterResolverFactory;
-        readonly object messagePackFormatterFactory;
+        readonly object? postProcessor;
+        readonly object? formatterResolverFactory;
+        readonly object? messagePackFormatterFactory;
 
         BinaryReadHandlerRegistration(string typeId, 
                                       Type targetType, 
                                       bool tag, 
-                                      object postProcessor, 
-                                      object resolverFactory,
-                                      object messageFormatter)
+                                      object? postProcessor, 
+                                      object? resolverFactory,
+                                      object? messageFormatter)
         {
             TypeId = typeId;
             TargetType = targetType;
@@ -29,7 +30,7 @@ namespace EnTTSharp.Serialization.Binary
             this.messagePackFormatterFactory = messageFormatter;
         }
 
-        public bool TryGetPostProcessor<TComponent>(out BinaryPostProcessor<TComponent> fn)
+        public bool TryGetPostProcessor<TComponent>([MaybeNullWhen(false)] out BinaryPostProcessor<TComponent> fn)
         {
             if (postProcessor is BinaryPostProcessor<TComponent> fnx)
             {
@@ -41,7 +42,7 @@ namespace EnTTSharp.Serialization.Binary
             return false;
         }
 
-        public bool TryGetResolverFactory(out FormatterResolverFactory fn)
+        public bool TryGetResolverFactory([MaybeNullWhen(false)] out FormatterResolverFactory fn)
         {
             if (formatterResolverFactory is FormatterResolverFactory fnx)
             {
@@ -53,7 +54,7 @@ namespace EnTTSharp.Serialization.Binary
             return false;
         }
 
-        public bool TryGetMessagePackFormatterFactory(out MessagePackFormatterFactory fn)
+        public bool TryGetMessagePackFormatterFactory([MaybeNullWhen(false)] out MessagePackFormatterFactory fn)
         {
             if (formatterResolverFactory is MessagePackFormatterFactory fnx)
             {
@@ -65,25 +66,25 @@ namespace EnTTSharp.Serialization.Binary
             return false;
         }
 
-        public BinaryReadHandlerRegistration WithFormatterResolver(FormatterResolverFactory r)
+        public BinaryReadHandlerRegistration WithFormatterResolver(FormatterResolverFactory? r)
         {
             return new BinaryReadHandlerRegistration(TypeId, TargetType, Tag, postProcessor, r, messagePackFormatterFactory);
         }
 
-        public BinaryReadHandlerRegistration WithMessagePackFormatter(MessagePackFormatterFactory r)
+        public BinaryReadHandlerRegistration WithMessagePackFormatter(MessagePackFormatterFactory? r)
         {
             return new BinaryReadHandlerRegistration(TypeId, TargetType, Tag, postProcessor, formatterResolverFactory, r);
         }
 
         public static BinaryReadHandlerRegistration Create<TComponent>(bool isTag, 
-                                                                       BinaryPostProcessor<TComponent> postProcessor = null)
+                                                                       BinaryPostProcessor<TComponent>? postProcessor = null)
         {
             return new BinaryReadHandlerRegistration(typeof(TComponent).FullName, typeof(TComponent), isTag, postProcessor, null, null);
         }
 
         public static BinaryReadHandlerRegistration Create<TComponent>(string typeId, 
                                                                        bool isTag, 
-                                                                       BinaryPostProcessor<TComponent> postProcessor = null)
+                                                                       BinaryPostProcessor<TComponent>? postProcessor = null)
         {
             if (string.IsNullOrEmpty(typeId))
             {

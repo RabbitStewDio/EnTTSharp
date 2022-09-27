@@ -13,7 +13,7 @@ namespace EnTTSharp.Serialization.Binary
         delegate void ParseFunctionDelegate(Stream s, TEntityKey k, 
                                             ISnapshotLoader<TEntityKey> l, 
                                             BinaryReadHandlerRegistration r, 
-                                            MessagePackSerializerOptions options);
+                                            MessagePackSerializerOptions? options);
 
         public readonly BinaryReadHandlerRegistry Registry;
         readonly MethodInfo missingTagParserMethod;
@@ -61,7 +61,7 @@ namespace EnTTSharp.Serialization.Binary
         }
 
         public void ReadTag(Stream stream, ISnapshotLoader<TEntityKey> loader, 
-                            MessagePackSerializerOptions options)
+                            MessagePackSerializerOptions? options)
         {
             var startTagRecord = MessagePackSerializer.Deserialize<BinaryControlObjects.StartTagRecord>(stream, options);
             if (!Registry.TryGetValue(startTagRecord.ComponentId, out var handler))
@@ -106,7 +106,7 @@ namespace EnTTSharp.Serialization.Binary
                       TEntityKey entityRaw, 
                       ISnapshotLoader<TEntityKey> loader, 
                       BinaryReadHandlerRegistration handler,
-                      MessagePackSerializerOptions options)
+                      MessagePackSerializerOptions? options)
         {
             if (cachedTagDelegates.TryGetValue(handler.TargetType, out var actionRaw))
             {
@@ -125,7 +125,7 @@ namespace EnTTSharp.Serialization.Binary
                                           TEntityKey entity, 
                                           ISnapshotLoader<TEntityKey> loader, 
                                           BinaryReadHandlerRegistration registration,
-                                          MessagePackSerializerOptions options)
+                                          MessagePackSerializerOptions? options)
         {
             var component = MessagePackSerializer.Deserialize<TComponent>(stream, options);
             if (registration.TryGetPostProcessor<TComponent>(out var pp))
@@ -139,7 +139,7 @@ namespace EnTTSharp.Serialization.Binary
         public void ReadComponent(Stream stream, 
                                   ISnapshotLoader<TEntityKey> loader, 
                                   BinaryReadHandlerRegistration registration,
-                                  MessagePackSerializerOptions options)
+                                  MessagePackSerializerOptions? options)
         {
             var entityKeyData = MessagePackSerializer.Deserialize<EntityKeyData>(stream, options);
             var entityKey = loader.Map(entityKeyData);
@@ -148,7 +148,7 @@ namespace EnTTSharp.Serialization.Binary
 
         void ParseComponent(Stream reader, TEntityKey entityRaw,
                             ISnapshotLoader<TEntityKey> loader, BinaryReadHandlerRegistration handler,
-                            MessagePackSerializerOptions options)
+                            MessagePackSerializerOptions? options)
         {
             if (cachedComponentDelegates.TryGetValue(handler.TargetType, out var actionRaw))
             {
@@ -167,7 +167,7 @@ namespace EnTTSharp.Serialization.Binary
                                                 TEntityKey entity, 
                                                 ISnapshotLoader<TEntityKey> loader, 
                                                 BinaryReadHandlerRegistration registration,
-                                                MessagePackSerializerOptions options)
+                                                MessagePackSerializerOptions? options)
         {
             var component = MessagePackSerializer.Deserialize<TComponent>(stream, options);
             if (registration.TryGetPostProcessor<TComponent>(out var pp))

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EnTTSharp.Entities
 {
@@ -32,7 +33,7 @@ namespace EnTTSharp.Entities
 
         public bool HasTag<TTag>()
         {
-            if (registry.TryGetTag(out TEntityKey k, out TTag _))
+            if (registry.TryGetTag<TTag>(out var k, out _))
             {
                 return EqualityHandler.Equals(k, entity);
             }
@@ -58,9 +59,9 @@ namespace EnTTSharp.Entities
             return this;
         }
 
-        public bool TryGetTag<TTag>(out TTag tag)
+        public bool TryGetTag<TTag>(out Optional<TTag> tag)
         {
-            if (registry.TryGetTag(out TEntityKey other, out tag))
+            if (registry.TryGetTag(out var other, out tag))
             {
                 if (EqualityHandler.Equals(other, entity))
                 {
@@ -106,7 +107,7 @@ namespace EnTTSharp.Entities
             return registry.HasComponent<TComponent>(entity);
         }
 
-        public bool GetComponent<TComponent>(out TComponent c)
+        public bool GetComponent<TComponent>([MaybeNullWhen(false)] out TComponent c)
         {
             return registry.GetComponent(entity, out c);
         }

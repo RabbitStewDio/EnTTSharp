@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace EnTTSharp.Annotations
@@ -19,10 +20,14 @@ namespace EnTTSharp.Annotations
 
         public void Store<TData>(TData value)
         {
-            data[typeof(TData)] = value;
+            object? o = value;
+            if (o != null)
+            {
+                data[typeof(TData)] = o;
+            }
         }
 
-        public bool TryGet<TData>(out TData result)
+        public bool TryGet<TData>([MaybeNullWhen(false)] out TData result)
         {
             if (this.data.TryGetValue(typeof(TData), out var raw) &&
                 raw is TData typed)
@@ -31,7 +36,7 @@ namespace EnTTSharp.Annotations
                 return true;
             }
 
-            result = default;
+            result = default!;
             return false;
         }
 

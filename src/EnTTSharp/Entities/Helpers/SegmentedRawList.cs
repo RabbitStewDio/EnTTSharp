@@ -14,12 +14,12 @@ namespace EnTTSharp.Entities.Helpers
             return exp;
         }
 
-        static readonly T[][] Empty = new T[0][];
+        static readonly T[][] empty = Array.Empty<T[]>();
         readonly int segmentBitShift;
         readonly int segmentMask;
         readonly int segmentSize;
         
-        T[][] data;
+        T[]?[] data;
         int version;
 
         public SegmentedRawList(int segmentSize = 256,
@@ -29,7 +29,7 @@ namespace EnTTSharp.Entities.Helpers
             this.segmentSize = (1 << segmentBitShift);
             this.segmentMask = segmentSize - 1;
             
-            data = Empty;
+            data = empty;
             EnsureCapacity(initialSize);
         }
         
@@ -41,7 +41,7 @@ namespace EnTTSharp.Entities.Helpers
             }
         }
 
-        public T[][] UnsafeData => data;
+        public T[]?[] UnsafeData => data;
         
         public void StoreAt(int index, in T input)
         {
@@ -104,7 +104,7 @@ namespace EnTTSharp.Entities.Helpers
             return GetEnumerator();
         }
 
-        public ref T TryGetRef(int index, ref T defaultValue, out bool success)
+        public ref T? TryGetRef(int index, ref T? defaultValue, out bool success)
         {
             if (index < 0 || index >= Count)
             {
@@ -122,7 +122,7 @@ namespace EnTTSharp.Entities.Helpers
             
             var dataIdx = index & segmentMask;
             success = true;
-            return ref segment[dataIdx];
+            return ref segment[dataIdx]!;
         }
 
         public int Count
@@ -144,7 +144,7 @@ namespace EnTTSharp.Entities.Helpers
                 var segment = this.data[segmentIdx];
                 if (segment == null)
                 {
-                    return default;
+                    return default!;
                 }
                 
                 var dataIdx = index & segmentMask;
@@ -158,20 +158,16 @@ namespace EnTTSharp.Entities.Helpers
 
         public void Swap(int src, int dst)
         {
-            var defaultVal = default(T);
+            T? defaultVal = default;
             ref var srcRef = ref TryGetRef(src, ref defaultVal, out var success1);
             ref var destRef = ref TryGetRef(dst, ref defaultVal, out var success2);
             if (!success1 || !success2)
             {
-                var tmpSlow = this[src];
-                this[src] = this[dst];
-                this[dst] = tmpSlow;
+                (this[src], this[dst]) = (this[dst], this[src]);
             }
             else
             {
-                var tmp = srcRef;
-                srcRef = destRef;
-                destRef = tmp;
+                (srcRef, destRef) = (destRef, srcRef);
             }
 
             this.version += 1;
@@ -190,15 +186,15 @@ namespace EnTTSharp.Entities.Helpers
 
         public bool TryGet(int index, out T output)
         {
-            T defaultVal = default;
+            T? defaultVal = default!;
             ref var retval = ref TryGetRef(index, ref defaultVal, out var success);
             if (success)
             {
-                output = retval;
+                output = retval!;
                 return true;
             }
 
-            output = default;
+            output = default!;
             return false;
         }
 
@@ -230,7 +226,7 @@ namespace EnTTSharp.Entities.Helpers
         {
             if (Count == 0) throw new ArgumentOutOfRangeException();
             
-            this[Count - 1] = default;
+            this[Count - 1] = default!;
             this.Count -= 1;
             this.version += 1;
         }
@@ -247,7 +243,7 @@ namespace EnTTSharp.Entities.Helpers
                 this.contents = widget;
                 this.versionAtStart = widget.version;
                 index = -1;
-                current = default;
+                current = default!;
             }
 
             public void Dispose()
@@ -268,17 +264,17 @@ namespace EnTTSharp.Entities.Helpers
                     return true;
                 }
 
-                current = default;
+                current = default!;
                 return false;
             }
 
             public void Reset()
             {
                 index = -1;
-                current = default;
+                current = default!;
             }
 
-            object IEnumerator.Current => Current;
+            object IEnumerator.Current => Current!;
 
             public T Current
             {

@@ -7,14 +7,14 @@ namespace EnTTSharp.Serialization.Binary
 {
     public class BinaryEntityArchiveReader<TEntityKey>: IEntityArchiveReader<TEntityKey> where TEntityKey : IEntityKey
     {
-        readonly MessagePackSerializerOptions options;
+        readonly MessagePackSerializerOptions? options;
         readonly BinaryReaderBackend<TEntityKey> registry;
         readonly Stream reader;
         BinaryReadHandlerRegistration readHandlerRegistration;
 
         public BinaryEntityArchiveReader(BinaryReaderBackend<TEntityKey> registry, 
                                          Stream reader,
-                                         MessagePackSerializerOptions optionsRaw = null)
+                                         MessagePackSerializerOptions? optionsRaw = null)
         {
             this.registry = registry;
             this.reader = reader;

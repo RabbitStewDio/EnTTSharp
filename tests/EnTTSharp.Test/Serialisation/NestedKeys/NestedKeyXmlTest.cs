@@ -11,6 +11,7 @@ using EnTTSharp.Serialization.Xml.AutoRegistration;
 using EnTTSharp.Serialization.Xml.Impl;
 using EnTTSharp.Test.Serialisation.Surrogates;
 using FluentAssertions;
+using FluentAssertions.Execution;
 using NUnit.Framework;
 
 namespace EnTTSharp.Test.Serialisation.NestedKeys
@@ -22,7 +23,7 @@ namespace EnTTSharp.Test.Serialisation.NestedKeys
             var scanner = new EntityRegistrationScanner(new ComponentRegistrationHandler<EntityKey>());
             if (!scanner.TryRegisterComponent<NestedKeyComponent>(out var reg))
             {
-                Assert.Fail();
+                throw new AssertionFailedException("Unexpected error");
             }
 
             var registry = new EntityRegistry<EntityKey>(EntityKey.MaxAge, EntityKey.Create);

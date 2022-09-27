@@ -1,34 +1,35 @@
 ﻿using System;
 using EnTTSharp.Entities.Helpers;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EnTTSharp.Entities.Pools
 {
     public interface IReadOnlyPool<TEntityKey, TComponent> : IReadOnlyPool<TEntityKey>
         where TEntityKey : IEntityKey
     {
-        bool TryGet(TEntityKey entity, out TComponent component);
-        ref readonly TComponent TryGetRef(TEntityKey entity, ref TComponent defaultValue, out bool success);
+        bool TryGet(TEntityKey entity, [MaybeNullWhen(false)] out TComponent component);
+        ref readonly TComponent? TryGetRef(TEntityKey entity, ref TComponent? defaultValue, out bool success);
     }
 
     public interface IPool<TEntityKey, TComponent>: IReadOnlyPool<TEntityKey, TComponent>, 
                                                     IPool<TEntityKey>
         where TEntityKey : IEntityKey
     {
-        event EventHandler<(TEntityKey key, TComponent old)> DestroyedNotify;
-        event EventHandler<(TEntityKey key, TComponent old)> Updated;
+        event EventHandler<(TEntityKey key, TComponent old)>? DestroyedNotify;
+        event EventHandler<(TEntityKey key, TComponent old)>? Updated;
 
         void Add(TEntityKey e, in TComponent component);
         bool WriteBack(TEntityKey entity, in TComponent component);
-        ref TComponent TryGetModifiableRef(TEntityKey entity, ref TComponent defaultValue, out bool success);
+        ref TComponent? TryGetModifiableRef(TEntityKey entity, ref TComponent? defaultValue, out bool success);
     }
 
     public class Pool<TEntityKey, TComponent> : SparseDictionary<TEntityKey, TComponent>, IPool<TEntityKey, TComponent>
         where TEntityKey : IEntityKey
     {
-        public event EventHandler<(TEntityKey key, TComponent old)> DestroyedNotify;
-        public event EventHandler<TEntityKey> Destroyed;
-        public event EventHandler<TEntityKey> Created;
-        public event EventHandler<(TEntityKey key, TComponent old)> Updated;
+        public event EventHandler<(TEntityKey key, TComponent old)>? DestroyedNotify;
+        public event EventHandler<TEntityKey>? Destroyed;
+        public event EventHandler<TEntityKey>? Created;
+        public event EventHandler<(TEntityKey key, TComponent old)>? Updated;
 
         internal Pool()
         {

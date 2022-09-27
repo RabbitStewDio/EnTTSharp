@@ -25,35 +25,35 @@ namespace EnTTSharp.Serialization.Binary.AutoRegistration
                 return;
             }
 
-            var componentTypeId = binarySerializationAttribute?.ComponentTypeId ?? componentType.FullName;
+            var componentTypeId = binarySerializationAttribute?.ComponentTypeId ?? componentType.FullName ?? throw new InvalidOperationException();
             var usedAsTag = binarySerializationAttribute?.UsedAsTag ?? false;
 
             var handlerMethods = componentType.GetMethods(BindingFlags.Static | BindingFlags.Public);
-            BinaryPreProcessor<TComponent> preProcessor = null;
-            BinaryPostProcessor<TComponent> postProcessor = null;
-            FormatterResolverFactory resolverFactory = null;
-            MessagePackFormatterFactory messageFormatterFactory = null;
+            BinaryPreProcessor<TComponent>? preProcessor = null;
+            BinaryPostProcessor<TComponent>? postProcessor = null;
+            FormatterResolverFactory? resolverFactory = null;
+            MessagePackFormatterFactory? messageFormatterFactory = null;
 
             foreach (var m in handlerMethods)
             {
                 if (IsResolverFactory(m))
                 {
-                    resolverFactory = (FormatterResolverFactory)Delegate.CreateDelegate(typeof(FormatterResolverFactory), null, m, false);
+                    resolverFactory = (FormatterResolverFactory?)Delegate.CreateDelegate(typeof(FormatterResolverFactory), null, m, false);
                 }
 
                 if (IsMessageFormatterFactory(m))
                 {
-                    messageFormatterFactory = (MessagePackFormatterFactory)Delegate.CreateDelegate(typeof(MessagePackFormatterFactory), null, m, false);
+                    messageFormatterFactory = (MessagePackFormatterFactory?)Delegate.CreateDelegate(typeof(MessagePackFormatterFactory), null, m, false);
                 }
 
                 if (IsPostProcessor<TComponent>(m))
                 {
-                    postProcessor = (BinaryPostProcessor<TComponent>)Delegate.CreateDelegate(typeof(BinaryPostProcessor<TComponent>), null, m, false);
+                    postProcessor = (BinaryPostProcessor<TComponent>?)Delegate.CreateDelegate(typeof(BinaryPostProcessor<TComponent>), null, m, false);
                 }
 
                 if (IsPreProcessor<TComponent>(m))
                 {
-                    preProcessor = (BinaryPreProcessor<TComponent>)Delegate.CreateDelegate(typeof(BinaryPreProcessor<TComponent>), null, m, false);
+                    preProcessor = (BinaryPreProcessor<TComponent>?)Delegate.CreateDelegate(typeof(BinaryPreProcessor<TComponent>), null, m, false);
                 }
             }
 

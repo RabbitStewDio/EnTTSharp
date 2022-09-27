@@ -7,7 +7,7 @@ namespace EnTTSharp.Serialization.Xml.Impl
     {
         readonly DataContractSerializer serializer;
 
-        public DefaultDataContractReadHandler(ObjectSurrogateResolver objectResolver = null)
+        public DefaultDataContractReadHandler(ObjectSurrogateResolver? objectResolver = null)
         {
             var serializerSettings = new DataContractSerializerSettings()
             {

@@ -10,10 +10,10 @@ namespace EnTTSharp.Serialization.Xml.AutoRegistration
 {
     public class XmlDataContractRegistrationHandler : EntityRegistrationHandlerBase
     {
-        readonly ObjectSurrogateResolver objectResolver;
-        static readonly ILogger Logger = Log.ForContext<XmlDataContractRegistrationHandler>();
+        readonly ObjectSurrogateResolver? objectResolver;
+        static readonly ILogger logger = Log.ForContext<XmlDataContractRegistrationHandler>();
 
-        public XmlDataContractRegistrationHandler(ObjectSurrogateResolver objectResolver = null)
+        public XmlDataContractRegistrationHandler(ObjectSurrogateResolver? objectResolver = null)
         {
             this.objectResolver = objectResolver;
         }
@@ -34,12 +34,12 @@ namespace EnTTSharp.Serialization.Xml.AutoRegistration
             }
 
             var handlerMethods = componentType.GetMethods(BindingFlags.Static | BindingFlags.Public);
-            FormatterResolverFactory formatterResolver = null;
+            FormatterResolverFactory? formatterResolver = null;
             foreach (var m in handlerMethods)
             {
                 if (IsSurrogateProvider(m))
                 {
-                    formatterResolver = (FormatterResolverFactory)Delegate.CreateDelegate(typeof(FormatterResolverFactory), null, m, false);
+                    formatterResolver = (FormatterResolverFactory?)Delegate.CreateDelegate(typeof(FormatterResolverFactory), null, m, false);
                 }
             }
 
@@ -50,7 +50,7 @@ namespace EnTTSharp.Serialization.Xml.AutoRegistration
             WriteHandlerDelegate<TComponent> writeHandler = new DefaultDataContractWriteHandler<TComponent>(objectResolver).Write;
             r.Store(XmlWriteHandlerRegistration.Create(null, writeHandler, false).WithFormatterResolver(formatterResolver));
 
-            Logger.Debug("Registered Xml DataContract Handling for {ComponentType}", componentType);
+            logger.Debug("Registered Xml DataContract Handling for {ComponentType}", componentType);
         }
 
         bool IsSurrogateProvider(MethodInfo methodInfo)

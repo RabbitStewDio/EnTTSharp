@@ -96,7 +96,7 @@ namespace EnTTSharp.Serialization
 
         public async Task<AsyncSnapshotView<TEntityKey>> WriteTag<TComponent>(IAsyncEntityArchiveWriter<TEntityKey> writer)
         {
-            if (registry.TryGetTag(out var entity, out TComponent tag))
+            if (registry.TryGetTag<TComponent>(out var entity, out var tag))
             {
                 await writer.WriteTagAsync(entity, tag);
             }

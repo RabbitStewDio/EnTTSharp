@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using EnTTSharp.Entities.Helpers;
 using EnTTSharp.Entities.Pools;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EnTTSharp.Entities
 {
@@ -49,8 +50,8 @@ namespace EnTTSharp.Entities
             Disposing(false);
         }
 
-        public event EventHandler<TEntityKey> Destroyed;
-        public event EventHandler<TEntityKey> Created;
+        public event EventHandler<TEntityKey>? Destroyed;
+        public event EventHandler<TEntityKey>? Created;
 
         protected virtual void OnCreated(object sender, TEntityKey e)
         {
@@ -181,7 +182,7 @@ namespace EnTTSharp.Entities
             }
         }
 
-        public bool GetComponent<TComponent>(TEntityKey entity, out TComponent data)
+        public bool GetComponent<TComponent>(TEntityKey entity, [MaybeNullWhen(false)] out TComponent data)
         {
             return Registry.GetComponent(entity, out data);
         }
@@ -226,7 +227,7 @@ namespace EnTTSharp.Entities
             Registry.RemoveTag<TTag>();
         }
 
-        public bool TryGetTag<TTag>(out TEntityKey k, out TTag tag)
+        public bool TryGetTag<TTag>([MaybeNullWhen(false)] out TEntityKey k, out Optional<TTag> tag)
         {
             return Registry.TryGetTag(out k, out tag);
         }
@@ -287,7 +288,7 @@ namespace EnTTSharp.Entities
         
         protected static IReadOnlyPool<TEntityKey> FindMinimumEntrySet(IReadOnlyList<IReadOnlyPool<TEntityKey>> sets)
         {
-            IReadOnlyPool<TEntityKey> s = null;
+            IReadOnlyPool<TEntityKey>? s = null;
             var count = int.MaxValue;
             foreach (var set in sets)
             {

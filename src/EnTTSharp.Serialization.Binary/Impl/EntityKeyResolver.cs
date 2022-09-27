@@ -7,9 +7,9 @@ namespace EnTTSharp.Serialization.Binary.Impl
     public class EntityKeyResolver : IFormatterResolver
     {
         readonly IEntityKeyMapper entityMapper;
-        EntityKeyFormatter keyFormatterInstance;
+        EntityKeyFormatter? keyFormatterInstance;
 
-        public IMessagePackFormatter<T> GetFormatter<T>()
+        public IMessagePackFormatter<T>? GetFormatter<T>()
         {
             if (typeof(T) == typeof(EntityKey))
             {
@@ -24,7 +24,7 @@ namespace EnTTSharp.Serialization.Binary.Impl
             return null;
         }
 
-        public EntityKeyResolver(IEntityKeyMapper mapper = null)
+        public EntityKeyResolver(IEntityKeyMapper? mapper = null)
         {
             this.entityMapper = mapper ?? new DefaultEntityKeyMapper().Register(Map);
         }

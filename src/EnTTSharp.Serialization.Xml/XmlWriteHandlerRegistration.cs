@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml;
 
 namespace EnTTSharp.Serialization.Xml
@@ -7,9 +8,9 @@ namespace EnTTSharp.Serialization.Xml
 
     public readonly struct XmlWriteHandlerRegistration
     {
-        readonly object handler;
+        readonly object? handler;
 
-        XmlWriteHandlerRegistration(Type targetType, string typeId, object handler, bool tag, object surrogateResolver)
+        XmlWriteHandlerRegistration(Type targetType, string? typeId, object? handler, bool tag, object? surrogateResolver)
         {
             if (string.IsNullOrWhiteSpace(typeId))
             {
@@ -17,7 +18,7 @@ namespace EnTTSharp.Serialization.Xml
             }
             
             this.TargetType = targetType ?? throw new ArgumentNullException(nameof(targetType));
-            this.TypeId = typeId;
+            this.TypeId = typeId ?? TargetType.FullName ?? TargetType.Name;
             this.handler = handler;
             this.Tag = tag;
             this.surrogateResolver = surrogateResolver;
@@ -26,14 +27,14 @@ namespace EnTTSharp.Serialization.Xml
         public Type TargetType { get; }
         public string TypeId { get; }
         public bool Tag { get; }
-        readonly object surrogateResolver;
+        readonly object? surrogateResolver;
 
-        public WriteHandlerDelegate<TData> GetHandler<TData>()
+        public WriteHandlerDelegate<TData>? GetHandler<TData>()
         {
-            return (WriteHandlerDelegate<TData>)handler;
+            return (WriteHandlerDelegate<TData>?)handler;
         }
 
-        public bool TryGetResolverFactory(out FormatterResolverFactory fn)
+        public bool TryGetResolverFactory([MaybeNullWhen(false)] out FormatterResolverFactory fn)
         {
             if (surrogateResolver is FormatterResolverFactory fnx)
             {
@@ -45,7 +46,7 @@ namespace EnTTSharp.Serialization.Xml
             return false;
         }
 
-        public XmlWriteHandlerRegistration WithFormatterResolver(FormatterResolverFactory r)
+        public XmlWriteHandlerRegistration WithFormatterResolver(FormatterResolverFactory? r)
         {
             return new XmlWriteHandlerRegistration(TargetType, TypeId, handler, Tag, r);
         }
@@ -60,7 +61,7 @@ namespace EnTTSharp.Serialization.Xml
             return new XmlWriteHandlerRegistration(typeof(TData), typeof(TData).FullName, handler, tag, null);
         }
 
-        public static XmlWriteHandlerRegistration Create<TData>(string typeId, WriteHandlerDelegate<TData> handler, bool tag)
+        public static XmlWriteHandlerRegistration Create<TData>(string? typeId, WriteHandlerDelegate<TData> handler, bool tag)
         {
             if (handler == null)
             {

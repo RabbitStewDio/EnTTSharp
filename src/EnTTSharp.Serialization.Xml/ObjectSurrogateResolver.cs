@@ -7,7 +7,7 @@ namespace EnTTSharp.Serialization.Xml
 {
     public class ObjectSurrogateResolver : ISerializationSurrogateProvider
     {
-        static readonly ILogger Logger = LogHelper.ForContext<ObjectSurrogateResolver>();
+        static readonly ILogger logger = LogHelper.ForContext<ObjectSurrogateResolver>();
         readonly Dictionary<Type, ISerializationSurrogateProvider> surrogateMappings;
 
         public ObjectSurrogateResolver()
@@ -45,9 +45,9 @@ namespace EnTTSharp.Serialization.Xml
             return reg.GetDeserializedObject(obj, targetType);
         }
 
-        public object GetObjectToSerialize(object obj, Type surrogateType)
+        public object? GetObjectToSerialize(object? obj, Type surrogateType)
         {
-            Logger.Verbose("GetObjectToSerialize {Object} of type {SurrogateType}", obj, surrogateType);
+            logger.Verbose("GetObjectToSerialize {Object} of type {SurrogateType}", obj, surrogateType);
             if (obj == null)
             {
                 return null;
@@ -67,12 +67,12 @@ namespace EnTTSharp.Serialization.Xml
             // return targetType;
             if (!surrogateMappings.TryGetValue(targetType, out var reg))
             {
-                Logger.Verbose("GetSurrogateType retaining original type {TargetType}", targetType);
+                logger.Verbose("GetSurrogateType retaining original type {TargetType}", targetType);
                 return targetType;
             }
 
             var surrogateType = reg.GetSurrogateType(targetType);
-            Logger.Verbose("GetSurrogateType mapped type {TargetType} to type {SurrogateType}", targetType, surrogateType);
+            logger.Verbose("GetSurrogateType mapped type {TargetType} to type {SurrogateType}", targetType, surrogateType);
             return surrogateType;
         }
     }

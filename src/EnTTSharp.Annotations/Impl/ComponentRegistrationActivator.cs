@@ -5,13 +5,13 @@ namespace EnTTSharp.Annotations.Impl
 {
     public class ComponentRegistrationActivator<TEntityKey> : EntityActivatorBase<TEntityKey> where TEntityKey : IEntityKey
     {
-        static readonly Lazy<ComponentRegistrationActivator<TEntityKey>> InstanceHolder = new Lazy<ComponentRegistrationActivator<TEntityKey>>();
-        public static ComponentRegistrationActivator<TEntityKey> Instance => InstanceHolder.Value; 
+        static readonly Lazy<ComponentRegistrationActivator<TEntityKey>> instanceHolder = new Lazy<ComponentRegistrationActivator<TEntityKey>>();
+        public static ComponentRegistrationActivator<TEntityKey> Instance => instanceHolder.Value; 
 
         protected override void ProcessTyped<TComponent>(EntityComponentRegistration r, IEntityComponentRegistry<TEntityKey> reg)
         {
-            bool hasConstructor = r.TryGet(out ConstructorRegistration<TComponent> constructor);
-            bool hasDestructor = r.TryGet(out DestructorRegistration<TEntityKey, TComponent> destructor);
+            bool hasConstructor = r.TryGet<ConstructorRegistration<TComponent>>(out var constructor);
+            bool hasDestructor = r.TryGet<DestructorRegistration<TEntityKey, TComponent>>(out var destructor);
 
             if (r.TryGet(out ComponentRegistrationExtensions.FlagMarker _))
             {
@@ -19,15 +19,15 @@ namespace EnTTSharp.Annotations.Impl
             }
             else if (hasConstructor && hasDestructor)
             {
-                reg.Register(constructor.ConstructorFn, destructor.DestructorFn);
+                reg.Register(constructor!.ConstructorFn, destructor!.DestructorFn);
             }
             else if (hasConstructor)
             {
-                reg.Register(constructor.ConstructorFn);
+                reg.Register(constructor!.ConstructorFn);
             }
             else if (hasDestructor)
             {
-                reg.RegisterNonConstructable(destructor.DestructorFn);
+                reg.RegisterNonConstructable(destructor!.DestructorFn);
             }
             else
             {

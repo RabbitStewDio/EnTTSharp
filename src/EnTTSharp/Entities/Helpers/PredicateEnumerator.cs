@@ -41,7 +41,7 @@ namespace EnTTSharp.Entities.Helpers
             enumerator = contents.GetEnumerator();
         }
 
-        object IEnumerator.Current => Current;
+        object IEnumerator.Current => Current!;
 
         public TValue Current
         {
@@ -82,7 +82,7 @@ namespace EnTTSharp.Entities.Helpers
 
         object IEnumerator.Current
         {
-            get { return Current; }
+            get { return Current!; }
         }
 
         public TValue Current

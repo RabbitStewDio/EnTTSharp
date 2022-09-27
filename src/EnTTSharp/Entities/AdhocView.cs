@@ -20,11 +20,12 @@ namespace EnTTSharp.Entities
         public AdhocView(IEntityPoolAccess<TEntityKey> registry)
         {
             this.registry = registry ?? throw new ArgumentNullException(nameof(registry));
-            if (!registry.TryGetWritablePool(out viewData))
+            if (!registry.TryGetWritablePool<TComponent>(out var viewDataRaw))
             {
                 throw new ArgumentException("No such pool: " + typeof(TComponent));
             }
 
+            viewData = viewDataRaw;
             onCreated = OnCreated;
             onDestroyed = OnDestroyed;
             this.viewData.Destroyed += onDestroyed;
@@ -56,7 +57,7 @@ namespace EnTTSharp.Entities
             return registry.HasTag<TTag>();
         }
 
-        public bool TryGetTag<TTag>(out TEntityKey k, out TTag tag)
+        public bool TryGetTag<TTag>([MaybeNullWhen(false)] out TEntityKey k, out Optional<TTag> tag)
         {
             return registry.TryGetTag(out k, out tag);
         }
@@ -130,7 +131,7 @@ namespace EnTTSharp.Entities
             }
         }
 
-        public bool GetComponent<TOtherComponent>(TEntityKey entity, out TOtherComponent data)
+        public bool GetComponent<TOtherComponent>(TEntityKey entity, [MaybeNullWhen(false)] out TOtherComponent data)
         {
             return registry.GetComponent(entity, out data);
         }
@@ -145,8 +146,8 @@ namespace EnTTSharp.Entities
             registry.RemoveComponent<TOtherComponent>(entity);
         }
 
-        public event EventHandler<TEntityKey> Destroyed;
-        public event EventHandler<TEntityKey> Created;
+        public event EventHandler<TEntityKey>? Destroyed;
+        public event EventHandler<TEntityKey>? Created;
 
         public void Apply(ViewDelegates.Apply<TEntityKey> bulk)
         {
@@ -187,11 +188,11 @@ namespace EnTTSharp.Entities
             {
                 foreach (var ek in p)
                 {
-                    TComponent d = default;
+                    TComponent? d = default;
                     ref readonly var c = ref viewData.TryGetRef(ek, ref d, out var s);
                     if (s)
                     {
-                        bulk(this, ek, in c);
+                        bulk(this, ek, in c!);
                     }
                 }
             }
@@ -208,11 +209,11 @@ namespace EnTTSharp.Entities
             {
                 foreach (var ek in p)
                 {
-                    TComponent d = default;
+                    TComponent? d = default;
                     ref var c = ref viewData.TryGetModifiableRef(ek, ref d, out var s);
                     if (s)
                     {
-                        bulk(this, ek, ref c);
+                        bulk(this, ek, ref c!);
                     }
                 }
             }
@@ -230,11 +231,11 @@ namespace EnTTSharp.Entities
             {
                 foreach (var ek in p)
                 {
-                    TComponent d = default;
+                    TComponent? d = default;
                     ref readonly var c = ref viewData.TryGetRef(ek, ref d, out var s);
                     if (s)
                     {
-                        bulk(this, context, ek, in c);
+                        bulk(this, context, ek, in c!);
                     }
                 }
             }
@@ -252,11 +253,11 @@ namespace EnTTSharp.Entities
             {
                 foreach (var ek in p)
                 {
-                    TComponent d = default;
+                    TComponent? d = default;
                     ref var c = ref viewData.TryGetModifiableRef(ek, ref d, out var s);
                     if (s)
                     {
-                        bulk(this, context, ek, ref c);
+                        bulk(this, context, ek, ref c!);
                     }
                 }
             }

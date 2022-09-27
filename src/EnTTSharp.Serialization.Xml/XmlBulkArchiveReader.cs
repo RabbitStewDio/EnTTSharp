@@ -7,7 +7,7 @@ namespace EnTTSharp.Serialization.Xml
 {
     public class XmlBulkArchiveReader<TEntityKey> where TEntityKey : IEntityKey
     {
-        static readonly ILogger Logger = LogHelper.ForContext<XmlBulkArchiveReader<TEntityKey>>();
+        static readonly ILogger logger = LogHelper.ForContext<XmlBulkArchiveReader<TEntityKey>>();
         readonly XmlArchiveReaderBackend<TEntityKey> readerConfiguration;
 
         public XmlBulkArchiveReader(XmlReadHandlerRegistry registry) : this(new XmlArchiveReaderBackend<TEntityKey>(registry))
@@ -26,7 +26,7 @@ namespace EnTTSharp.Serialization.Xml
                 return;
             }
 
-            Logger.Verbose("Begin ReadAllFragment");
+            logger.Verbose("Begin ReadAllFragment");
             try
             {
                 while (reader.Read())
@@ -46,7 +46,7 @@ namespace EnTTSharp.Serialization.Xml
             }
             finally
             {
-                Logger.Verbose("End ReadAllFragment");
+                logger.Verbose("End ReadAllFragment");
             }
         }
 
@@ -120,7 +120,7 @@ namespace EnTTSharp.Serialization.Xml
                 return;
             }
 
-            Logger.Verbose("Begin ReadEntities");
+            logger.Verbose("Begin ReadEntities");
             try
             {
                 while (reader.Read())
@@ -145,7 +145,7 @@ namespace EnTTSharp.Serialization.Xml
             }
             finally
             {
-                Logger.Verbose("End ReadEntities");
+                logger.Verbose("End ReadEntities");
             }
         }
 
@@ -156,7 +156,7 @@ namespace EnTTSharp.Serialization.Xml
                 return;
             }
 
-            Logger.Verbose("Begin ReadDestroyed");
+            logger.Verbose("Begin ReadDestroyed");
             try
             {
                 while (reader.Read())
@@ -181,7 +181,7 @@ namespace EnTTSharp.Serialization.Xml
             }
             finally
             {
-                Logger.Verbose("End ReadDestroyed");
+                logger.Verbose("End ReadDestroyed");
             }
         }
 
@@ -192,7 +192,7 @@ namespace EnTTSharp.Serialization.Xml
                 return;
             }
 
-            Logger.Verbose("Begin ReadComponent");
+            logger.Verbose("Begin ReadComponent");
             try
             {
                 while (reader.Read())
@@ -216,7 +216,7 @@ namespace EnTTSharp.Serialization.Xml
             }
             finally
             {
-                Logger.Verbose("End ReadComponent");
+                logger.Verbose("End ReadComponent");
             }
         }
     }

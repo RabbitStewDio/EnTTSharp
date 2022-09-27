@@ -106,7 +106,7 @@ namespace EnTTSharp.Serialization
 
         public SnapshotView<TEntityKey> WriteTag<TComponent>(IEntityArchiveWriter<TEntityKey> writer)
         {
-            if (registry.TryGetTag(out var entity, out TComponent tag))
+            if (registry.TryGetTag<TComponent>(out var entity, out var tag))
             {
                 writer.WriteTag(entity, tag);
             }

@@ -12,7 +12,7 @@ namespace EnTTSharp.Entities.Helpers
                 l.Capacity = Math.Max(l.Capacity, index + 1);
                 while (l.Count <= index)
                 {
-                    l.Add(default);
+                    l.Add(default!);
                 }
             }
 

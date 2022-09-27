@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 
 namespace EnTTSharp.Entities.Systems
@@ -55,7 +56,7 @@ namespace EnTTSharp.Entities.Systems
             return $"{sourceMethod}.{methodName}";
         }
 
-        static bool IsClosure(Type t, out Type baseType)
+        static bool IsClosure(Type? t, [MaybeNullWhen(false)] out Type baseType)
         {
             if (t == null)
             {
@@ -75,10 +76,10 @@ namespace EnTTSharp.Entities.Systems
             }
             
             baseType = t;
-            return true;
+            return baseType != null;
         }
         
-        static string NameWithoutGenerics(Type t)
+        static string NameWithoutGenerics(Type? t)
         {
             if (t == null) return "<??>";
 

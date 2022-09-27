@@ -6,7 +6,7 @@ namespace EnTTSharp.Entities
     public readonly struct Unit
     {
     }
-
+    
     [EntityKey]
     [Serializable]
     public readonly struct EntityKey : IEquatable<EntityKey>, IEntityKey

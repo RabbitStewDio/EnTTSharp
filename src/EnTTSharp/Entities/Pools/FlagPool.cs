@@ -35,9 +35,9 @@ namespace EnTTSharp.Entities.Pools
             return backend.Contains(entity);
         }
 
-        public event EventHandler<(TEntityKey key, TData old)> DestroyedNotify;
-        public event EventHandler<TEntityKey> Destroyed;
-        public event EventHandler<TEntityKey> Created;
+        public event EventHandler<(TEntityKey key, TData old)>? DestroyedNotify;
+        public event EventHandler<TEntityKey>? Destroyed;
+        public event EventHandler<TEntityKey>? Created;
 
         public int Count => backend.Count;
 
@@ -73,7 +73,7 @@ namespace EnTTSharp.Entities.Pools
             return backend.GetEnumerator();
         }
 
-        public event EventHandler<(TEntityKey key, TData old)> Updated
+        public event EventHandler<(TEntityKey key, TData old)>? Updated
         {
             add { }
             remove { }
@@ -120,7 +120,7 @@ namespace EnTTSharp.Entities.Pools
         }
 
         [SuppressMessage("ReSharper", "RedundantAssignment")]
-        public ref readonly TData TryGetRef(TEntityKey entity, ref TData defaultValue, out bool success)
+        public ref readonly TData? TryGetRef(TEntityKey entity, ref TData? defaultValue, out bool success)
         {
             if (Contains(entity))
             {
@@ -134,7 +134,7 @@ namespace EnTTSharp.Entities.Pools
             return ref defaultValue;
         }
 
-        public ref TData TryGetModifiableRef(TEntityKey entity, ref TData defaultValue, out bool success)
+        public ref TData? TryGetModifiableRef(TEntityKey entity, ref TData? defaultValue, out bool success)
         {
             if (Contains(entity))
             {

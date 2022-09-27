@@ -7,7 +7,7 @@ namespace EnTTSharp.Serialization.Xml.Impl
     {
         readonly DataContractSerializer serializer;
 
-        public DefaultDataContractWriteHandler(ObjectSurrogateResolver surrogateResolver = null)
+        public DefaultDataContractWriteHandler(ObjectSurrogateResolver? surrogateResolver = null)
         {
             var ds = new DataContractSerializerSettings();
             ds.SerializeReadOnlyTypes = true;
@@ -21,7 +21,7 @@ namespace EnTTSharp.Serialization.Xml.Impl
 
         public void Write(XmlWriter writer, TData component)
         {
-            serializer.WriteObject(writer, component);
+            serializer.WriteObject(writer, component!);
         }
     }
 }

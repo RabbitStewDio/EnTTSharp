@@ -49,7 +49,7 @@ namespace EnTTSharp.Entities
 
         public override PredicateEnumerator<TEntityKey> GetEnumerator()
         {
-            IReadOnlyPool<TEntityKey> s = null;
+            IReadOnlyPool<TEntityKey>? s = null;
             var count = int.MaxValue;
             for (var index = 0; index < Sets.Count; index++)
             {

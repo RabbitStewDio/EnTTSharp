@@ -9,13 +9,13 @@ namespace EnTTSharp.Entities
         {
             readonly EntityRegistry<TEntityKey> registry;
             readonly Func<T> constructor;
-            readonly Action<TEntityKey, EntityRegistry<TEntityKey>, T> destructor;
+            readonly Action<TEntityKey, EntityRegistry<TEntityKey>, T>? destructor;
             public int Index { get; }
 
             public ComponentRegistration0(int index,
                                           EntityRegistry<TEntityKey> registry,
                                           Func<T> constructor,
-                                          Action<TEntityKey, EntityRegistry<TEntityKey>, T> destructor = null)
+                                          Action<TEntityKey, EntityRegistry<TEntityKey>, T>? destructor = null)
             {
                 this.registry = registry;
                 this.constructor = constructor;
@@ -41,7 +41,7 @@ namespace EnTTSharp.Entities
 
         public static IComponentRegistration<TEntityKey, T> Create<TEntityKey, T>(int count, 
                                                                                   EntityRegistry<TEntityKey> r, 
-                                                                                  Action<TEntityKey, EntityRegistry<TEntityKey>, T> destructor = null) 
+                                                                                  Action<TEntityKey, EntityRegistry<TEntityKey>, T>? destructor = null) 
             where TEntityKey : IEntityKey
         {
             return new ComponentRegistration0<TEntityKey, T>(count, r,
@@ -52,7 +52,7 @@ namespace EnTTSharp.Entities
         public static IComponentRegistration<TEntityKey, T> Create<TEntityKey, T>(int count, 
                                                                                             EntityRegistry<TEntityKey> r, 
                                                                                             Func<T> func, 
-                                                                                            Action<TEntityKey, EntityRegistry<TEntityKey>, T> destructor = null)
+                                                                                            Action<TEntityKey, EntityRegistry<TEntityKey>, T>? destructor = null)
             where TEntityKey : IEntityKey
         {
             return new ComponentRegistration0<TEntityKey, T>(count, r, func, destructor);

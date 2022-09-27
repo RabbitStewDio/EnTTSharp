@@ -33,8 +33,8 @@ namespace EnTTSharp.Entities.Pools
 
         public int Count => registry.Count - entityPool.Count;
 
-        public event EventHandler<TEntityKey> Destroyed;
-        public event EventHandler<TEntityKey> Created;
+        public event EventHandler<TEntityKey>? Destroyed;
+        public event EventHandler<TEntityKey>? Created;
 
         public bool TryGet(TEntityKey entity, out Not<TComponent> component)
         {
@@ -124,7 +124,7 @@ namespace EnTTSharp.Entities.Pools
             {
                 this.backend = backend;
                 contents = EntityKeyListPool.Reserve(backend.registry);
-                Current = default;
+                Current = default!;
                 index = -1;
             }
 
@@ -140,14 +140,14 @@ namespace EnTTSharp.Entities.Pools
                     }
                 }
 
-                Current = default;
+                Current = default!;
                 return false;
             }
 
             public void Reset()
             {
                 index = -1;
-                Current = default;
+                Current = default!;
             }
 
             object IEnumerator.Current => Current;

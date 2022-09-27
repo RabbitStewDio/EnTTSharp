@@ -11,7 +11,7 @@ namespace EnTTSharp.Serialization.Xml
 {
     public class XmlArchiveReaderBackend<TEntityKey> where TEntityKey : IEntityKey
     {
-        static readonly ILogger Logger = LogHelper.ForContext<XmlArchiveReaderBackend<TEntityKey>>();
+        static readonly ILogger logger = LogHelper.ForContext<XmlArchiveReaderBackend<TEntityKey>>();
         
         readonly MethodInfo tagParserMethod;
         readonly MethodInfo missingTagParserMethod;
@@ -70,7 +70,7 @@ namespace EnTTSharp.Serialization.Xml
         {
             var age = byte.Parse(r.GetAttribute("entity-age") ?? throw r.FromMissingAttribute(tag, "entity-age"));
             var key = int.Parse(r.GetAttribute("entity-key") ?? throw r.FromMissingAttribute(tag, "entity-key"));
-            Logger.Verbose("Reading Entity Data: Age: {Age}, Key: {Key}", age, key);
+            logger.Verbose("Reading Entity Data: Age: {Age}, Key: {Key}", age, key);
             return new EntityKeyData(age, key);
         }
 
@@ -92,7 +92,7 @@ namespace EnTTSharp.Serialization.Xml
 
             entity = entityMapper.EntityKeyMapper<TEntityKey>(ReadEntityData(reader, XmlTagNames.Tag));
             var _ = reader.Read();
-            Logger.Verbose("Reading Component for {Entity}", entity);
+            logger.Verbose("Reading Component for {Entity}", entity);
             component = parser(reader);
         }
 

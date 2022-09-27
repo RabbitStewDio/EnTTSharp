@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 namespace EnTTSharp.Entities.Helpers
@@ -64,7 +65,7 @@ namespace EnTTSharp.Entities.Helpers
             return GetEnumerator();
         }
 
-        public ref T TryGetRef(int index, ref T defaultValue, out bool success)
+        public ref T? TryGetRef(int index, ref T? defaultValue, out bool success)
         {
             if (index < 0 || index >= Count)
             {
@@ -73,7 +74,7 @@ namespace EnTTSharp.Entities.Helpers
             }
 
             success = true;
-            return ref data[index];
+            return ref data[index]!;
         }
 
         public int Count
@@ -93,9 +94,7 @@ namespace EnTTSharp.Entities.Helpers
 
         public void Swap(int src, int dst)
         {
-            var tmp = data[src];
-            data[src] = data[dst];
-            data[dst] = tmp;
+            (data[src], data[dst]) = (data[dst], data[src]);
 
             this.version += 1;
         }
@@ -117,7 +116,7 @@ namespace EnTTSharp.Entities.Helpers
             return ref data[index];
         }
 
-        public bool TryGet(int index, out T output)
+        public bool TryGet(int index, [MaybeNullWhen(false)] out T output)
         {
             if (index >= 0 && index < Count)
             {
@@ -153,7 +152,7 @@ namespace EnTTSharp.Entities.Helpers
 
         public void RemoveLast()
         {
-            this.data[Count - 1] = default;
+            this.data[Count - 1] = default!;
             this.Count -= 1;
             this.version += 1;
         }
@@ -170,7 +169,7 @@ namespace EnTTSharp.Entities.Helpers
                 this.contents = widget;
                 this.versionAtStart = widget.version;
                 index = -1;
-                current = default;
+                current = default!;
             }
 
             public void Dispose()
@@ -191,17 +190,17 @@ namespace EnTTSharp.Entities.Helpers
                     return true;
                 }
 
-                current = default;
+                current = default!;
                 return false;
             }
 
             public void Reset()
             {
                 index = -1;
-                current = default;
+                current = default!;
             }
 
-            object IEnumerator.Current => Current;
+            object IEnumerator.Current => Current!;
 
             public T Current
             {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 using System.Xml;
 
@@ -12,10 +13,10 @@ namespace EnTTSharp.Serialization.Xml
         public readonly string TypeId;
         public readonly Type TargetType;
         public readonly bool Tag;
-        readonly object parserFunction;
-        readonly object surrogateResolver;
+        readonly object? parserFunction;
+        readonly object? surrogateResolver;
 
-        XmlReadHandlerRegistration(string typeId, Type targetType, object parserFunction, bool tag, object surrogateResolver)
+        XmlReadHandlerRegistration(string typeId, Type targetType, object? parserFunction, bool tag, object? surrogateResolver)
         {
             TypeId = typeId;
             TargetType = targetType;
@@ -24,7 +25,7 @@ namespace EnTTSharp.Serialization.Xml
             this.surrogateResolver = surrogateResolver;
         }
 
-        public bool TryGetParser<TComponent>(out ReadHandlerDelegate<TComponent> fn)
+        public bool TryGetParser<TComponent>([MaybeNullWhen(false)] out ReadHandlerDelegate<TComponent> fn)
         {
             if (parserFunction is ReadHandlerDelegate<TComponent> fnx)
             {
@@ -36,7 +37,7 @@ namespace EnTTSharp.Serialization.Xml
             return false;
         }
 
-        public bool TryGetResolverFactory(out FormatterResolverFactory fn)
+        public bool TryGetResolverFactory([MaybeNullWhen(false)] out FormatterResolverFactory fn)
         {
             if (surrogateResolver is FormatterResolverFactory fnx)
             {
@@ -48,7 +49,7 @@ namespace EnTTSharp.Serialization.Xml
             return false;
         }
 
-        public XmlReadHandlerRegistration WithFormatterResolver(FormatterResolverFactory r)
+        public XmlReadHandlerRegistration WithFormatterResolver(FormatterResolverFactory? r)
         {
             return new XmlReadHandlerRegistration(TypeId, TargetType, parserFunction, Tag, r);
         }
@@ -58,13 +59,15 @@ namespace EnTTSharp.Serialization.Xml
             return new XmlReadHandlerRegistration(typeof(TComponent).FullName, typeof(TComponent), handler, tag, null);
         }
 
-        public static XmlReadHandlerRegistration Create<TComponent>(string id, ReadHandlerDelegate<TComponent> handler, bool tag)
+        public static XmlReadHandlerRegistration Create<TComponent>(string? id, ReadHandlerDelegate<TComponent> handler, bool tag)
         {
             if (string.IsNullOrEmpty(id))
             {
-                id = typeof(TComponent).FullName;
+                id = typeof(TComponent).FullName ?? typeof(TComponent).Name;
             }
 
+            if (id == null) throw new InvalidOperationException();
+            
             return new XmlReadHandlerRegistration(id, typeof(TComponent), handler, tag, null);
         }
     }

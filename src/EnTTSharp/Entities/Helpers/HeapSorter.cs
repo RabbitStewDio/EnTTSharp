@@ -13,7 +13,7 @@ namespace EnTTSharp.Entities.Helpers
         /// Public API: Default functionality.
         /// Sorts in ascending order. Uses Max-Heaps.
         /// </summary>
-        public static void HeapSort<T>(this ISortableCollection<T> collection, IComparer<T> comparer = null)
+        public static void HeapSort<T>(this ISortableCollection<T> collection, IComparer<T>? comparer = null)
         {
             collection.HeapSortAscending(comparer);
         }
@@ -22,7 +22,7 @@ namespace EnTTSharp.Entities.Helpers
         /// Public API: Sorts ascending
         /// Uses Max-Heaps
         /// </summary>
-        public static void HeapSortAscending<T>(this ISortableCollection<T> collection, IComparer<T> comparer = null)
+        public static void HeapSortAscending<T>(this ISortableCollection<T> collection, IComparer<T>? comparer = null)
         {
             // Handle the comparer's default null value
             comparer = comparer ?? Comparer<T>.Default;
@@ -42,7 +42,7 @@ namespace EnTTSharp.Entities.Helpers
         /// Public API: Sorts ascending
         /// Uses Min-Heaps
         /// </summary>
-        public static void HeapSortDescending<T>(this ISortableCollection<T> collection, IComparer<T> comparer = null)
+        public static void HeapSortDescending<T>(this ISortableCollection<T> collection, IComparer<T>? comparer = null)
         {
             // Handle the comparer's default null value
             comparer = comparer ?? Comparer<T>.Default;

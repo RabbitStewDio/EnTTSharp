@@ -5,7 +5,7 @@ namespace EnTTSharp.Serialization.Xml
 {
     public abstract class SerializationSurrogateProviderBase<TObject, TSurrogateType> : ISerializationSurrogateProvider
     {
-        public object GetDeserializedObject(object obj, Type memberType)
+        public object? GetDeserializedObject(object obj, Type memberType)
         {
             if (obj is TSurrogateType surrogate)
             {
@@ -15,9 +15,9 @@ namespace EnTTSharp.Serialization.Xml
             return obj;
         }
 
-        public abstract TObject GetDeserializedObject(TSurrogateType surrogate);
+        public abstract TObject? GetDeserializedObject(TSurrogateType surrogate);
 
-        public object GetObjectToSerialize(object obj, Type surrogateType)
+        public object? GetObjectToSerialize(object obj, Type surrogateType)
         {
             if (obj is TObject source)
             {
@@ -27,7 +27,7 @@ namespace EnTTSharp.Serialization.Xml
             return obj;
         }
 
-        public abstract TSurrogateType GetObjectToSerialize(TObject obj);
+        public abstract TSurrogateType? GetObjectToSerialize(TObject obj);
 
         public Type GetSurrogateType(Type memberType)
         {
