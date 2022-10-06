@@ -30,7 +30,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <DotNetCliToolReference Include="dotnet-t4-project-tool" Version="2.0.5" />
         <PackageReference Include="JetBrains.Annotations" Version="2020.1.0" />
         <PackageReference Include="Serilog" Version="2.9.0" />
         <PackageReference Include="System.ValueTuple" Version="4.5.0" />
@@ -65,6 +64,11 @@
         <DependentUpon>EntitySystemBuilderWithoutContext.Generated.tt</DependentUpon>
       </Compile>
     </ItemGroup>
+
+    <Target Name="RestoreDotnetTools" BeforeTargets="Restore">
+      <Message Text="Restoring dotnet tools" Importance="High" />
+      <Exec Command="dotnet tool restore" />
+    </Target>
 
     <Target Name="TextTemplateTransform" BeforeTargets="BeforeBuild" Inputs="@(TextTemplate)" Outputs="@(TextTemplate->'%(RelativeDir)%(Filename).cs')">
         <!-- 
