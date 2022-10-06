@@ -10,7 +10,7 @@ namespace EnTTSharp.Serialization.Xml
     {
         readonly object? handler;
 
-        XmlWriteHandlerRegistration(Type targetType, string? typeId, object? handler, bool tag, object? surrogateResolver)
+        XmlWriteHandlerRegistration(Type targetType, string typeId, object? handler, bool tag, object? surrogateResolver)
         {
             if (string.IsNullOrWhiteSpace(typeId))
             {
@@ -18,7 +18,7 @@ namespace EnTTSharp.Serialization.Xml
             }
             
             this.TargetType = targetType ?? throw new ArgumentNullException(nameof(targetType));
-            this.TypeId = typeId ?? TargetType.FullName ?? TargetType.Name;
+            this.TypeId = typeId;
             this.handler = handler;
             this.Tag = tag;
             this.surrogateResolver = surrogateResolver;

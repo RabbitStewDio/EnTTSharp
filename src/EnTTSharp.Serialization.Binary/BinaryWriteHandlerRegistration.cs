@@ -5,8 +5,8 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace EnTTSharp.Serialization.Binary
 {
-    public delegate IFormatterResolver FormatterResolverFactory(IEntityKeyMapper entityMapper);
-    public delegate IMessagePackFormatter MessagePackFormatterFactory(IEntityKeyMapper entityMapper);
+    public delegate IFormatterResolver? FormatterResolverFactory(IEntityKeyMapper entityMapper);
+    public delegate IMessagePackFormatter? MessagePackFormatterFactory(IEntityKeyMapper entityMapper);
 
     public readonly struct BinaryWriteHandlerRegistration
     {

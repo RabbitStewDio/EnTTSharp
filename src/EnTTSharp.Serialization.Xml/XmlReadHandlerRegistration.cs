@@ -5,7 +5,7 @@ using System.Xml;
 
 namespace EnTTSharp.Serialization.Xml
 {
-    public delegate ISerializationSurrogateProvider FormatterResolverFactory(IEntityKeyMapper entityMapper);
+    public delegate ISerializationSurrogateProvider? FormatterResolverFactory(IEntityKeyMapper entityMapper);
     public delegate TComponent ReadHandlerDelegate<TComponent>(XmlReader reader);
 
     public readonly struct XmlReadHandlerRegistration

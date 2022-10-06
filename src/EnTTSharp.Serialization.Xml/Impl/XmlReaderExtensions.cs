@@ -84,7 +84,7 @@ namespace EnTTSharp.Serialization.Xml.Impl
 
         public static bool TryGetAttributeBool(this XmlReader reader, string name, out bool value)
         {
-            string rawValue = reader.GetAttribute(name);
+            string? rawValue = reader.GetAttribute(name);
             if (string.IsNullOrEmpty(rawValue))
             {
                 value = default;

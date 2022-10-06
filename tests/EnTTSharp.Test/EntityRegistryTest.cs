@@ -2,9 +2,11 @@ using EnTTSharp.Entities;
 using FluentAssertions;
 using NUnit.Framework;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EnTTSharp.Test
 {
+    [SuppressMessage("ReSharper", "NotNullOrRequiredMemberIsNotInitialized")]
     public class EntityRegistryTest
     {
         EntityRegistry<EntityKey> registry;

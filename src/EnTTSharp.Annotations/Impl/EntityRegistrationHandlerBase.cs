@@ -5,26 +5,28 @@ namespace EnTTSharp.Annotations.Impl
 {
     public abstract class EntityRegistrationHandlerBase : IEntityRegistrationHandler
     {
-        static readonly MethodInfo ProcessMethod;
+        static readonly MethodInfo processMethod;
 
         static EntityRegistrationHandlerBase()
         {
-            ProcessMethod = typeof(EntityRegistrationHandlerBase).GetMethod(nameof(ProcessTypedInternal),
-                                                                     BindingFlags.NonPublic | BindingFlags.Instance,
-                                                                     null,
-                                                                     new[] {typeof(EntityComponentRegistration)},
-                                                                     null);
-            if (ProcessMethod == null)
+            var method = typeof(EntityRegistrationHandlerBase).GetMethod(nameof(ProcessTypedInternal),
+                                                                         BindingFlags.NonPublic | BindingFlags.Instance,
+                                                                         null,
+                                                                         new[] { typeof(EntityComponentRegistration) },
+                                                                         null);
+            if (method == null)
             {
                 throw new InvalidOperationException(" Unable to find private generic method. That really should not happen.");
             }
+
+            processMethod = method;
         }
 
         public void Process(EntityComponentRegistration reg)
         {
             var typeInfo = reg.TypeInfo;
-            var genericMethod = ProcessMethod.MakeGenericMethod(typeInfo);
-            genericMethod.Invoke(this, new object[] {reg});
+            var genericMethod = processMethod.MakeGenericMethod(typeInfo);
+            genericMethod.Invoke(this, new object[] { reg });
         }
 
         void ProcessTypedInternal<TComponent>(EntityComponentRegistration r)

@@ -9,9 +9,11 @@ using EnTTSharp.Serialization.Xml.Impl;
 using EnTTSharp.Test.Fixtures;
 using FluentAssertions;
 using NUnit.Framework;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EnTTSharp.Test.Serialisation
 {
+    [SuppressMessage("ReSharper", "NotNullOrRequiredMemberIsNotInitialized")]
     public class RegistrySerialisationTest
     {
         EntityRegistry<EntityKey> ereg;

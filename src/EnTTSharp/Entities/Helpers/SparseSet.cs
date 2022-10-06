@@ -228,7 +228,7 @@ namespace EnTTSharp.Entities.Helpers
             var set = new SparseSet<TEntityKey>();
             while (members.MoveNext())
             {
-                set.Add(members.Current);
+                set.Add(members.Current!);
             }
 
             return set;

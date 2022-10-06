@@ -1,5 +1,4 @@
 ﻿using EnTTSharp.Entities;
-using JetBrains.Annotations;
 using System;
 
 namespace EnTTSharp.Serialization
@@ -12,7 +11,7 @@ namespace EnTTSharp.Serialization
         readonly ISnapshotLoader<TEntityKey> loader;
         readonly IEntityKeyMapper entityMapper;
 
-        public SnapshotStreamReader([NotNull] ISnapshotLoader<TEntityKey> loader, [NotNull] IEntityKeyMapper mapper)
+        public SnapshotStreamReader(ISnapshotLoader<TEntityKey> loader, IEntityKeyMapper mapper)
         {
             this.loader = loader ?? throw new ArgumentNullException(nameof(loader));
             this.entityMapper = mapper ?? throw new ArgumentNullException(nameof(mapper));

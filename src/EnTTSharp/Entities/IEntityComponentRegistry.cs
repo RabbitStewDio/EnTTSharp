@@ -8,8 +8,8 @@ namespace EnTTSharp.Entities
         void RegisterFlag<TComponent>();
         
         void Register<TComponent>(Func<TComponent> constructorFn,
-                                  Action<TEntityKey, IEntityViewControl<TEntityKey>, TComponent> destructorFn = null);
+                                  Action<TEntityKey, IEntityViewControl<TEntityKey>, TComponent>? destructorFn = null);
 
-        void RegisterNonConstructable<TComponent>(Action<TEntityKey, IEntityViewControl<TEntityKey>, TComponent> destructorFn = null);
+        void RegisterNonConstructable<TComponent>(Action<TEntityKey, IEntityViewControl<TEntityKey>, TComponent>? destructorFn = null);
     }
 }

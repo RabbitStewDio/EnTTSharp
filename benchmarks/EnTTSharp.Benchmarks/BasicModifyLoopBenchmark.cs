@@ -9,8 +9,8 @@ namespace EnTTSharp.Benchmarks
     [SimpleJob(RuntimeMoniker.NetCoreApp31, baseline: true)]
     public class BasicModifyLoopBenchmark
     {
-        EntityRegistry<EntityKey> registry;
-        IPersistentEntityView<EntityKey, PerformanceTraitVelocity, PerformanceTraitPos> view;
+        EntityRegistry<EntityKey>? registry;
+        IPersistentEntityView<EntityKey, PerformanceTraitVelocity, PerformanceTraitPos>? view;
 
         [GlobalSetup]
         public void SetUp()
@@ -33,28 +33,28 @@ namespace EnTTSharp.Benchmarks
         [Benchmark]
         public void IterateSingleThreadedRef()
         {
-            view.AllowParallelExecution = false;
+            view!.AllowParallelExecution = false;
             view.Apply(RunByRef);
         }
 
         [Benchmark]
         public void IterateSingleThreadedWriteBack()
         {
-            view.AllowParallelExecution = false;
+            view!.AllowParallelExecution = false;
             view.Apply(RunWriteBack);
         }
         
         [Benchmark(Baseline = true)]
         public void IterateMultiThreadedThreadedRef()
         {
-            view.AllowParallelExecution = true;
+            view!.AllowParallelExecution = true;
             view.Apply(RunByRef);
         }
 
         [Benchmark]
         public void IterateMultiThreadedWriteBack()
         {
-            view.AllowParallelExecution = true;
+            view!.AllowParallelExecution = true;
             view.Apply(RunWriteBack);
         }
         

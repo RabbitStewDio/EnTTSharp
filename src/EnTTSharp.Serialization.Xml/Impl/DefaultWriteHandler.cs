@@ -15,7 +15,11 @@ namespace EnTTSharp.Serialization.Xml.Impl
 
         public void Write(XmlWriter writer, T component)
         {
-            serializer.Serialize(writer, component);
+            object? o = component;
+            if (o != null)
+            {
+                serializer.Serialize(writer, o);
+            }
         }
     }
 }

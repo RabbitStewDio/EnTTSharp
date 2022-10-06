@@ -79,7 +79,7 @@
 
         public GenericsParameterVariant(int count)
         {
-            this.Count = count;
+            Count = count;
         }
 
         public string ToDeclaration()
@@ -129,7 +129,7 @@
         {
             this.inParamCount = inParamCount;
             this.outParamCount = outParamCount;
-            this.parameterData = ExpandParameters();
+            parameterData = ExpandParameters();
         }
 
         List<GenericsParameter> ExpandParameters()
@@ -213,7 +213,7 @@
 
         public string ToPartialDeclaration(GenericsParameterSet genericsParameterSet)
         {
-            if (genericsParameterSet.Count >= this.Count)
+            if (genericsParameterSet.Count >= Count)
             {
                 throw new ArgumentException();
             }
@@ -223,7 +223,7 @@
         
         public string ToPartialParameter(GenericsParameterSet genericsParameterSet)
         {
-            if (genericsParameterSet.Count >= this.Count)
+            if (genericsParameterSet.Count >= Count)
             {
                 throw new ArgumentException();
             }

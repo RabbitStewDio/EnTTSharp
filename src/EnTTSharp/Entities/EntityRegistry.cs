@@ -271,7 +271,7 @@ namespace EnTTSharp.Entities
         }
 
         void IEntityComponentRegistry<TEntityKey>.Register<TComponent>(Func<TComponent> constructorFn,
-                                                                       Action<TEntityKey, IEntityViewControl<TEntityKey>, TComponent> destructorFn)
+                                                                       Action<TEntityKey, IEntityViewControl<TEntityKey>, TComponent>? destructorFn)
         {
             Register(constructorFn, destructorFn);
         }
@@ -292,7 +292,7 @@ namespace EnTTSharp.Entities
             return pool;
         }
 
-        void IEntityComponentRegistry<TEntityKey>.RegisterNonConstructable<TComponent>(Action<TEntityKey, IEntityViewControl<TEntityKey>, TComponent> destructorFn)
+        void IEntityComponentRegistry<TEntityKey>.RegisterNonConstructable<TComponent>(Action<TEntityKey, IEntityViewControl<TEntityKey>, TComponent>? destructorFn)
         {
             RegisterNonConstructable(destructorFn);
         }
