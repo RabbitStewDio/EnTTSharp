@@ -76,6 +76,7 @@ namespace EnTTSharp.Test.Serialisation.NestedKeys
                 var resolver = CompositeResolver.Create(
                     new EntityKeyDataResolver(),
                     new EntityKeyResolver(),
+                    OptionalResolver.Instance,
                     StandardResolver.Instance
                 );
 
@@ -110,6 +111,7 @@ namespace EnTTSharp.Test.Serialisation.NestedKeys
                 var resolver = CompositeResolver.Create(
                     new EntityKeyDataResolver(),
                     new EntityKeyResolver(new DefaultEntityKeyMapper().Register(loader.Map)),
+                    OptionalResolver.Instance,
                     StandardResolver.Instance
                 );
 

@@ -10,7 +10,7 @@ namespace EnTTSharp.Entities
         where TEntityKey: IEntityKey
     {
         bool HasTag<TTag>();
-        bool TryGetTag<TTag>([MaybeNullWhen(false)] out TEntityKey k, out Optional<TTag> tag);
+        bool TryGetTag<TTag>([MaybeNullWhen(false)] out TEntityKey k, [MaybeNullWhen(false)] out TTag tag);
         void RemoveTag<TTag>();
         void AttachTag<TTag>(TEntityKey entity);
         void AttachTag<TTag>(TEntityKey entity, in TTag tag);

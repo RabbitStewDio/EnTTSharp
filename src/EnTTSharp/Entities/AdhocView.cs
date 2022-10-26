@@ -57,7 +57,7 @@ namespace EnTTSharp.Entities
             return registry.HasTag<TTag>();
         }
 
-        public bool TryGetTag<TTag>([MaybeNullWhen(false)] out TEntityKey k, out Optional<TTag> tag)
+        public bool TryGetTag<TTag>([MaybeNullWhen(false)] out TEntityKey k, [MaybeNullWhen(false)] out TTag tag)
         {
             return registry.TryGetTag(out k, out tag);
         }

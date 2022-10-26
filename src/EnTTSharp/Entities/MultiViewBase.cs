@@ -227,7 +227,7 @@ namespace EnTTSharp.Entities
             Registry.RemoveTag<TTag>();
         }
 
-        public bool TryGetTag<TTag>([MaybeNullWhen(false)] out TEntityKey k, out Optional<TTag> tag)
+        public bool TryGetTag<TTag>([MaybeNullWhen(false)] out TEntityKey k, [MaybeNullWhen(false)] out TTag tag)
         {
             return Registry.TryGetTag(out k, out tag);
         }

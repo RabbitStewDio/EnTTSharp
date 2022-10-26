@@ -483,21 +483,17 @@ namespace EnTTSharp.Entities
             throw new ArgumentException();
         }
 
-        public bool TryGetTag<TTag>([MaybeNullWhen(false)] out TEntityKey entity, out Optional<TTag> tag)
+        public bool TryGetTag<TTag>([MaybeNullWhen(false)] out TEntityKey entity, [MaybeNullWhen(false)] out TTag tag)
         {
             if (tagIndex.TryGetValue(typeof(TTag), out var idx))
             {
                 var att = tags[idx];
-                entity = att.Entity;
                 if (att.Tag is TTag typedTag)
                 {
                     tag = typedTag;
+                    entity = att.Entity;
+                    return true;
                 }
-                else
-                {
-                    tag = default;
-                }
-                return true;
             }
 
             entity = default;
