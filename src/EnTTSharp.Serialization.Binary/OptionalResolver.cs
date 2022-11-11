@@ -25,13 +25,14 @@ namespace EnTTSharp.Serialization.Binary
             // use outer helper method.
             static FormatterCache()
             {
-                if (typeof(T).GetGenericTypeDefinition() != typeof(Optional<>))
+                var t = typeof(T);
+                if (!t.IsGenericType || t.GetGenericTypeDefinition() != typeof(Optional<>))
                 {
                     Formatter = null;
                     return;
                 }
 
-                var args = typeof(T).GetGenericArguments();
+                var args = t.GetGenericArguments();
                 var formatterType = typeof(OptionalMessagePackFormatter<>).MakeGenericType(args);
                 Formatter = (IMessagePackFormatter<T>)Activator.CreateInstance(formatterType);
             }

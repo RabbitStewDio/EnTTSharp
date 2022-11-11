@@ -127,6 +127,24 @@ namespace EnTTSharp
         public T GetOrElse(T t) => HasValue ? value : t;
         public T GetOrElse(Func<T> ft) => HasValue ? value : ft();
 
+        public Optional<TNext> Select<TNext>(Func<T, TNext> selector)
+        {
+            if (TryGetValue(out var v))
+            {
+                return selector(v);
+            }
+            return Optional.Empty();
+        }
+        
+        public Optional<TNext> SelectMany<TNext>(Func<T, Optional<TNext>> selector)
+        {
+            if (TryGetValue(out var v))
+            {
+                return selector(v);
+            }
+            return Optional.Empty();
+        }
+        
         public static bool operator ==(Optional<T> left, T right)
         {
             return left.Equals(right);
