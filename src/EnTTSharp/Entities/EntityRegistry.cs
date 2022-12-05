@@ -168,7 +168,7 @@ namespace EnTTSharp.Entities
                 pool = p;
                 return true;
             }
-            
+
             pool = default;
             return false;
         }
@@ -183,7 +183,7 @@ namespace EnTTSharp.Entities
 
             return p;
         }
-        
+
         public bool TryGetWritablePool<TComponent>([MaybeNullWhen(false)] out IPool<TEntityKey, TComponent> pool)
         {
             var idx = ManagedIndex<TComponent>();
@@ -270,46 +270,31 @@ namespace EnTTSharp.Entities
             RegisterFlag(default(TComponent));
         }
 
-        void IEntityComponentRegistry<TEntityKey>.Register<TComponent>(Func<TComponent> constructorFn,
-                                                                       Action<TEntityKey, IEntityViewControl<TEntityKey>, TComponent>? destructorFn)
-        {
-            Register(constructorFn, destructorFn);
-        }
-
-        public IPool<TEntityKey, TComponent>
-            Register<TComponent>(Func<TComponent> con,
-                                 Action<TEntityKey, EntityRegistry<TEntityKey>, TComponent>? destructor = null)
+        public void Register<TComponent>(Func<TComponent> constructorFn,
+                                         Action<TEntityKey, IEntityViewControl<TEntityKey>, TComponent>? destructorFn)
         {
             if (IsManaged<TComponent>())
             {
                 throw new ArgumentException("Duplicate registration");
             }
 
-            var registration = ComponentRegistration.Create(componentIndex.Count, this, con, destructor);
+            var registration = ComponentRegistration.Create(componentIndex.Count, this, constructorFn, destructorFn);
             var pool = PoolFactory.Create(registration);
             componentIndex[typeof(TComponent)] = registration;
             pools.StoreAt(registration.Index, new PoolEntry(pool));
-            return pool;
         }
 
-        void IEntityComponentRegistry<TEntityKey>.RegisterNonConstructable<TComponent>(Action<TEntityKey, IEntityViewControl<TEntityKey>, TComponent>? destructorFn)
-        {
-            RegisterNonConstructable(destructorFn);
-        }
-
-        public IPool<TEntityKey, TComponent> RegisterNonConstructable<TComponent>(
-            Action<TEntityKey, EntityRegistry<TEntityKey>, TComponent>? destructor = null)
+        public void RegisterNonConstructable<TComponent>(Action<TEntityKey, IEntityViewControl<TEntityKey>, TComponent>? destructorFn = null)
         {
             if (IsManaged<TComponent>())
             {
                 throw new ArgumentException("Duplicate registration");
             }
 
-            var registration = ComponentRegistration.Create(componentIndex.Count, this, destructor);
+            var registration = ComponentRegistration.Create(componentIndex.Count, this, destructorFn);
             var pool = PoolFactory.Create(registration);
             componentIndex[typeof(TComponent)] = registration;
             pools.StoreAt(registration.Index, new PoolEntry(pool));
-            return pool;
         }
 
         public void Reserve<TComponent>(int capacity)
@@ -337,6 +322,8 @@ namespace EnTTSharp.Entities
             return entities[key.Key].Age;
         }
 
+        public event EventHandler<TEntityKey>? EntityCreated;
+
         public TEntityKey Create()
         {
             if (available > 0)
@@ -349,12 +336,14 @@ namespace EnTTSharp.Entities
                 entities[next] = entity;
                 next = nextEmpty.Key;
                 available -= 1;
+                EntityCreated?.Invoke(this, entity);
                 return entity;
             }
             else
             {
                 var entity = entityKeyFactory(1, entities.Count);
                 entities.Add(entity);
+                EntityCreated?.Invoke(this, entity);
                 return entity;
             }
         }
@@ -377,11 +366,10 @@ namespace EnTTSharp.Entities
                     p.Remove(entity);
                 }
             }
-            
+
             entities[entt] = node;
             next = entt;
             available += 1;
-
         }
 
         public bool HasTag<TTag>()
@@ -657,7 +645,7 @@ namespace EnTTSharp.Entities
 
         public void Sort<TComponent>(IComparer<TComponent> comparator)
         {
-            if (TryGetPool<TComponent>(out var pool) && 
+            if (TryGetPool<TComponent>(out var pool) &&
                 pool is ISortableCollection<TComponent> sortablePool)
             {
                 sortablePool.HeapSort(comparator);

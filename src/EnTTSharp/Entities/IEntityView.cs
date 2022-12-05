@@ -10,6 +10,7 @@ namespace EnTTSharp.Entities
     public interface IEntityView<TEntityKey> : IEnumerable<TEntityKey>, IEntityViewControl<TEntityKey>, IDisposable 
         where TEntityKey : IEntityKey
     {
+        event EventHandler<TEntityKey> Updated;
         event EventHandler<TEntityKey> Destroyed;
         event EventHandler<TEntityKey> Created;
 

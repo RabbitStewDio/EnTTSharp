@@ -6,7 +6,7 @@ using EnTTSharp.Entities.Helpers;
 
 namespace EnTTSharp.Entities.Pools
 {
-    public class NotPool<TEntityKey, TComponent>: IReadOnlyPool<TEntityKey, Not<TComponent>> 
+    public class NotPool<TEntityKey, TComponent>: IReadOnlyPool<TEntityKey, Not<TComponent>>, IDisposable
         where TEntityKey : IEntityKey
     {
         readonly IEntityPoolAccess<TEntityKey> registry;
@@ -16,9 +16,28 @@ namespace EnTTSharp.Entities.Pools
                        IReadOnlyPool<TEntityKey, TComponent> entityPool)
         {
             this.registry = registry;
+            this.registry.BeforeEntityDestroyed += HandleEntityDestroyed;
+            this.registry.EntityCreated += HandleEntityCreated;
             this.entityPool = entityPool ?? throw new ArgumentNullException(nameof(entityPool));
-            this.entityPool.Created += HandleCreated;
+            this.entityPool.CreatedEntry += HandleCreated;
             this.entityPool.Destroyed += HandleDestroyed;
+        }
+
+        void HandleEntityCreated(object sender, TEntityKey e)
+        { 
+            CreatedEntry?.Invoke(this, e);
+            Created?.Invoke(this, (e, default));
+        }
+
+        void HandleEntityDestroyed(object sender, TEntityKey e)
+        {
+            Destroyed?.Invoke(this, e);
+        }
+
+        public void Dispose()
+        {
+            this.entityPool.CreatedEntry -= HandleCreated;
+            this.entityPool.Destroyed -= HandleCreated;
         }
 
         void HandleCreated(object sender, TEntityKey e)
@@ -28,13 +47,18 @@ namespace EnTTSharp.Entities.Pools
 
         void HandleDestroyed(object sender, TEntityKey e)
         {
-            Created?.Invoke(this, e);
+            CreatedEntry?.Invoke(this, e);
+            Created?.Invoke(this, (e, default));
         }
 
         public int Count => registry.Count - entityPool.Count;
 
         public event EventHandler<TEntityKey>? Destroyed;
-        public event EventHandler<TEntityKey>? Created;
+        public event EventHandler<TEntityKey>? UpdatedEntry;
+        public event EventHandler<TEntityKey>? CreatedEntry;
+        public event EventHandler<(TEntityKey key, Not<TComponent> old)>? DestroyedNotify;
+        public event EventHandler<(TEntityKey key, Not<TComponent> old)>? Updated;
+        public event EventHandler<(TEntityKey key, Not<TComponent> old)>? Created;
 
         public bool TryGet(TEntityKey entity, out Not<TComponent> component)
         {
@@ -92,10 +116,10 @@ namespace EnTTSharp.Entities.Pools
             }
         }
         
-        public void CopyTo(SparseSet<TEntityKey> entites)
+        public void CopyTo(SparseSet<TEntityKey> entities)
         {
-            entites.Capacity = Math.Max(entites.Capacity, Count);
-            entites.RemoveAll();
+            entities.Capacity = Math.Max(entities.Capacity, Count);
+            entities.RemoveAll();
             
             var p = EntityKeyListPool.Reserve(registry);
             try
@@ -104,7 +128,7 @@ namespace EnTTSharp.Entities.Pools
                 {
                     if (Contains(e))
                     {
-                        entites.Add(e);
+                        entities.Add(e);
                     }
                 }
             }

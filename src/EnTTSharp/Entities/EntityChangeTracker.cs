@@ -19,18 +19,10 @@ namespace EnTTSharp.Entities
 
         public void Install()
         {
-            if (Registry.TryGetWritablePool<TComponent>(out var pool))
-            {
-                pool.Updated += OnPositionUpdated;
-                pool.Created += OnPositionCreated;
-                pool.DestroyedNotify += OnComplexDestroyed;
-            }
-            else
-            {
-                var roPool = Registry.GetPool<TComponent>();
-                roPool.Created += OnPositionCreated;
-                roPool.Destroyed += OnBasicDestroyed;
-            }
+            var pool = Registry.GetPool<TComponent>();
+            pool.Updated += OnPositionUpdated;
+            pool.Created += OnPositionCreated;
+            pool.DestroyedNotify += OnDestroyed;
         }
 
         public void Dispose()
@@ -40,29 +32,16 @@ namespace EnTTSharp.Entities
 
         protected virtual void Dispose(bool disposing)
         {
-            if (Registry.TryGetWritablePool<TComponent>(out var pool))
-            {
-                pool.Updated -= OnPositionUpdated;
-                pool.Created -= OnPositionCreated;
-                pool.DestroyedNotify -= OnComplexDestroyed;
-            }
-            else
-            {
-                var roPool = Registry.GetPool<TComponent>();
-                roPool.Created -= OnPositionCreated;
-                roPool.Destroyed -= OnBasicDestroyed;
-            }
+            var pool = Registry.GetPool<TComponent>();
+            pool.Updated -= OnPositionUpdated;
+            pool.Created -= OnPositionCreated;
+            pool.DestroyedNotify -= OnDestroyed;
         }
 
-        void OnBasicDestroyed(object sender, TEntityKey e)
-        {
-            OnPositionDestroyed(sender, (e, default));
-        }
-
-        void OnComplexDestroyed(object sender, (TEntityKey k, TComponent old) x) => OnPositionDestroyed(sender, (x.k, x.old));
+        void OnDestroyed(object sender, (TEntityKey k, TComponent old) x) => OnPositionDestroyed(sender, (x.k, x.old));
         
         protected virtual void OnPositionDestroyed(object sender, (TEntityKey key, Optional<TComponent> old) e) { }
-        protected abstract void OnPositionUpdated(object sender, (TEntityKey key, TComponent old) e);
-        protected abstract void OnPositionCreated(object sender, TEntityKey e);
+        protected abstract void OnPositionUpdated(object sender, (TEntityKey key, TComponent c) e);
+        protected abstract void OnPositionCreated(object sender, (TEntityKey key, TComponent c) e);
     }
 }

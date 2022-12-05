@@ -9,6 +9,8 @@ namespace EnTTSharp.Entities
                                                      IReadOnlyCollection<TEntityKey> 
         where TEntityKey : IEntityKey
     {
+        event EventHandler<TEntityKey> EntityCreated;
+
         TEntityKey Create();
         IPool<TEntityKey, TComponent> GetWritablePool<TComponent>();
         IReadOnlyPool<TEntityKey, TComponent> GetPool<TComponent>();

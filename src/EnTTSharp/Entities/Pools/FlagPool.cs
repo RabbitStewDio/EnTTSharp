@@ -27,7 +27,8 @@ namespace EnTTSharp.Entities.Pools
         public void Add(TEntityKey e, in TData component)
         {
             backend.Add(e);
-            Created?.Invoke(this, e);
+            CreatedEntry?.Invoke(this, e);
+            Created?.Invoke(this, (e, sharedData));
         }
 
         public virtual bool WriteBack(TEntityKey entity, in TData component)
@@ -37,7 +38,8 @@ namespace EnTTSharp.Entities.Pools
 
         public event EventHandler<(TEntityKey key, TData old)>? DestroyedNotify;
         public event EventHandler<TEntityKey>? Destroyed;
-        public event EventHandler<TEntityKey>? Created;
+        public event EventHandler<TEntityKey>? CreatedEntry;
+        public event EventHandler<(TEntityKey key, TData old)>? Created;
 
         public int Count => backend.Count;
 
@@ -78,6 +80,13 @@ namespace EnTTSharp.Entities.Pools
             add { }
             remove { }
         }
+
+        public event EventHandler<TEntityKey>? UpdatedEntry
+        {
+            add { }
+            remove { }
+        }
+
 
         public virtual bool Remove(TEntityKey e)
         {

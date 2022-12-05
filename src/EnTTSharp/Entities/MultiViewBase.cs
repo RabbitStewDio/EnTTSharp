@@ -13,6 +13,7 @@ namespace EnTTSharp.Entities
     {
         readonly EventHandler<TEntityKey> onCreated;
         readonly EventHandler<TEntityKey> onDestroyed;
+        readonly EventHandler<TEntityKey> onUpdated;
         protected readonly List<IReadOnlyPool<TEntityKey>> Sets;
 
         /// <summary>
@@ -35,11 +36,13 @@ namespace EnTTSharp.Entities
 
             onCreated = OnCreated;
             onDestroyed = OnDestroyed;
+            onUpdated = OnUpdated;
             this.Sets = new List<IReadOnlyPool<TEntityKey>>(entries);
             foreach (var pool in Sets)
             {
                 pool.Destroyed += onDestroyed;
-                pool.Created += onCreated;
+                pool.CreatedEntry += onCreated;
+                pool.UpdatedEntry += onUpdated;
             }
 
             IsMemberPredicate = IsMember;
@@ -52,6 +55,7 @@ namespace EnTTSharp.Entities
 
         public event EventHandler<TEntityKey>? Destroyed;
         public event EventHandler<TEntityKey>? Created;
+        public event EventHandler<TEntityKey>? Updated;
 
         protected virtual void OnCreated(object sender, TEntityKey e)
         {
@@ -75,6 +79,14 @@ namespace EnTTSharp.Entities
             if (countContained == Sets.Count - 1)
             {
                 Destroyed?.Invoke(sender, e);
+            }
+        }
+
+        void OnUpdated(object sender, TEntityKey e)
+        {
+            if (Contains(e))
+            {
+                Updated?.Invoke(sender, e);
             }
         }
 
@@ -282,7 +294,7 @@ namespace EnTTSharp.Entities
             foreach (var pool in Sets)
             {
                 pool.Destroyed -= onDestroyed;
-                pool.Created -= onCreated;
+                pool.CreatedEntry -= onCreated;
             }
         }
         

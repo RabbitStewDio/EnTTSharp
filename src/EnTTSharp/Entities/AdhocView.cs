@@ -12,8 +12,9 @@ namespace EnTTSharp.Entities
     {
         readonly IEntityPoolAccess<TEntityKey> registry;
         readonly IPool<TEntityKey, TComponent> viewData;
-        readonly EventHandler<TEntityKey> onCreated;
+        readonly EventHandler<(TEntityKey, TComponent)> onCreated;
         readonly EventHandler<TEntityKey> onDestroyed;
+        readonly EventHandler<(TEntityKey, TComponent)> onUpdated;
         bool disposed;
         public bool AllowParallelExecution { get; set; }
 
@@ -28,8 +29,10 @@ namespace EnTTSharp.Entities
             viewData = viewDataRaw;
             onCreated = OnCreated;
             onDestroyed = OnDestroyed;
+            onUpdated = OnUpdated;
             this.viewData.Destroyed += onDestroyed;
             this.viewData.Created += onCreated;
+            this.viewData.Updated += onUpdated;
         }
 
         ~AdhocView()
@@ -102,16 +105,21 @@ namespace EnTTSharp.Entities
             return registry.AssignOrReplace<TOtherComponent>(entity);
         }
 
-        void OnCreated(object sender, TEntityKey e)
+        void OnCreated(object sender, (TEntityKey e, TComponent c) e)
         {
-            Created?.Invoke(sender, e);
+            Created?.Invoke(this, e.e);
         }
 
         void OnDestroyed(object sender, TEntityKey e)
         {
-            Destroyed?.Invoke(sender, e);
+            Destroyed?.Invoke(this, e);
         }
 
+        void OnUpdated(object sender, (TEntityKey key, TComponent old) e)
+        {
+            Updated?.Invoke(this, e.key);            
+        }
+        
         public bool Contains(TEntityKey e)
         {
             return viewData.Contains(e);
@@ -148,6 +156,7 @@ namespace EnTTSharp.Entities
 
         public event EventHandler<TEntityKey>? Destroyed;
         public event EventHandler<TEntityKey>? Created;
+        public event EventHandler<TEntityKey>? Updated;
 
         public void Apply(ViewDelegates.Apply<TEntityKey> bulk)
         {
@@ -304,6 +313,7 @@ namespace EnTTSharp.Entities
             disposed = true;
             this.viewData.Destroyed -= onDestroyed;
             this.viewData.Created -= onCreated;
+            this.viewData.Updated -= OnUpdated;
         }
 
         public int EstimatedSize => viewData.Count;
