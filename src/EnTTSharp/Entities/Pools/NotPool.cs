@@ -94,10 +94,10 @@ namespace EnTTSharp.Entities.Pools
 
         public Enumerator GetEnumerator() => new Enumerator(this);
 
-        public void CopyTo(RawList<TEntityKey> entites)
+        public void CopyTo(RawList<TEntityKey> entities)
         {
-            entites.Capacity = Math.Max(entites.Capacity, Count);
-            entites.Clear();
+            entities.Capacity = Math.Max(entities.Capacity, Count);
+            entities.Clear();
             
             var p = EntityKeyListPool.Reserve(registry);
             try
@@ -106,7 +106,7 @@ namespace EnTTSharp.Entities.Pools
                 {
                     if (Contains(e))
                     {
-                        entites.Add(e);
+                        entities.Add(e);
                     }
                 }
             }

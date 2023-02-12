@@ -157,11 +157,11 @@ namespace EnTTSharp.Entities.Pools
             return ref defaultValue;
         }
 
-        public void CopyTo(RawList<TEntityKey> entites)
+        public void CopyTo(RawList<TEntityKey> entities)
         {
-            entites.Capacity = Math.Max(entites.Capacity, Count);
-            entites.Clear();
-            backend.CopyTo(entites);
+            entities.Capacity = Math.Max(entities.Capacity, Count);
+            entities.Clear();
+            backend.CopyTo(entities);
         }
     }
 }

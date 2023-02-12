@@ -27,6 +27,6 @@ namespace EnTTSharp.Entities.Pools
         int Count { get; }
         void Reserve(int capacity);
 
-        void CopyTo(RawList<TEntityKey> entites);
+        void CopyTo(RawList<TEntityKey> entities);
     }
 }

@@ -284,6 +284,24 @@ namespace EnTTSharp.Entities
             pools.StoreAt(registration.Index, new PoolEntry(pool));
         }
 
+        public void RegisterDerived<TSourceComponent, TComponent>(Func<TEntityKey, TSourceComponent, TComponent> fn)
+        {
+            if (IsManaged<TComponent>())
+            {
+                throw new ArgumentException("Duplicate registration");
+            }
+
+            if (!IsManaged<TSourceComponent>())
+            {
+                throw new ArgumentException("Invalid source component registration");
+            }
+
+            var sourcePool = GetPool<TSourceComponent>();
+            var registration = ComponentRegistration.Create<TEntityKey, TComponent>(componentIndex.Count, this);
+            var pool = new DerivedValuePool<TEntityKey, TSourceComponent, TComponent>(sourcePool, fn);
+            pools.StoreAt(registration.Index, new PoolEntry(pool));
+        } 
+        
         public void RegisterNonConstructable<TComponent>(Action<TEntityKey, IEntityViewControl<TEntityKey>, TComponent>? destructorFn = null)
         {
             if (IsManaged<TComponent>())
