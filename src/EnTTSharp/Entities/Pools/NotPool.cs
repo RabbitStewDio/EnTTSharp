@@ -32,6 +32,7 @@ namespace EnTTSharp.Entities.Pools
         void HandleEntityDestroyed(object sender, TEntityKey e)
         {
             Destroyed?.Invoke(this, e);
+            DestroyedNotify?.Invoke(this, (e, default));
         }
 
         public void Dispose()
@@ -43,6 +44,7 @@ namespace EnTTSharp.Entities.Pools
         void HandleCreated(object sender, TEntityKey e)
         {
             Destroyed?.Invoke(this, e);
+            DestroyedNotify?.Invoke(this, (e, default));
         }
 
         void HandleDestroyed(object sender, TEntityKey e)
@@ -54,12 +56,22 @@ namespace EnTTSharp.Entities.Pools
         public int Count => registry.Count - entityPool.Count;
 
         public event EventHandler<TEntityKey>? Destroyed;
-        public event EventHandler<TEntityKey>? UpdatedEntry;
+        public event EventHandler<TEntityKey>? UpdatedEntry
+        {
+            add { }
+            remove { }
+        }
+        
         public event EventHandler<TEntityKey>? CreatedEntry;
         public event EventHandler<(TEntityKey key, Not<TComponent> old)>? DestroyedNotify;
-        public event EventHandler<(TEntityKey key, Not<TComponent> old)>? Updated;
+        public event EventHandler<(TEntityKey key, Not<TComponent> old)>? Updated
+        {
+            add { }
+            remove { }
+        }
+        
         public event EventHandler<(TEntityKey key, Not<TComponent> old)>? Created;
-
+        
         public bool TryGet(TEntityKey entity, out Not<TComponent> component)
         {
             component = default;

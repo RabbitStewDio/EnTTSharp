@@ -1,70 +1,86 @@
+#
+# Defines the GitVersion model this project is using. 
+#
+# 5 Minutes overview: 
+#     http://gitversion.readthedocs.io/en/latest/git-branching-strategies/gitflow-examples/
+# 
+# Summary:
+#   - Development happens in the "develop" branch
+#   - Releases go into the "master" branch
+#     - stabilisation, if needed happens in "release-x.y.z" branches
+#     - long term support for releases is branched off master as needed. 
+#       This is where ongoing patches for older versions are developed.
+#      - "support-dev-1.x" for developing the changes.
+#      - "support-1.x" is used for the releases
+#
+#
+
 next-version: 1.0.0
 assembly-versioning-scheme: Major
 mode: ContinuousDelivery
 branches:
-  master:
+  main:
+    regex: ^master$|^main$
     mode: ContinuousDelivery
     tag: ''
     increment: Patch
     prevent-increment-of-merged-branch-version: true
     track-merge-target: false
-#    tracks-release-branches: false
-#    is-release-branch: false
-  releases?[/-]:
+    tracks-release-branches: false
+    is-release-branch: false
+  release:
+    regex: ^releases?[/-]
     mode: ContinuousDelivery
     tag: beta
     increment: Patch
     prevent-increment-of-merged-branch-version: true
     track-merge-target: false
-#    tracks-release-branches: false
-#    is-release-branch: true
-  features?[/-]:
+    tracks-release-branches: false
+    is-release-branch: true
+    pre-release-weight: 1000
+  feature:
+    regex: ^features?[/-]
     mode: ContinuousDelivery
     tag: useBranchName
     increment: Inherit
     prevent-increment-of-merged-branch-version: false
     track-merge-target: false
-#    tracks-release-branches: false
-#    is-release-branch: false
-  (pull|pull\-requests|pr)[/-]:
+    tracks-release-branches: false
+    is-release-branch: false
+  pull-request:
+    regex: ^(pull|pull\-requests|pr)[/-]
     mode: ContinuousDelivery
     tag: PullRequest
     increment: Inherit
     prevent-increment-of-merged-branch-version: false
     tag-number-pattern: '[/-](?<number>\d+)[-/]'
     track-merge-target: false
-#    tracks-release-branches: false
-#    is-release-branch: false
-  hotfix(es)?[/-]:
+    tracks-release-branches: false
+    is-release-branch: false
+  hotfix:
+    regex: ^hotfix(es)?[/-]
     mode: ContinuousDelivery
     tag: beta
     increment: Patch
     prevent-increment-of-merged-branch-version: false
     track-merge-target: false
-#    tracks-release-branches: false
-#    is-release-branch: false
-  support[/-]:
+    tracks-release-branches: false
+    is-release-branch: false
+  support:
+    regex: ^support[/-]
     mode: ContinuousDelivery
     tag: ''
     increment: Patch
     prevent-increment-of-merged-branch-version: true
     track-merge-target: false
-#    tracks-release-branches: false
-#    is-release-branch: false
-  dev(elop)?(ment)?$:
+    tracks-release-branches: false
+    is-release-branch: false
+  develop:
+    regex: ^dev(elop)?(ment)?$
     mode: ContinuousDeployment
     tag: unstable
     increment: Minor
     prevent-increment-of-merged-branch-version: false
     track-merge-target: true
-#    tracks-release-branches: true
-#    is-release-branch: false
-  support-dev(elop)?(ment)?[/-]:
-    mode: ContinuousDeployment
-    tag: unstable
-    increment: Minor
-    prevent-increment-of-merged-branch-version: false
-    track-merge-target: true
-#    tracks-release-branches: true
-#    is-release-branch: false
-    
+    tracks-release-branches: true
+    is-release-branch: false

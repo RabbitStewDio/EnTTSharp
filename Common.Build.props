@@ -14,14 +14,13 @@
   </PropertyGroup>
   
   <PropertyGroup>
-    <Description>A entity based turn based role-playing game framework</Description>
-    <Authors>Thomas Morgner</Authors>
-    <Copyright>Copyright $([System.DateTime]::Now.Year) Maintainers of RogueEntity</Copyright>
-    <PackageTags>game rogue</PackageTags>
-    <PackageProjectUrl>https://www.rabbit-stew-dio.com/projects/rogue-entity/</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/rabbitstewdio/RogueEntity</RepositoryUrl>
+    <Description>EnTTSharp is a C# port of the EnTT C++ library.</Description>
+    <Authors>Liron Morgner</Authors>
+    <Copyright>Copyright $([System.DateTime]::Now.Year) Maintainers of EnTTSharp; 2017-2020 Michele Caini</Copyright>
+    <PackageTags>game ecs entt</PackageTags>
+    <PackageProjectUrl>https://github.com/RabbitStewDio/EnTTSharp</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/RabbitStewDio/EnTTSharp</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-<!--    <PackageIconUrl>https://raw.githubusercontent.com/github.com/rabbitstewdio/RogueEntity/icon.png</PackageIconUrl> -->
   </PropertyGroup>
 
   <ItemGroup>
