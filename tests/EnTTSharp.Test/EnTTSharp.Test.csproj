@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+
+    <Nullable>annotations</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" Version="2020.1.0" />
+    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.7" />
+    <PackageReference Include="Serilog" Version="2.9.0" />
+    <PackageReference Include="Serilog.Settings.Configuration" Version="3.1.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
+    <PackageReference Include="Serilog.Sinks.Debug" Version="1.0.1" />
+  </ItemGroup>
+
+    <ItemGroup Label="NUnitTestProjectMarker">
+        <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
+    </ItemGroup> 
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\EnTTSharp.Annotations\EnTTSharp.Annotations.csproj" />
+    <ProjectReference Include="..\..\src\EnTTSharp.Serialization.Binary\EnTTSharp.Serialization.Binary.csproj" />
+    <ProjectReference Include="..\..\src\EnTTSharp.Serialization.Xml\EnTTSharp.Serialization.Xml.csproj" />
+    <ProjectReference Include="..\..\src\EnTTSharp.Serialization\EnTTSharp.Serialization.csproj" />
+    <ProjectReference Include="..\..\src\EnTTSharp\EnTTSharp.csproj" />
+  </ItemGroup> 
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
